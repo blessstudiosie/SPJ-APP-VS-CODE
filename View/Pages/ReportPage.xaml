@@ -1,0 +1,48 @@
+<UserControl x:Class="SPJ_APP.View.Pages.ReportPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Laporan Kinerja Sales" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+
+        <Grid Grid.Row="0" HorizontalAlignment="Right">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Dari:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <DatePicker x:Name="InputMulai" Width="120" Margin="0,0,10,0"/>
+                <TextBlock Text="Sampai:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <DatePicker x:Name="InputSelesai" Width="120" Margin="0,0,10,0"/>
+                <Button x:Name="TombolFilter" Content="Filter" Padding="10,3" Click="TombolFilter_Click"/>
+            </StackPanel>
+        </Grid>
+
+        <TabControl Grid.Row="1">
+            <TabItem Header="Kinerja Omset">
+                <DataGrid x:Name="TabelKinerja" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" AlternatingRowBackground="#F5F5F5">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Sales" Binding="{Binding SalesPersonName}" Width="*"/>
+                        <DataGridTextColumn Header="Omset" Binding="{Binding Omset, StringFormat={}{0:N0}}" Width="140"/>
+                        <DataGridTextColumn Header="Jumlah Nota" Binding="{Binding NotaCount}" Width="110"/>
+                        <DataGridTextColumn Header="Nota >14 Hari" Binding="{Binding NotaMoreThan14Days}" Width="140"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <TabItem Header="Gaji Sales">
+                <DataGrid x:Name="TabelGaji" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" AlternatingRowBackground="#F5F5F5">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Sales" Binding="{Binding SalesPersonName}" Width="*"/>
+                        <DataGridTextColumn Header="Omset" Binding="{Binding Omset, StringFormat={}{0:N0}}" Width="140"/>
+                        <DataGridTextColumn Header="Kunjungan" Binding="{Binding KunjunganCount}" Width="110"/>
+                        <DataGridTextColumn Header="Komisi Omset" Binding="{Binding KomisiOmset, StringFormat={}{0:N0}}" Width="140"/>
+                        <DataGridTextColumn Header="Komisi Kunjungan" Binding="{Binding KomisiKunjungan, StringFormat={}{0:N0}}" Width="160"/>
+                        <DataGridTextColumn Header="Total Gaji" Binding="{Binding TotalGaji, StringFormat={}{0:N0}}" Width="140"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

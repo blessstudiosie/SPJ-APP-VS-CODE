@@ -1,0 +1,22 @@
+<Window x:Class="SPJ_APP.View.DeliveryAssignmentWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Buat Nota Pengiriman" Height="350" Width="400" WindowStartupLocation="CenterOwner">
+    <StackPanel Margin="15">
+        <TextBlock x:Name="TeksJumlahNota" FontWeight="Bold" Margin="0,0,0,15"/>
+
+        <TextBlock Text="Sopir"/>
+        <ComboBox x:Name="InputSopir" Margin="0,2,0,10" DisplayMemberPath="Name"/>
+
+        <TextBlock Text="Helper (opsional)"/>
+        <ComboBox x:Name="InputHelper" Margin="0,2,0,10" DisplayMemberPath="Name"/>
+
+        <TextBlock Text="Checker (penanggung jawab)"/>
+        <ComboBox x:Name="InputChecker" Margin="0,2,0,15" DisplayMemberPath="Name"/>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="TombolBatal" Content="Batal" Padding="15,5" Margin="0,0,10,0" Click="TombolBatal_Click"/>
+            <Button x:Name="TombolBuat" Content="Buat Pengiriman" Padding="15,5" Click="TombolBuat_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

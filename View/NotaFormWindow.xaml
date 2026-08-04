@@ -1,0 +1,137 @@
+<Window x:Class="SPJ_APP.View.NotaFormWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Form Nota" Height="700" Width="800" WindowStartupLocation="CenterOwner">
+    <Window.InputBindings>
+        <KeyBinding Key="Escape" Command="{x:Static ApplicationCommands.Close}"/>
+    </Window.InputBindings>
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static ApplicationCommands.Close}" Executed="ShortcutClose_Executed"/>
+    </Window.CommandBindings>
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header: No Nota & Status -->
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" x:Name="TeksNota" FontSize="16" FontWeight="Bold"/>
+            <TextBlock Grid.Column="1" x:Name="TeksStatusBadge" FontSize="16" FontWeight="Bold" HorizontalAlignment="Right"/>
+        </Grid>
+
+        <!-- Customer & Sales -->
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+    <TextBlock Text="Customer"/>
+    <Grid Margin="0,2,0,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <ComboBox Grid.Column="0" x:Name="InputCustomer" DisplayMemberPath="Name"
+                  SelectionChanged="InputCustomer_SelectionChanged"/>
+        <Button Grid.Column="1" Content="+ Baru" Padding="8,2" Margin="5,0,0,0" Click="TombolTambahCustomerBaru_Click"/>
+    </Grid>
+</StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="Sales"/>
+                <ComboBox x:Name="InputSales" Margin="0,2,0,0" DisplayMemberPath="Name"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Tambah Item -->
+        <GroupBox x:Name="PanelTambahItem" Grid.Row="2" Header="Tambah Item" Margin="0,0,0,10">
+            <StackPanel Margin="10">
+                <Grid>
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="2*"/>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
+    </Grid.ColumnDefinitions>
+
+    <StackPanel Grid.Column="0" Margin="0,0,10,0">
+        <TextBlock Text="Produk"/>
+        <ComboBox x:Name="InputProduk" Margin="0,2,0,0" DisplayMemberPath="Name"
+                  SelectionChanged="InputProduk_SelectionChanged"/>
+    </StackPanel>
+
+    <StackPanel Grid.Column="1" Margin="0,0,10,0">
+        <TextBlock Text="Qty"/>
+        <TextBox x:Name="InputQty" Margin="0,2,0,0" Text="1" TextChanged="InputQty_TextChanged"/>
+    </StackPanel>
+
+    <StackPanel Grid.Column="2" Margin="0,0,10,0">
+        <TextBlock Text="Kategori Harga"/>
+        <ComboBox x:Name="InputKategoriHarga" Margin="0,2,0,0" SelectionChanged="InputKategoriHarga_SelectionChanged">
+            <ComboBoxItem Content="R" Tag="R"/>
+            <ComboBoxItem Content="SG" Tag="SG"/>
+            <ComboBoxItem Content="G" Tag="G"/>
+            <ComboBoxItem Content="P" Tag="P"/>
+        </ComboBox>
+    </StackPanel>
+
+    <StackPanel Grid.Column="3" Margin="0,0,10,0">
+        <TextBlock Text="Harga Jual"/>
+        <TextBox x:Name="InputHarga" Margin="0,2,0,0" TextChanged="InputHarga_TextChanged"/>
+    </StackPanel>
+
+    <Button Grid.Column="4" x:Name="TombolTambahItem" Content="Tambah" VerticalAlignment="Bottom" 
+            Padding="15,5" Click="TombolTambahItem_Click"/>
+</Grid>
+
+                <TextBlock x:Name="TeksInfoHarga" Margin="0,8,0,0" FontStyle="Italic" TextWrapping="Wrap"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- List Item -->
+        <DataGrid x:Name="TabelItem" Grid.Row="3" AutoGenerateColumns="False" IsReadOnly="True"
+                  CanUserAddRows="False" AlternatingRowBackground="#F5F5F5">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Produk" Binding="{Binding ProductName}" Width="*"/>
+                <DataGridTextColumn Header="Qty" Binding="{Binding Qty, StringFormat={}{0:N0}}" Width="70"/>
+                <DataGridTextColumn Header="Kategori" Binding="{Binding PriceCategory}" Width="80"/>
+                <DataGridTextColumn Header="Harga" Binding="{Binding Price, StringFormat={}{0:N0}}" Width="110"/>
+                <DataGridTextColumn Header="Subtotal" Binding="{Binding Subtotal, StringFormat={}{0:N0}}" Width="120"/>
+                <DataGridTemplateColumn Header="" Width="80">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Hapus" Padding="8,2" Tag="{Binding}" Click="TombolHapusItem_Click"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Total -->
+        <StackPanel Grid.Row="4" Margin="0,10,0,10">
+    <TextBlock x:Name="TeksTotal" FontWeight="Bold" FontSize="14" HorizontalAlignment="Right"/>
+    <TextBlock x:Name="TeksPembayaran" HorizontalAlignment="Right" Margin="0,3,0,0" Foreground="DarkGreen"/>
+</StackPanel>
+
+        <!-- Aksi -->
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="TombolHapusNota" Content="Hapus Nota" Padding="12,5" Margin="0,0,10,0" Click="TombolHapusNota_Click"/>
+            <Button x:Name="TombolPembayaran" Content="Catat Pembayaran" Padding="12,5" Margin="0,0,10,0" Click="TombolPembayaran_Click"/>
+            <Button x:Name="TombolUnduhGambar" Content="Unduh Gambar" Padding="12,5" Margin="0,0,10,0" Click="TombolUnduhGambar_Click"/>
+            <Button x:Name="TombolCetak" Content="Cetak Nota" Padding="12,5" Margin="0,0,10,0" Click="TombolCetak_Click"/>
+            <Button x:Name="TombolTutup" Content="Tutup" Padding="12,5" Margin="0,0,10,0" Click="TombolTutup_Click"/>
+            <Button x:Name="TombolSimpan" Content="Simpan" Padding="15,5" Click="TombolSimpan_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

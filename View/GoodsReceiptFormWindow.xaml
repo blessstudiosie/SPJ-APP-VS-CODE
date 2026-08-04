@@ -1,0 +1,50 @@
+<Window x:Class="SPJ_APP.View.GoodsReceiptFormWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Barang Masuk" Height="650" Width="760" WindowStartupLocation="CenterOwner">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+            <TextBlock Text="Nota Barang Masuk" FontSize="20" FontWeight="Bold"/>
+            <TextBlock x:Name="TeksNomor" Margin="0,4,0,0" FontStyle="Italic" Foreground="Gray"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                <TextBlock Text="Tanggal"/>
+                <DatePicker x:Name="InputTanggal" Margin="0,2,0,0"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="Catatan"/>
+                <TextBox x:Name="InputCatatan" Margin="0,2,0,0"/>
+            </StackPanel>
+        </Grid>
+
+        <DataGrid x:Name="TabelItem" Grid.Row="2" AutoGenerateColumns="False" CanUserAddRows="False"
+                  AlternatingRowBackground="#F5F5F5" Margin="0,0,0,10">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Produk" Binding="{Binding ProductName}" Width="*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Qty Ready" Binding="{Binding QtyReady, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
+                <DataGridTextColumn Header="Qty Fisik" Binding="{Binding QtyFisik, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
+                <DataGridTextColumn Header="Catatan" Binding="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" Width="160"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="TombolBatal" Content="Batal" Padding="15,5" Margin="0,0,10,0" Click="TombolBatal_Click"/>
+            <Button x:Name="TombolSimpan" Content="Simpan" Padding="15,5" Click="TombolSimpan_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

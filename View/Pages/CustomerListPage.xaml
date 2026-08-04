@@ -1,0 +1,35 @@
+<UserControl x:Class="SPJ_APP.View.Pages.CustomerListPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Master Data Customer" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+            <Button x:Name="TombolTambah" Content="Tambah Customer" Padding="10,5" Margin="10,0,0,0" Click="TombolTambah_Click"/>
+            <TextBox x:Name="TeksStatus" VerticalAlignment="Center" Margin="15,0,0,0" FontStyle="Italic"
+                     IsReadOnly="True" BorderThickness="0" Background="Transparent" IsReadOnlyCaretVisible="True"/>
+        </StackPanel>
+
+        <DataGrid x:Name="TabelCustomer" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True"
+                  CanUserAddRows="False" AlternatingRowBackground="#F5F5F5"
+                  MouseDoubleClick="TabelCustomer_MouseDoubleClick">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Nama Toko" Binding="{Binding Name}" Width="180"/>
+                <DataGridTextColumn Header="Pemilik" Binding="{Binding OwnerName}" Width="140"/>
+                <DataGridTextColumn Header="Telepon" Binding="{Binding Phone}" Width="130"/>
+                <DataGridTextColumn Header="Jalur" Binding="{Binding JalurPengiriman}" Width="120"/>
+                <DataGridTextColumn Header="Sales" Binding="{Binding SalesPersonName}" Width="140"/>
+                <DataGridTextColumn Header="Limit Piutang" Binding="{Binding LimitPiutang, StringFormat={}{0:N0}}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <TextBlock x:Name="TeksJumlah" Grid.Row="3" Margin="0,10,0,0" FontWeight="Bold"/>
+    </Grid>
+</UserControl>

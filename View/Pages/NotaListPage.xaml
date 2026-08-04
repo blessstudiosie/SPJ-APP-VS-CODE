@@ -1,0 +1,45 @@
+<UserControl x:Class="SPJ_APP.View.Pages.NotaListPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Transaksi Penjualan (Nota)" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Dari:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <DatePicker x:Name="InputMulai" Width="120" Margin="0,0,10,0"/>
+            <TextBlock Text="Sampai:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <DatePicker x:Name="InputSelesai" Width="120" Margin="0,0,10,0"/>
+            <Button x:Name="TombolFilter" Content="Filter" Padding="10,3" Click="TombolFilter_Click"/>
+            <Button x:Name="TombolTambah" Content="Tambah Nota" Padding="10,5" Margin="10,0,0,0" Click="TombolTambah_Click"/>
+            <TextBox x:Name="TeksStatus" VerticalAlignment="Center" Margin="15,0,0,0" FontStyle="Italic"
+                     IsReadOnly="True" BorderThickness="0" Background="Transparent" IsReadOnlyCaretVisible="True"/>
+        </StackPanel>
+
+        <DataGrid x:Name="TabelNota" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True"
+                  CanUserAddRows="False" AlternatingRowBackground="#F5F5F5"
+                  MouseDoubleClick="TabelNota_MouseDoubleClick">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="No Nota" Binding="{Binding Nota}" Width="130"/>
+                <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="160"/>
+                <DataGridTextColumn Header="Sales" Binding="{Binding SalesPersonName}" Width="120"/>
+                <DataGridTextColumn Header="Tgl Order" Binding="{Binding OrderDate, StringFormat=dd/MM/yyyy HH:mm}" Width="130"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="130"/>
+                <DataGridTextColumn Header="Total" Binding="{Binding Total, StringFormat={}{0:N0}}" Width="110"/>
+                <DataGridTextColumn Header="Sisa" Binding="{Binding Remaining, StringFormat={}{0:N0}}" Width="110"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+            <Button x:Name="TombolSebelumnya" Content="&lt; Sebelumnya" Padding="10,5" Margin="0,0,10,0" Click="TombolSebelumnya_Click"/>
+            <TextBlock x:Name="TeksHalaman" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <Button x:Name="TombolBerikutnya" Content="Berikutnya &gt;" Padding="10,5" Click="TombolBerikutnya_Click"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

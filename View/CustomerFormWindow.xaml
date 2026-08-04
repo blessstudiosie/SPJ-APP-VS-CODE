@@ -1,0 +1,47 @@
+<Window x:Class="SPJ_APP.View.CustomerFormWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Form Customer" Height="560" Width="400" WindowStartupLocation="CenterOwner">
+    <Window.InputBindings>
+        <KeyBinding Key="Enter" Modifiers="Control" Command="{x:Static ApplicationCommands.Save}"/>
+        <KeyBinding Key="Escape" Command="{x:Static ApplicationCommands.Close}"/>
+    </Window.InputBindings>
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static ApplicationCommands.Save}" Executed="ShortcutSave_Executed"/>
+        <CommandBinding Command="{x:Static ApplicationCommands.Close}" Executed="ShortcutClose_Executed"/>
+    </Window.CommandBindings>
+    <ScrollViewer Margin="15">
+        <StackPanel>
+            <TextBlock Text="Nama Toko"/>
+            <TextBox x:Name="InputName" Margin="0,2,0,10"/>
+
+            <TextBlock Text="Nama Pemilik"/>
+            <TextBox x:Name="InputOwnerName" Margin="0,2,0,10"/>
+
+            <TextBlock Text="Telepon"/>
+            <TextBox x:Name="InputPhone" Margin="0,2,0,10"/>
+
+            <TextBlock Text="Alamat"/>
+            <TextBox x:Name="InputAddress" Margin="0,2,0,10" TextWrapping="Wrap" AcceptsReturn="True" Height="50"/>
+
+            <TextBlock Text="Jalur Pengiriman"/>
+            <ComboBox x:Name="InputJalur" Margin="0,2,0,10">
+                <ComboBoxItem Content="LOTIM"/>
+                <ComboBoxItem Content="LOTENG"/>
+                <ComboBoxItem Content="KLU"/>
+                <ComboBoxItem Content="LOBAR-MATARAM"/>
+            </ComboBox>
+
+            <TextBlock Text="Sales"/>
+            <ComboBox x:Name="InputSalesPerson" Margin="0,2,0,10" DisplayMemberPath="Name"/>
+
+            <TextBlock Text="Limit Piutang"/>
+<TextBox x:Name="InputLimitPiutang" Margin="0,2,0,10" TextChanged="InputAngka_TextChanged"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                <Button x:Name="TombolBatal" Content="Batal" Padding="15,5" Margin="0,0,10,0" Click="TombolBatal_Click"/>
+                <Button x:Name="TombolSimpan" Content="Simpan" Padding="15,5" Click="TombolSimpan_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

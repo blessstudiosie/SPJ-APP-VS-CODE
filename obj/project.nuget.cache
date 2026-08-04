@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "dgSpecHash": "TY7NeThUx/8=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ADVAN\\SPJ APP\\SPJ APP.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ADVAN\\.nuget\\packages\\functions-csharp\\1.3.2\\functions-csharp.1.3.2.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\gotrue-csharp\\4.2.7\\gotrue-csharp.4.2.7.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\microsoft.bcl.cryptography\\10.0.2\\microsoft.bcl.cryptography.10.0.2.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\8.0.0\\microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\microsoft.identitymodel.abstractions\\8.22.0\\microsoft.identitymodel.abstractions.8.22.0.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\8.22.0\\microsoft.identitymodel.jsonwebtokens.8.22.0.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\microsoft.identitymodel.logging\\8.22.0\\microsoft.identitymodel.logging.8.22.0.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\microsoft.identitymodel.tokens\\8.22.0\\microsoft.identitymodel.tokens.8.22.0.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\mimemapping\\2.0.0\\mimemapping.2.0.0.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\postgrest-csharp\\3.5.1\\postgrest-csharp.3.5.1.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\questpdf\\2026.7.2\\questpdf.2026.7.2.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\realtime-csharp\\6.0.4\\realtime-csharp.6.0.4.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\sourcegear.sqlite3\\3.53.3\\sourcegear.sqlite3.3.53.3.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\sqlite-net-pcl\\1.11.285\\sqlite-net-pcl.1.11.285.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\sqlitepclraw.core\\3.0.3\\sqlitepclraw.core.3.0.3.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\sqlitepclraw.provider.e_sqlite3\\3.0.3\\sqlitepclraw.provider.e_sqlite3.3.0.3.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\supabase-core\\0.0.3\\supabase-core.0.0.3.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\supabase-csharp\\0.16.2\\supabase-csharp.0.16.2.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\supabase-storage-csharp\\1.4.0\\supabase-storage-csharp.1.4.0.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\system.identitymodel.tokens.jwt\\8.22.0\\system.identitymodel.tokens.jwt.8.22.0.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\system.reactive\\5.0.0\\system.reactive.5.0.0.nupkg.sha512",
+    "C:\\Users\\ADVAN\\.nuget\\packages\\websocket.client\\4.6.1\\websocket.client.4.6.1.nupkg.sha512"
+  ],
+  "logs": []
+}

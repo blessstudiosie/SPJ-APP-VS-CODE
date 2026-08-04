@@ -1,0 +1,38 @@
+<Window x:Class="SPJ_APP.View.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Pengaturan & Backup" Height="350" Width="500" WindowStartupLocation="CenterOwner">
+    <StackPanel Margin="15">
+        <GroupBox Header="Backup Database Lokal" Padding="10">
+            <StackPanel>
+                <TextBlock Text="Simpan salinan file database lokal (SQLite) ke lokasi yang aman." TextWrapping="Wrap" Margin="0,0,0,10"/>
+                <Button x:Name="TombolBackupLokal" Content="Backup Sekarang..." Padding="10,5" HorizontalAlignment="Left" Click="TombolBackupLokal_Click"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="Ekspor Data Lokal (JSON)" Padding="10" Margin="0,15,0,0">
+            <StackPanel>
+                <TextBlock Text="Simpan snapshot dari semua data lokal (produk, penjualan, customer, dll) ke dalam satu file JSON. Ini berguna untuk analisis atau migrasi data." TextWrapping="Wrap" Margin="0,0,0,10"/>
+                <Button x:Name="TombolEksporJson" Content="Ekspor Sekarang..." Padding="10,5" HorizontalAlignment="Left" Click="TombolEksporJson_Click"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="Backup Database Cloud (Supabase)" Padding="10" Margin="0,15,0,0">
+            <StackPanel>
+                <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
+                    Backup database Supabase dikelola melalui dashboard web Supabase. Disarankan untuk melakukan backup secara rutin.
+                </TextBlock>
+                <TextBlock>
+                    <Run>Buka halaman</Run>
+                    <Hyperlink NavigateUri="https://app.supabase.com/" RequestNavigate="Hyperlink_RequestNavigate">
+                        Dashboard Supabase
+                    </Hyperlink>
+                    <Run>untuk mengelola backup Anda.</Run>
+                </TextBlock>
+            </StackPanel>
+        </GroupBox>
+        
+        <Button Content="Tutup" IsCancel="True" HorizontalAlignment="Right" Padding="15,5" Margin="0,20,0,0"/>
+
+    </StackPanel>
+</Window>

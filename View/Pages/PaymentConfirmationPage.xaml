@@ -1,0 +1,35 @@
+<UserControl x:Class="SPJ_APP.View.Pages.PaymentConfirmationPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Konfirmasi Pembayaran" FontSize="20" FontWeight="Bold" Margin="0,0,0,6"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+            <Button Content="Muat Pembayaran dari Android" Padding="12,5" Click="TombolMuat_Click"/>
+            <TextBlock x:Name="TeksStatus" VerticalAlignment="Center" Margin="12,0,0,0" Foreground="#4B5563"/>
+        </StackPanel>
+        <DataGrid x:Name="TabelPembayaran" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" AlternatingRowBackground="#F5F5F5">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID Nota" Binding="{Binding SaleId}" Width="*"/>
+                <DataGridTextColumn Header="Tanggal" Binding="{Binding PaymentDate, StringFormat=dd/MM/yyyy HH:mm}" Width="145"/>
+                <DataGridTextColumn Header="Nominal" Binding="{Binding Amount, StringFormat={}{0:N0}}" Width="120"/>
+                <DataGridTextColumn Header="Metode" Binding="{Binding PaymentMethod}" Width="110"/>
+                <DataGridTextColumn Header="Catatan" Binding="{Binding Notes}" Width="160"/>
+                <DataGridTemplateColumn Header="Aksi" Width="180">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Setujui" Padding="8,2" Margin="0,0,5,0" Tag="{Binding}" Click="TombolSetujui_Click"/>
+                                <Button Content="Tolak" Padding="8,2" Tag="{Binding}" Click="TombolTolak_Click"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>
