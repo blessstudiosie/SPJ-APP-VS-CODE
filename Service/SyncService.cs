@@ -341,13 +341,13 @@ namespace SPJ_APP.Service
                     detailCount += details.Count;
                 }
 
-                var parameters = new Dictionary<string, object>
+                var parameters = new Dictionary<string, object?>
                 {
                     { "p_id", id },
                     { "p_delivery_number", local.DeliveryNumber },
-                    { "p_driver_id", ParseOptionalGuid(local.DriverId, "driver")! },
+                    { "p_driver_id", ParseOptionalGuid(local.DriverId, "driver") },
                     { "p_helper_id", ParseOptionalGuid(local.HelperId, "helper") },
-                    { "p_checker_id", ParseOptionalGuid(local.CheckerId, "checker")! },
+                    { "p_checker_id", ParseOptionalGuid(local.CheckerId, "checker") },
                     { "p_status", local.Status },
                     { "p_closed_at", local.ClosedAt },
                     { "p_details", Newtonsoft.Json.JsonConvert.SerializeObject(detailsForRpc) }

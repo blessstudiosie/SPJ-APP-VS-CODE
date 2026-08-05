@@ -1,4 +1,5 @@
 using System.Windows;
+using SPJ_APP.View;
 
 namespace SPJ_APP.Service
 {
@@ -6,7 +7,11 @@ namespace SPJ_APP.Service
     {
         public static void ShowError(string message, string title = "Error")
         {
-            MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
+            var errorWindow = new ErrorDialogWindow(message, title)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            errorWindow.ShowDialog();
         }
 
         public static void ShowInfo(string message, string title = "Informasi")

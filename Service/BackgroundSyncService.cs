@@ -21,11 +21,11 @@ namespace SPJ_APP.Service
         private static readonly Lazy<BackgroundSyncService> _instance = new(() => new BackgroundSyncService());
         public static BackgroundSyncService Instance => _instance.Value;
 
-        private Timer _timer;
+        private Timer? _timer;
         private bool _isSyncing = false;
         private readonly TimeSpan _syncInterval = TimeSpan.FromMinutes(5);
 
-        public event EventHandler<SyncStatusEventArgs> SyncStatusChanged;
+        public event EventHandler<SyncStatusEventArgs>? SyncStatusChanged;
 
         private BackgroundSyncService() { }
 

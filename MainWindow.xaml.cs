@@ -1,7 +1,9 @@
 ﻿using System.Windows;
 using SPJ_APP.Service;
 using SPJ_APP.View.Pages;
+using SPJ_APP.View;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace SPJ_APP
 {
@@ -15,7 +17,38 @@ namespace SPJ_APP
             BackgroundSyncService.Instance.SyncStatusChanged += BackgroundSyncService_SyncStatusChanged;
         }
 
-        private void BackgroundSyncService_SyncStatusChanged(object sender, SyncStatusEventArgs e)
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            // F5: Refresh current page
+            if (e.Key == Key.F5)
+            {
+                if (AreaKonten.Content is IRefreshablePage refreshablePage)
+                {
+                    refreshablePage.RefreshData();
+                }
+            }
+
+            // Ctrl+N: New item (context-sensitive)
+            if (e.Key == Key.N && Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                Window? form = null;
+                if (AreaKonten.Content is ProductListPage)
+                    form = new ProductFormWindow { Owner = this };
+                else if (AreaKonten.Content is NotaListPage)
+                    form = new NotaFormWindow { Owner = this };
+                else if (AreaKonten.Content is CustomerListPage)
+                    form = new CustomerFormWindow { Owner = this };
+                else if (AreaKonten.Content is SalesPersonListPage)
+                    form = new SalesPersonFormWindow { Owner = this };
+                
+                if (form != null && form.ShowDialog() == true)
+                {
+                    (AreaKonten.Content as IRefreshablePage)?.RefreshData();
+                }
+            }
+        }
+        
+        private void BackgroundSyncService_SyncStatusChanged(object? sender, SyncStatusEventArgs e)
         {
             Dispatcher.Invoke(() =>
             {
@@ -33,7 +66,7 @@ namespace SPJ_APP
             await AppInitializationService.InitializeAppAsync();
         }
 
-        private void AppInitializationService_InitializationProgressChanged(object sender, string message)
+        private void AppInitializationService_InitializationProgressChanged(object? sender, string message)
         {
             Dispatcher.Invoke(() =>
             {
@@ -106,7 +139,8 @@ namespace SPJ_APP
 
         private void MenuPengaturan_Click(object sender, RoutedEventArgs e)
         {
-            // Menu Pengaturan belum dibangun
+            var settingsWindow = new SettingsWindow { Owner = this };
+            settingsWindow.ShowDialog();
         }
 
         private async void MenuSync_Click(object sender, RoutedEventArgs e)

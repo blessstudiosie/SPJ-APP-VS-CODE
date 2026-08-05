@@ -3,9 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Form Nota" Height="700" Width="800" WindowStartupLocation="CenterOwner">
     <Window.InputBindings>
+        <KeyBinding Key="Enter" Modifiers="Control" Command="{x:Static ApplicationCommands.Save}"/>
         <KeyBinding Key="Escape" Command="{x:Static ApplicationCommands.Close}"/>
     </Window.InputBindings>
     <Window.CommandBindings>
+        <CommandBinding Command="{x:Static ApplicationCommands.Save}" Executed="ShortcutSave_Executed"/>
         <CommandBinding Command="{x:Static ApplicationCommands.Close}" Executed="ShortcutClose_Executed"/>
     </Window.CommandBindings>
 

@@ -4,7 +4,7 @@ namespace SPJ_APP.Service
 {
     public static class AppInitializationService
     {
-        public static event EventHandler<string> InitializationProgressChanged;
+        public static event EventHandler<string>? InitializationProgressChanged;
 
         public static async Task InitializeAppAsync()
         {

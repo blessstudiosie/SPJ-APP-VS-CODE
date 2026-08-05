@@ -57,5 +57,8 @@ The SPJ App is a WPF desktop application built with C#. It utilizes a local SQLi
 - **UI Responsiveness:** For long-running operations (like sync or complex calculations), ensure the UI remains responsive by running tasks asynchronously and updating the UI correctly using `Dispatcher.Invoke`.
 - **Code Organization:** Follow existing `Service` and `View/Pages` directory structures.
 
+### Task Management
+- **PLAN.md:** Refer to `PLAN.md` at the project root for a detailed breakdown of current tasks, their stages, and completion status. This document will be used to track progress and identify unfinished work.
+
 ---
 *Last updated by Gemini on 2026-08-04*

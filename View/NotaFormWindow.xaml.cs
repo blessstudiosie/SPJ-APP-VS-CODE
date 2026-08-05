@@ -783,5 +783,10 @@ namespace SPJ_APP.View
         }
 
         private void ShortcutClose_Executed(object sender, ExecutedRoutedEventArgs e) => TombolTutup_Click(sender, new RoutedEventArgs());
+
+        private void ShortcutSave_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            TombolSimpan_Click(sender, new RoutedEventArgs());
+        }
     }
 }

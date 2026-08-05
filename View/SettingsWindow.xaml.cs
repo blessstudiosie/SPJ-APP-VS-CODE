@@ -28,15 +28,12 @@ namespace SPJ_APP.View
                 try
                 {
                     await BackupService.BackupLocalDatabaseAsync(dialog.FileName);
-                    MessageBox.Show($"Backup database lokal berhasil disimpan di:
-{dialog.FileName}", 
+                    MessageBox.Show($"Backup database lokal berhasil disimpan di:\n{dialog.FileName}", 
                                     "Backup Berhasil", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Gagal melakukan backup:
-{ex.Message}", 
-                                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    DialogHelper.ShowError($"Gagal melakukan backup:\n{ex.Message}");
                 }
             }
         }
@@ -66,8 +63,7 @@ namespace SPJ_APP.View
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Gagal melakukan ekspor:\n{ex.Message}",
-                                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    DialogHelper.ShowError($"Gagal melakukan ekspor:\n{ex.Message}");
                 }
             }
         }
