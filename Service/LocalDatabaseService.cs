@@ -37,6 +37,9 @@ namespace SPJ_APP.Service
                 await _database.CreateTableAsync<LocalGoodsReceiptDetail>();
                 await _database.CreateTableAsync<LocalStockOpname>();
                 await _database.CreateTableAsync<LocalStockOpnameDetail>();
+                await _database.CreateTableAsync<LocalPurchaseOrder>();
+                await _database.CreateTableAsync<LocalPurchaseOrderDetail>();
+                await _database.CreateTableAsync<LocalActivityLog>();
             }
 
             return _database;

@@ -1,5 +1,5 @@
-using SPJ_APP.Service;
 using System.Windows;
+using SPJ_APP.View;
 
 namespace SPJ_APP
 {
@@ -8,8 +8,6 @@ namespace SPJ_APP
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
-            BackgroundSyncService.Instance.Start();
 
             DispatcherUnhandledException += (sender, args) =>
             {
@@ -23,12 +21,19 @@ namespace SPJ_APP
                 MessageBox.Show(detail, "Error Detail", MessageBoxButton.OK, MessageBoxImage.Error);
                 args.Handled = true;
             };
-        }
 
-        protected override void OnExit(ExitEventArgs e)
-        {
-            BackgroundSyncService.Instance.Stop();
-            base.OnExit(e);
+            var loginWindow = new LoginWindow();
+            bool? loginResult = loginWindow.ShowDialog();
+
+            if (loginResult == true)
+            {
+                var mainWindow = new MainWindow();
+                mainWindow.Show();
+            }
+            else
+            {
+                Shutdown();
+            }
         }
     }
 }

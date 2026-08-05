@@ -123,7 +123,7 @@ namespace SPJ_APP.View {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/SPJ APP;component/view/customerformwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/SPJ APP;V1.0.0.0;component/view/customerformwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\View\CustomerFormWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

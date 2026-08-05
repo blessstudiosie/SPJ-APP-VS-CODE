@@ -14,7 +14,7 @@ namespace SPJ_APP.Model
         public decimal TargetOmset { get; set; }
         public string? Role { get; set; }
         public DateTime? UpdatedAt { get; set; }
-
+        public string? Password { get; set; }
         public bool IsSynced { get; set; } = true;
         public DateTime? LastSyncedUpdatedAt { get; set; }
     }

@@ -1,4 +1,5 @@
 using SPJ_APP.Model;
+using SQLite;
 
 namespace SPJ_APP.Service
 {
@@ -78,7 +79,7 @@ namespace SPJ_APP.Service
 
             var allLocalDetails = await localDb.Table<LocalPurchaseOrderDetail>().ToListAsync();
             var remotePOIds = (await supabase.From<PurchaseOrder>().Get()).Models.Select(item => item.Id).ToHashSet();
-            
+
             foreach (var localPO in localPOs)
             {
                 if (!Guid.TryParse(localPO.Id, out var poId))
@@ -98,7 +99,7 @@ namespace SPJ_APP.Service
                     await supabase.From<PurchaseOrder>().Update(remotePO);
                 else
                     await supabase.From<PurchaseOrder>().Insert(remotePO);
-                
+
                 // Delete existing details and insert new ones
                 await supabase.From<PurchaseOrderDetail>().Where(x => x.PurchaseOrderId == poId).Delete();
 
@@ -128,12 +129,23 @@ namespace SPJ_APP.Service
             var localDb = await LocalDatabaseService.GetConnection();
             var supabase = await SupabaseService.GetClient();
             var localItems = await localDb.Table<LocalSalesPerson>().ToListAsync();
-            var remoteIds = (await supabase.From<SalesPerson>().Get()).Models.Select(item => item.Id).ToHashSet();
+            var remoteList = (await supabase.From<SalesPerson>().Get()).Models;
+            var remoteIds = remoteList.Select(item => item.Id).ToHashSet();
+            var remoteByName = remoteList.ToDictionary(item => item.Name, item => item, StringComparer.OrdinalIgnoreCase);
 
             foreach (var local in localItems)
             {
                 if (!Guid.TryParse(local.Id, out var id))
                     throw new InvalidOperationException($"ID sales person tidak valid: '{local.Id}'.");
+
+                // Kalau ID lokal tidak ada di server tapi NAMA sudah ada (misal karena database lokal
+                // pernah di-reset lalu data ini dibuat ulang), adopsi ID milik server - jangan insert baru.
+                if (!remoteIds.Contains(id) && remoteByName.TryGetValue(local.Name, out var existingByName))
+                {
+                    await ReassignLocalSalesPersonIdAsync(localDb, local, existingByName.Id);
+                    id = existingByName.Id;
+                }
+
                 var remote = new SalesPerson { Id = id, Name = local.Name, Phone = local.Phone, Email = local.Email, TargetOmset = local.TargetOmset, Role = local.Role };
                 if (remoteIds.Contains(id)) await supabase.From<SalesPerson>().Update(remote);
                 else await supabase.From<SalesPerson>().Insert(remote);
@@ -143,22 +155,66 @@ namespace SPJ_APP.Service
             return localItems.Count;
         }
 
+        private static async Task ReassignLocalSalesPersonIdAsync(SQLiteAsyncConnection localDb, LocalSalesPerson local, Guid newId)
+        {
+            string oldId = local.Id;
+            string newIdStr = newId.ToString();
+
+            await localDb.RunInTransactionAsync(conn =>
+            {
+                var customers = conn.Table<LocalCustomer>().Where(c => c.SalesPersonId == oldId).ToList();
+                foreach (var c in customers) { c.SalesPersonId = newIdStr; conn.Update(c); }
+
+                var sales = conn.Table<LocalSale>().Where(s => s.SalesPersonId == oldId).ToList();
+                foreach (var s in sales) { s.SalesPersonId = newIdStr; conn.Update(s); }
+
+                var deliveries = conn.Table<LocalDelivery>().ToList();
+                foreach (var d in deliveries)
+                {
+                    bool changed = false;
+                    if (d.DriverId == oldId) { d.DriverId = newIdStr; changed = true; }
+                    if (d.HelperId == oldId) { d.HelperId = newIdStr; changed = true; }
+                    if (d.CheckerId == oldId) { d.CheckerId = newIdStr; changed = true; }
+                    if (changed) conn.Update(d);
+                }
+
+                conn.Delete(local);
+                local.Id = newIdStr;
+                conn.InsertOrReplace(local);
+            });
+        }
         public static async Task<int> SyncCustomersAsync()
         {
             var localDb = await LocalDatabaseService.GetConnection();
             var supabase = await SupabaseService.GetClient();
             var localItems = await localDb.Table<LocalCustomer>().ToListAsync();
-            var remoteIds = (await supabase.From<Customer>().Get()).Models.Select(item => item.Id).ToHashSet();
+            var remoteList = (await supabase.From<Customer>().Get()).Models;
+            var remoteIds = remoteList.Select(item => item.Id).ToHashSet();
+            var remoteByName = remoteList.ToDictionary(item => item.Name, item => item, StringComparer.OrdinalIgnoreCase);
 
             foreach (var local in localItems)
             {
                 if (!Guid.TryParse(local.Id, out var id))
                     throw new InvalidOperationException($"ID customer tidak valid: '{local.Id}'.");
+
+                if (!remoteIds.Contains(id) && remoteByName.TryGetValue(local.Name, out var existingByName))
+                {
+                    await ReassignLocalCustomerIdAsync(localDb, local, existingByName.Id);
+                    id = existingByName.Id;
+                }
+
                 var remote = new Customer
                 {
-                    Id = id, Name = local.Name, OwnerName = local.OwnerName, Phone = local.Phone, Address = local.Address,
-                    JalurPengiriman = local.JalurPengiriman, Latitude = local.Latitude, Longitude = local.Longitude,
-                    SalesPersonId = ParseOptionalGuid(local.SalesPersonId, "sales person customer"), LimitPiutang = local.LimitPiutang
+                    Id = id,
+                    Name = local.Name,
+                    OwnerName = local.OwnerName,
+                    Phone = local.Phone,
+                    Address = local.Address,
+                    JalurPengiriman = local.JalurPengiriman,
+                    Latitude = local.Latitude,
+                    Longitude = local.Longitude,
+                    SalesPersonId = ParseOptionalGuid(local.SalesPersonId, "sales person customer"),
+                    LimitPiutang = local.LimitPiutang
                 };
                 if (remoteIds.Contains(id)) await supabase.From<Customer>().Update(remote);
                 else await supabase.From<Customer>().Insert(remote);
@@ -166,6 +222,22 @@ namespace SPJ_APP.Service
                 await localDb.UpdateAsync(local);
             }
             return localItems.Count;
+        }
+
+        private static async Task ReassignLocalCustomerIdAsync(SQLiteAsyncConnection localDb, LocalCustomer local, Guid newId)
+        {
+            string oldId = local.Id;
+            string newIdStr = newId.ToString();
+
+            await localDb.RunInTransactionAsync(conn =>
+            {
+                var sales = conn.Table<LocalSale>().Where(s => s.CustomerId == oldId).ToList();
+                foreach (var s in sales) { s.CustomerId = newIdStr; conn.Update(s); }
+
+                conn.Delete(local);
+                local.Id = newIdStr;
+                conn.InsertOrReplace(local);
+            });
         }
 
         /// <summary>
@@ -248,8 +320,13 @@ namespace SPJ_APP.Service
                 var local = await localDb.FindAsync<LocalPayment>(remote.Id.ToString());
                 var mapped = new LocalPayment
                 {
-                    Id = remote.Id.ToString(), SaleId = remote.SaleId.ToString(), PaymentDate = remote.PaymentDate,
-                    Amount = remote.Amount, PaymentMethod = remote.PaymentMethod, Status = "PENDING", Notes = remote.Notes,
+                    Id = remote.Id.ToString(),
+                    SaleId = remote.SaleId.ToString(),
+                    PaymentDate = remote.PaymentDate,
+                    Amount = remote.Amount,
+                    PaymentMethod = remote.PaymentMethod,
+                    Status = "PENDING",
+                    Notes = remote.Notes,
                     IsSynced = true
                 };
                 if (local is null) await localDb.InsertAsync(mapped);
@@ -272,8 +349,13 @@ namespace SPJ_APP.Service
             var supabase = await SupabaseService.GetClient();
             var remote = new Payment
             {
-                Id = paymentId, SaleId = saleId, PaymentDate = payment.PaymentDate, Amount = payment.Amount,
-                PaymentMethod = payment.PaymentMethod, Status = approve ? "APPROVED" : "REJECTED", Notes = payment.Notes
+                Id = paymentId,
+                SaleId = saleId,
+                PaymentDate = payment.PaymentDate,
+                Amount = payment.Amount,
+                PaymentMethod = payment.PaymentMethod,
+                Status = approve ? "APPROVED" : "REJECTED",
+                Notes = payment.Notes
             };
             await supabase.From<Payment>().Update(remote);
 
@@ -358,7 +440,7 @@ namespace SPJ_APP.Service
                 local.IsSynced = true;
                 await localDb.UpdateAsync(local);
                 deliveryCount++;
-                
+
                 // Add the newly assigned number to the set to prevent collisions within the same sync batch
                 remoteDeliveryNumbers.Add(local.DeliveryNumber);
             }
@@ -459,19 +541,41 @@ namespace SPJ_APP.Service
 
         private static Product ToRemoteProduct(LocalProduct local, Guid id) => new()
         {
-            Id = id, Name = local.Name, StokReady = local.StokReady, StokFisik = local.StokFisik,
-            HargaR = local.HargaR, HargaSg = local.HargaSg, HargaG = local.HargaG, HargaP = local.HargaP,
-            Kategori = local.Kategori, Satuan = local.Satuan, SatuanBesar = local.SatuanBesar,
-            QtyRatio = local.QtyRatio, Status = local.Status, Description = local.Description
+            Id = id,
+            Name = local.Name,
+            StokReady = local.StokReady,
+            StokFisik = local.StokFisik,
+            HargaR = local.HargaR,
+            HargaSg = local.HargaSg,
+            HargaG = local.HargaG,
+            HargaP = local.HargaP,
+            Kategori = local.Kategori,
+            Satuan = local.Satuan,
+            SatuanBesar = local.SatuanBesar,
+            QtyRatio = local.QtyRatio,
+            Status = local.Status,
+            Description = local.Description
         };
 
         private static LocalProduct ToLocalProduct(Product remote, LocalProduct? existing) => new()
         {
-            Id = remote.Id.ToString(), Name = remote.Name, StokReady = remote.StokReady, StokFisik = remote.StokFisik,
-            HargaR = remote.HargaR, HargaSg = remote.HargaSg, HargaG = remote.HargaG, HargaP = remote.HargaP,
-            Kategori = remote.Kategori, Satuan = remote.Satuan, SatuanBesar = remote.SatuanBesar,
-            QtyRatio = remote.QtyRatio, Status = remote.Status, Description = remote.Description,
-            UpdatedAt = remote.UpdatedAt, IsSynced = true, LastSyncedUpdatedAt = remote.UpdatedAt
+            Id = remote.Id.ToString(),
+            Name = remote.Name,
+            StokReady = remote.StokReady,
+            StokFisik = remote.StokFisik,
+            HargaR = remote.HargaR,
+            HargaSg = remote.HargaSg,
+            HargaG = remote.HargaG,
+            HargaP = remote.HargaP,
+            Kategori = remote.Kategori,
+            Satuan = remote.Satuan,
+            SatuanBesar = remote.SatuanBesar,
+            QtyRatio = remote.QtyRatio,
+            Status = remote.Status,
+            Description = remote.Description,
+            UpdatedAt = remote.UpdatedAt,
+            IsSynced = true,
+            LastSyncedUpdatedAt = remote.UpdatedAt
         };
 
         private static Sale ToRemoteSale(LocalSale local, Guid id) => new()
@@ -521,6 +625,25 @@ namespace SPJ_APP.Service
             throw new InvalidOperationException($"ID {fieldName} tidak valid: '{value}'.");
         }
 
+        public static async Task<int> SyncActivityLogsAsync()
+{
+    var localDb = await LocalDatabaseService.GetConnection();
+    var supabase = await SupabaseService.GetClient();
+    var localItems = await localDb.Table<LocalActivityLog>().Where(l => l.IsSynced == false).ToListAsync();
+
+    foreach (var local in localItems)
+    {
+        if (!Guid.TryParse(local.Id, out var id))
+            continue;
+
+        var remote = new ActivityLog { Id = id, UserName = local.UserName, Action = local.Action, Details = local.Details };
+        await supabase.From<ActivityLog>().Insert(remote);
+
+        local.IsSynced = true;
+        await localDb.UpdateAsync(local);
+    }
+    return localItems.Count;
+}
         private static DeliveryDetail ToRemoteDeliveryDetail(LocalDeliveryDetail local)
         {
             if (!Guid.TryParse(local.Id, out var id) || !Guid.TryParse(local.DeliveryId, out var deliveryId) || !Guid.TryParse(local.SaleId, out var saleId))

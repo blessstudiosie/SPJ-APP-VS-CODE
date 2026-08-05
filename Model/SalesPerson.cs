@@ -29,5 +29,9 @@ public DateTime? CreatedAt { get; set; }
 
 [Column("updated_at", ignoreOnInsert: true, ignoreOnUpdate: true)]
 public DateTime? UpdatedAt { get; set; }
+
+[Column("password")]
+public string? Password { get; set; }
+
     }
 }

@@ -1,0 +1,20 @@
+<Window x:Class="SPJ_APP.View.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Login - SPJ APP" Height="320" Width="380" WindowStartupLocation="CenterScreen"
+        WindowStyle="SingleBorderWindow" ResizeMode="NoResize">
+    <StackPanel Margin="25" VerticalAlignment="Center">
+        <TextBlock Text="SPJ APP" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+        <TextBlock Text="CV. Sarana Prima Jaya" FontSize="12" Foreground="Gray" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+        <TextBlock Text="Nama User"/>
+        <ComboBox x:Name="InputNama" Margin="0,2,0,10" DisplayMemberPath="Name" IsEditable="True"/>
+
+        <TextBlock Text="Password"/>
+        <PasswordBox x:Name="InputPassword" Margin="0,2,0,15" KeyDown="InputPassword_KeyDown"/>
+
+        <TextBlock x:Name="TeksStatus" Foreground="Red" Margin="0,0,0,10" TextWrapping="Wrap"/>
+
+        <Button x:Name="TombolLogin" Content="Login" Padding="10,8" Click="TombolLogin_Click"/>
+    </StackPanel>
+</Window>
