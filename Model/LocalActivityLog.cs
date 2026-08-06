@@ -1,17 +1,16 @@
 using SQLite;
+using System;
 
 namespace SPJ_APP.Model
 {
-    [Table("activity_logs")]
     public class LocalActivityLog
     {
         [PrimaryKey]
-        public string Id { get; set; } = string.Empty;
-
-        public string UserName { get; set; } = string.Empty;
-        public string Action { get; set; } = string.Empty;
+        public Guid Id { get; set; }
+        public string UserName { get; set; }
+        public string Action { get; set; }
         public string? Details { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public bool IsSynced { get; set; } = false;
+        public DateTime CreatedAt { get; set; }
+        public bool IsSynced { get; set; }
     }
 }

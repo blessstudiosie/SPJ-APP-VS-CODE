@@ -78,5 +78,38 @@ Status yang valid dan telah ditetapkan untuk sebuah Nota (penjualan/invoice) ada
 - `TEMPO`: Pengiriman selesai, pembayaran belum lunas (jatuh tempo).
 - `DONE`: Pengiriman selesai dan pembayaran sudah lunas.
 
+## Fitur Baru: Login & Audit Trail (dirancang bersama Claude, 2026-08-06)
+
+### Konteks
+Aplikasi sebelumnya tidak punya konsep "siapa yang sedang pakai app". Ditambahkan sistem login sederhana berbasis password per-user (disimpan di `sales_persons.password`), plus pencatatan aktivitas ke `activity_logs` (tabel yang sudah ada di skema tapi belum pernah dipakai).
+
+### Keputusan desain
+- **Password sederhana** (bukan Supabase Auth) - dipilih untuk kecepatan implementasi. **Plain text untuk sekarang - ini utang teknis, harus di-hash sebelum go-live.**
+- **`CurrentUserService`**: singleton in-memory (bukan persisted), reset tiap kali app dibuka - user harus login ulang setiap sesi.
+- **Audit trail pakai `activity_logs`** yang sudah ada di skema awal, bukan tabel baru - konsisten dengan skema yang sudah dirancang sejak awal project.
+- **PENTING - cek integrasi startup**: `AppInitializationService` sudah menangani alur startup (loading overlay, sync awal blocking). Login window HARUS terintegrasi ke alur ini dengan urutan yang tepat (rekomendasi: Login dulu sebelum initialization/sync, karena `ActivityLogService` butuh tahu siapa user-nya sebelum mencatat log apapun termasuk saat startup). Jangan menimpa alur `AppInitializationService` yang sudah ada - sesuaikan urutannya.
+
+### Keterkaitan dengan Tahap 6 (Otorisasi)
+Task "Implementasi Otorisasi Perubahan Status" di `PLAN.md` sekarang punya fondasi yang dibutuhkan (`sales_persons.password` + `role`). Prioritaskan ini setelah Login selesai, karena keduanya saling berkaitan erat.
+
+## Migrasi Data Production (satu kali, didokumentasikan terpisah)
+Proses migrasi data asli dari Supabase production ke database development (yang strukturnya sudah UUID-based) dilakukan lewat `postgres_fdw`, dijalankan manual di SQL Editor - bukan bagian dari kode aplikasi. Skrip migrasinya idempotent (aman diulang). Lihat Tahap 8 di `PLAN.md` untuk detail. Ini murni operasi database, tidak memerlukan perubahan kode C#.
+
+## Keputusan Ruang Lingkup (6 Agustus 2026)
+Fitur/tabel berikut **tidak diprioritaskan** untuk saat ini - jangan bangun atau kembangkan lebih lanjut kecuali diminta eksplisit:
+- Returns (`returns`, `return_details`)
+- Barang Masuk (`barang_masuk`, `barang_masuk_details`)
+- Stock Opname Details (`stock_opname_details`) - header `stock_opname` boleh tetap ada di skema, tapi detail per-item tidak perlu dikerjakan.
+
+Alasan: belum dibutuhkan untuk tahap operasional saat ini. Bisa diaktifkan kembali nanti dengan mencabut catatan ini.
+
+## Developer Tools: Database Inspector (rancangan awal bersama Claude)
+Halaman generik untuk CRUD langsung ke tabel SQLite lokal, untuk keperluan debug/perbaikan darurat - BUKAN untuk alur kerja normal. Poin desain penting:
+- Dropdown pilih tabel (dari daftar model lokal yang relevan - lihat PLAN.md Tahap 9 untuk daftar tabelnya).
+- DataGrid dengan `AutoGenerateColumns="True"` untuk generik menampilkan semua property model.
+- Tombol Simpan Perubahan (commit edit + `UpdateAsync` per baris) dan Hapus Baris (multi-select, `DeleteAsync`).
+- **WAJIB** ada dialog konfirmasi bertuliskan bahwa alat ini melewati validasi bisnis aplikasi, baik saat masuk ke halaman maupun saat simpan/hapus.
+- Akses lewat menu terpisah "Developer" di `MainWindow.xaml`, bukan menu operasional biasa.
+
 ---
-*Last updated by Gemini on 2026-08-04*
+*Last updated by Gemini on 2026-08-06*

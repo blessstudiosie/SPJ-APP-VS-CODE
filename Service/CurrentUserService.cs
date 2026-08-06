@@ -4,18 +4,12 @@ namespace SPJ_APP.Service
 {
     public static class CurrentUserService
     {
-        public static LocalSalesPerson? LoggedInUser { get; private set; }
+        private static LocalSalesPerson? _loggedInUser;
+        public static LocalSalesPerson? LoggedInUser => _loggedInUser;
 
         public static void SetUser(LocalSalesPerson user)
         {
-            LoggedInUser = user;
+            _loggedInUser = user;
         }
-
-        public static void ClearUser()
-        {
-            LoggedInUser = null;
-        }
-
-        public static string CurrentUserName => LoggedInUser?.Name ?? "Unknown";
     }
 }

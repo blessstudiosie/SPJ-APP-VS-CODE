@@ -558,6 +558,7 @@ namespace SPJ_APP.View
             conn.Update(_existingSale);
         });
 
+        await ActivityLogService.LogAsync("PRINT_NOTA", $"Nota '{_existingSale.Nota}' dicetak dan status diubah ke ON PROSES.");
         DialogHelper.ShowInfo("Status nota diubah menjadi ON PROSES, dan Stok Ready produk sudah dikurangi. (Cetak fisik belum diimplementasikan)");
 
         DialogResult = true;

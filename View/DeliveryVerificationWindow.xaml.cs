@@ -145,6 +145,7 @@ namespace SPJ_APP.View
                     conn.Update(delivery);
                 });
 
+                await ActivityLogService.LogAsync("CLOSE_DELIVERY_WITH_CHANGES", $"Pengiriman '{_deliveryDisplay.Delivery.DeliveryNumber}' ditutup dengan penyesuaian.");
                 DialogHelper.ShowInfo("Verifikasi tersimpan, dan pengiriman berhasil ditutup.");
                 DialogResult = true;
                 Close();

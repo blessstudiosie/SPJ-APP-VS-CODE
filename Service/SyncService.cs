@@ -27,12 +27,13 @@ namespace SPJ_APP.Service
         public int SalesPushed { get; internal set; }
         public int SaleDetailsPushed { get; internal set; }
         public int PurchaseOrdersPushed { get; internal set; }
+        public int ActivityLogsPushed { get; internal set; }
         public int Conflicts { get; internal set; }
 
         public string ToDisplayText() =>
             $"Sinkronisasi selesai. Sales: {SalesPersonsPushed}, customer: {CustomersPushed}, produk dikirim: {ProductsPushed}, " +
             $"produk diambil: {ProductsPulled}, penjualan: {SalesPushed}, detail penjualan: {SaleDetailsPushed}, " +
-            $"pembayaran: {PaymentsPushed}, pengiriman: {DeliveriesPushed}, PO: {PurchaseOrdersPushed}, konflik: {Conflicts}.";
+            $"pembayaran: {PaymentsPushed}, pengiriman: {DeliveriesPushed}, PO: {PurchaseOrdersPushed}, log aktivitas: {ActivityLogsPushed}, konflik: {Conflicts}.";
     }
 
     // Tetap berada di file ini karena merupakan hasil internal dari SyncService.
@@ -54,6 +55,8 @@ namespace SPJ_APP.Service
             var paymentsPushed = await SyncPaymentsAsync();
             var deliveriesPushed = await SyncDeliveriesAsync();
             var purchaseOrdersPushed = await SyncPurchaseOrdersAsync();
+            var activityLogsPushed = await SyncActivityLogsAsync();
+
             var summary = new SyncSummary
             {
                 ProductsPushed = productResult.PushedCount,
@@ -65,6 +68,7 @@ namespace SPJ_APP.Service
                 PaymentsPushed = paymentsPushed,
                 DeliveriesPushed = deliveriesPushed,
                 PurchaseOrdersPushed = purchaseOrdersPushed,
+                ActivityLogsPushed = activityLogsPushed,
                 Conflicts = productResult.Conflicts.Count
             };
             return (summary, productResult.Conflicts);

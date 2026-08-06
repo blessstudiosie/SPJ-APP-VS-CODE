@@ -101,6 +101,7 @@ namespace SPJ_APP.View
     conn.Update(_sale);
 });
 
+                await ActivityLogService.LogAsync("CREATE_PAYMENT", $"Pembayaran untuk nota '{_sale.Nota}' sebesar {jumlah:N0} dicatat.");
                 DialogHelper.ShowInfo("Pembayaran berhasil dicatat lokal. Gunakan menu Sync Sekarang untuk kirim ke server.");
                 DialogResult = true;
                 Close();

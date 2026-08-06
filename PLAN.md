@@ -100,3 +100,53 @@ Dokumen ini melacak semua tugas yang perlu diselesaikan untuk meningkatkan dan m
         - [ ] Tampilkan dialog popup yang meminta password.
         - [ ] Verifikasi password tersebut dengan password milik user yang memiliki role 'Manager' atau 'Owner' di tabel `sales_persons`.
     - [ ] **Status:** Belum dimulai.
+
+## Tahap 7: Sistem Login & Audit Trail
+*Tujuan: Mengetahui siapa yang menggunakan aplikasi, dan membuka jalan untuk otorisasi berbasis role (terkait Tahap 6).*
+
+- [ ] **Kolom Password di `sales_persons`**
+  - [ ] Tambah kolom `password` (TEXT) di Supabase (production & dev) dan di `Model/SalesPerson.cs` + `Model/LocalSalesPerson.cs`.
+  - [ ] **Utang teknis - PENTING:** password saat ini direncanakan disimpan plain text untuk mempercepat rilis awal. WAJIB diganti ke hashing (BCrypt atau setara) sebelum aplikasi ini dipakai oleh banyak user sungguhan. Jangan tutup task ini sebagai "selesai" sampai hashing diterapkan.
+
+- [ ] **Halaman Login**
+  - [ ] Buat `View/LoginWindow.xaml` + `.xaml.cs`: pilih nama dari `sales_persons`, masukkan password, validasi terhadap data lokal.
+  - [ ] **PERIKSA DULU** alur startup yang sudah ada di `AppInitializationService` dan `MainWindow.xaml` (LoadingOverlay) sebelum mengubah `App.xaml.cs` - pastikan Login terintegrasi dengan urutan yang benar (Login → Initialization/Sync awal → MainWindow), bukan saling menimpa.
+
+- [ ] **Session User Aktif**
+  - [ ] Buat `Service/CurrentUserService.cs` (singleton in-memory) untuk menyimpan siapa yang sedang login di sesi berjalan.
+
+- [ ] **Audit Trail via `activity_logs`**
+  - [ ] Buat `Model/ActivityLog.cs` (Supabase) + `Model/LocalActivityLog.cs` (lokal), daftarkan tabel lokal di `LocalDatabaseService.cs`.
+  - [ ] Buat `Service/ActivityLogService.cs` dengan method `LogAsync(action, details)` yang otomatis mengambil nama user dari `CurrentUserService`.
+  - [ ] Tambahkan `SyncActivityLogsAsync` di `SyncService.cs`, masukkan ke `SyncAllAsync`.
+  - [ ] Panggil `ActivityLogService.LogAsync(...)` minimal di titik-titik penting: login, cetak nota, catat pembayaran, selesaikan pengiriman.
+
+- [ ] **Sambungkan ke Tahap 6 - Otorisasi Perubahan Status**
+  - [ ] Task "Implementasi Otorisasi Perubahan Status" di Tahap 6 sekarang **tidak lagi terblokir** - password per-user sudah tersedia. Gunakan `sales_persons.password` + `role` (cek role = 'MANAGER' atau 'OWNER') untuk validasi saat status nota diubah ke `TEMPO`/`DONE`.
+
+## Tahap 8: Migrasi Data Production → Development
+*Tujuan: Memindahkan data asli dari Supabase production ke Supabase development yang sudah diperbaiki strukturnya (UUID-based).*
+
+- [ ] **Setup `postgres_fdw`** di project development untuk baca langsung dari production (read-only, aman).
+- [ ] **Migrasi Master Data** (products, sales_persons, customers) - idempotent via `ON CONFLICT DO UPDATE`, aman dijalankan berkali-kali untuk testing.
+- [ ] **Migrasi Transaksi** (sales, sales_details, payments) - idempotent per nota.
+- [ ] **Migrasi Data Historis** (returns, stock_opname, barang_masuk, check_in_logs, activity_logs) - **catatan:** bagian `return_details`, `stock_opname_details`, `barang_masuk_details` butuh strategi mapping ID lama→baru yang lebih hati-hati (belum diselesaikan skripnya, lanjutkan kalau data historis ini dianggap penting untuk dibawa).
+- [ ] Setelah migrasi final disepakati, `DROP SERVER production_server CASCADE;` untuk keamanan (tutup akses).
+## Catatan Ruang Lingkup (Scope Decision) - 6 Agustus 2026
+Tabel/fitur berikut **DIKELUARKAN dari ruang lingkup saat ini** - tidak perlu dimigrasikan, dikembangkan, atau dipelihara sampai ada keputusan untuk mengaktifkannya kembali:
+- `returns` & `return_details`
+- `barang_masuk` & `barang_masuk_details`
+- `stock_opname_details` (detail per-item dari sesi stock opname)
+
+## Tahap 8: Migrasi Data Production → Development (REVISI - scope dipersempit)
+*Tujuan: Memindahkan data asli dari Supabase production ke Supabase development.*
+
+- [ ] **Setup `postgres_fdw`** di project development untuk baca langsung dari production (read-only, aman).
+- [ ] **Migrasi Master Data**: products, sales_persons, customers - idempotent via `ON CONFLICT DO UPDATE`.
+- [ ] **Migrasi Transaksi**: sales, sales_details, payments - idempotent per nota.
+- [ ] ~~Migrasi returns, barang_masuk, stock_opname_details~~ - **DI LUAR SCOPE saat ini**, lihat Catatan Ruang Lingkup di atas.
+- [ ] Setelah migrasi final disepakati, `DROP SERVER production_server CASCADE;` untuk keamanan.
+
+## Tahap 9: Developer Tools
+- [ ] **Database Inspector Page**: alat admin untuk lihat/edit/hapus data lokal (SQLite) langsung lewat UI, tabel dipilih dari dropdown (Produk, Customer, Sales Person, Nota, Item Nota, Pembayaran, Pengiriman, Item Pengiriman, Purchase Order, Activity Log - TIDAK termasuk returns/barang_masuk/stock_opname_details sesuai scope saat ini). Wajib ada peringatan tegas bahwa alat ini melewati validasi bisnis aplikasi (stok, total nota, dll tidak otomatis disesuaikan). Akses lewat menu terpisah "Developer" dengan konfirmasi sebelum masuk.
+- [ ] **Status:** Belum dimulai.

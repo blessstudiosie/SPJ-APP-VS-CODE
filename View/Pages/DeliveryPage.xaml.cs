@@ -262,6 +262,7 @@ namespace SPJ_APP.View.Pages
                     conn.Update(delivery);
                 });
 
+                await ActivityLogService.LogAsync("CLOSE_DELIVERY_NOCHANGE", $"Pengiriman '{deliveryDisplay.Delivery.DeliveryNumber}' ditutup tanpa perubahan.");
                 DialogHelper.ShowInfo("Pengiriman berhasil diselesaikan dan ditutup.");
                 RefreshData();
             }
