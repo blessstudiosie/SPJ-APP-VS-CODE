@@ -33,3 +33,70 @@ Dokumen ini melacak semua tugas yang perlu diselesaikan untuk meningkatkan dan m
 
 - [x] **Pengujian Komprehensif:** Melakukan pengujian menyeluruh untuk semua fitur baru dan yang sudah ada.
 - [x] **Pembersihan Kode:** Merapikan kode dan memastikan tidak ada bug yang tersisa.
+
+## Tahap 5: Fitur Manajemen Data (Data Management Features)
+*Tujuan: Memberikan pengguna kemampuan untuk mengimpor, merestore, dan membackup data mereka secara mandiri.*
+
+- [ ] **Review Fitur Backup/Export yang Ada**
+  - [ ] **Tugas:** Verifikasi bahwa `BackupLocalDatabaseAsync` dan `ExportLocalDataAsJsonAsync` di `BackupService.cs` berfungsi sesuai harapan.
+  - [ ] **Status:** Sudah ada, perlu konfirmasi fungsionalitas.
+
+- [ ] **Implementasi Fitur Restore from Backup**
+  - [ ] **Tujuan:** Mengembalikan kondisi data aplikasi dari file backup JSON yang sebelumnya diekspor.
+  - [ ] **Langkah-langkah Logika (Service Layer):**
+    - [ ] Buat metode baru `RestoreDataFromJsonAsync(string jsonFilePath)` di dalam `Service/BackupService.cs`.
+    - [ ] Metode harus membaca file JSON dan melakukan deserialisasi ke dalam model data backup.
+    - [ ] Di dalam sebuah transaksi database:
+      - [ ] Hapus semua data dari tabel-tabel lokal yang relevan (misalnya: `LocalProduct`, `LocalSale`, dll.).
+      - [ ] Masukkan data dari objek hasil deserialisasi ke dalam tabel yang sesuai.
+    - [ ] Jika terjadi error, transaksi harus di-rollback untuk mencegah data korup.
+  - [ ] **Langkah-langkah Antarmuka (View Layer):**
+    - [ ] Tambahkan tombol "Restore dari Backup (JSON)..." di `View/SettingsWindow.xaml`.
+    - [ ] Buat event handler di `View/SettingsWindow.xaml.cs` yang:
+      - [ ] Menggunakan `OpenFileDialog` untuk meminta pengguna memilih file `.json`.
+      - [ ] Memanggil metode `RestoreDataFromJsonAsync`.
+      - [ ] Menampilkan notifikasi sukses atau gagal menggunakan `DialogHelper`.
+  - [ ] **Status:** Belum dimulai.
+
+- [x] **Implementasi Fitur Impor dari CSV**
+  - [x] **Tujuan:** Memungkinkan pengguna mengimpor data massal dari sumber eksternal (misalnya: data dari sistem lama) ke dalam aplikasi.
+  - [x] **Pendekatan:** Impor berbasis template. Pengguna harus menyediakan file CSV dengan header kolom yang cocok dengan properti model data aplikasi.
+  - [x] **Sub-tahap: Impor Pelanggan (Customers)**
+    - [x] Buat `Service/ImportService.cs` dengan metode `ImportCustomersFromCsvAsync`.
+    - [x] Buat jendela `View/ImportDataWindow.xaml` untuk antarmuka impor pelanggan.
+    - [x] Tambahkan tombol pemicu di `SettingsWindow.xaml`.
+  - [x] **Sub-tahap: Impor Produk (Products)**
+    - [x] Tambahkan metode `ImportProductsFromCsvAsync` ke `ImportService.cs`.
+    - [x] Tentukan format CSV untuk produk (contoh: Id,Name,Stock,Price,Category,IsActive).
+    - [x] (Sementara) Adaptasi `ImportDataWindow` khusus untuk Produk, atau buat yang baru jika perlu.
+  - [x] **Sub-tahap: Refactor Jendela Impor menjadi Dinamis**
+    - [x] Modifikasi `ImportDataWindow.xaml` untuk memiliki dropdown (ComboBox) guna memilih tipe data (Pelanggan, Produk).
+    - [x] Logika di `ImportDataWindow.xaml.cs` harus berubah secara dinamis berdasarkan pilihan (menampilkan format CSV yang benar, memanggil metode service yang benar).
+  - [x] **Status:** Selesai.
+
+## Tahap 6: Sistem Komunikasi & Otorisasi
+*Tujuan: Membangun alur kerja untuk menerima permintaan dari klien mobile (Android) dan mengimplementasikan otorisasi untuk aksi-aksi penting.*
+
+- [ ] **Desain & Implementasi Tabel `change_requests` di Supabase**
+    - [ ] **Tugas:** Definisikan dan buat tabel `change_requests` di Supabase untuk bertindak sebagai antrian pesan.
+    - [ ] **Kolom Penting:** `id`, `created_at`, `requested_by`, `request_type` (misal: 'CREATE_NOTA'), `payload` (JSON), `status` ('SO', 'APPROVED', 'REJECTED'), `processed_at`, `processed_by`.
+    - [ ] **Status:** Belum dimulai.
+
+- [ ] **Buat Halaman "Inbox Permintaan"**
+    - [ ] **Tugas:** Buat halaman/view baru di aplikasi desktop untuk menampilkan daftar permintaan yang masuk dengan status `SO`.
+    - [ ] **Fitur:** Harus bisa refresh secara periodik atau manual untuk mengambil data baru dari tabel `change_requests`.
+    - [ ] **Status:** Belum dimulai.
+
+- [ ] **Buat Halaman Detail & Konfirmasi Permintaan**
+    - [ ] **Tugas:** Buat UI yang dapat menampilkan detail permintaan (misalnya, item-item dalam nota) saat satu permintaan di-klik dari Inbox.
+    - [ ] **Fitur Konfirmasi Sebagian (Partial Approval):**
+        - [ ] User desktop harus bisa mengedit kuantitas atau menghapus item dari permintaan nota sebelum menyetujui.
+    - [ ] **Logika Persetujuan:** Tombol "Setujui" akan mengambil data yang sudah divalidasi/diedit dan menyimpannya ke database **lokal**. Status di `change_requests` diperbarui menjadi `APPROVED`.
+    - [ ] **Status:** Belum dimulai.
+
+- [ ] **Implementasi Otorisasi Perubahan Status**
+    - [ ] **Tugas:** Buat mekanisme yang meminta password saat status Nota diubah menjadi `TEMPO` atau `DONE`.
+    - [ ] **Alur:**
+        - [ ] Tampilkan dialog popup yang meminta password.
+        - [ ] Verifikasi password tersebut dengan password milik user yang memiliki role 'Manager' atau 'Owner' di tabel `sales_persons`.
+    - [ ] **Status:** Belum dimulai.

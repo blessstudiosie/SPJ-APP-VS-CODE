@@ -44,6 +44,15 @@ namespace SPJ_APP.View
             e.Handled = true;
         }
 
+        private void TombolImporCsv_Click(object sender, RoutedEventArgs e)
+        {
+            var importWindow = new ImportDataWindow()
+            {
+                Owner = this
+            };
+            importWindow.ShowDialog();
+        }
+
         private async void TombolEksporJson_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new SaveFileDialog
@@ -64,6 +73,41 @@ namespace SPJ_APP.View
                 catch (Exception ex)
                 {
                     DialogHelper.ShowError($"Gagal melakukan ekspor:\n{ex.Message}");
+                }
+            }
+        }
+
+        private async void TombolRestoreJson_Click(object sender, RoutedEventArgs e)
+        {
+            var confirmation = MessageBox.Show(
+                "Anda yakin ingin merestore data? Semua data lokal saat ini akan DIHAPUS dan digantikan oleh data dari file backup. Aksi ini tidak bisa dibatalkan.",
+                "Konfirmasi Restore Data",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (confirmation != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            var dialog = new OpenFileDialog
+            {
+                Title = "Pilih File Backup JSON untuk di-restore",
+                Filter = "JSON Files (*.json)|*.json",
+                FileName = "data_export.json"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    await BackupService.RestoreDataFromJsonAsync(dialog.FileName);
+                    MessageBox.Show("Restore data berhasil. Aplikasi mungkin perlu di-restart untuk melihat semua perubahan.",
+                                    "Restore Berhasil", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    DialogHelper.ShowError($"Gagal melakukan restore:\n{ex.Message}");
                 }
             }
         }

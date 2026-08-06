@@ -166,3 +166,7 @@ C:\Users\ADVAN\SPJ APP\bin\Debug\net10.0-windows\runtimes\win-x86\native\QuestPd
 C:\Users\ADVAN\SPJ APP\bin\Debug\net10.0-windows\runtimes\win-x86\native\qpdf.dll
 C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\ErrorDialogWindow.baml
 C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\ErrorDialogWindow.g.cs
+C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\LoginWindow.baml
+C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\LoginWindow.g.cs
+C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\ImportDataWindow.baml
+C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\ImportDataWindow.g.cs

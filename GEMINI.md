@@ -60,5 +60,23 @@ The SPJ App is a WPF desktop application built with C#. It utilizes a local SQLi
 ### Task Management
 - **PLAN.md:** Refer to `PLAN.md` at the project root for a detailed breakdown of current tasks, their stages, and completion status. This document will be used to track progress and identify unfinished work.
 
+## Prinsip Arsitektur Fundamental (Core Architectural Principles)
+
+### 1. Aplikasi Desktop sebagai "Single Source of Truth"
+Aplikasi desktop ini dianggap sebagai pemegang data utama dan sumber kebenaran. Semua data yang valid dan final berasal dari aplikasi ini. Database lokal di aplikasi ini adalah master.
+
+### 2. Interaksi Klien Mobile via "Change Requests"
+Klien mobile (misalnya, aplikasi Android untuk sales di lapangan) tidak memodifikasi data di database utama secara langsung. Sebaliknya, mereka mengirimkan "permintaan perubahan" (change requests) ke sebuah sistem antrian pesan. Aplikasi desktop kemudian akan memproses permintaan ini (menyetujui, menolak, atau memodifikasi) dan mengaplikasikannya ke database master lokal.
+
+## Aturan Bisnis & Konvensi (Business Rules & Conventions)
+
+### 1. Status Nota (Invoice Statuses)
+Status yang valid dan telah ditetapkan untuk sebuah Nota (penjualan/invoice) adalah sebagai berikut, dan tidak boleh ditambahkan status lain di luar daftar ini:
+- `SO` (Sales Order): Permintaan penjualan awal dari klien mobile, belum dikonfirmasi.
+- `ON PROSES`: Pesanan sedang disiapkan.
+- `DALAM PENGIRIMAN`: Pesanan sedang dalam perjalanan ke pelanggan.
+- `TEMPO`: Pengiriman selesai, pembayaran belum lunas (jatuh tempo).
+- `DONE`: Pengiriman selesai dan pembayaran sudah lunas.
+
 ---
 *Last updated by Gemini on 2026-08-04*

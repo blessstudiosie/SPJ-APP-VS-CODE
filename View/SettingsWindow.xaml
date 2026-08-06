@@ -10,10 +10,20 @@
             </StackPanel>
         </GroupBox>
 
-        <GroupBox Header="Ekspor Data Lokal (JSON)" Padding="10" Margin="0,15,0,0">
+        <GroupBox Header="Impor/Ekspor Data" Padding="10" Margin="0,15,0,0">
             <StackPanel>
-                <TextBlock Text="Simpan snapshot dari semua data lokal (produk, penjualan, customer, dll) ke dalam satu file JSON. Ini berguna untuk analisis atau migrasi data." TextWrapping="Wrap" Margin="0,0,0,10"/>
-                <Button x:Name="TombolEksporJson" Content="Ekspor Sekarang..." Padding="10,5" HorizontalAlignment="Left" Click="TombolEksporJson_Click"/>
+                <TextBlock Text="Impor data dari file CSV atau ekspor semua data lokal ke dalam satu file JSON." TextWrapping="Wrap" Margin="0,0,0,10"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="TombolImporCsv" Content="Impor dari CSV..." Padding="10,5" HorizontalAlignment="Left" Click="TombolImporCsv_Click"/>
+                    <Button x:Name="TombolEksporJson" Content="Ekspor ke JSON..." Padding="10,5" HorizontalAlignment="Left" Margin="10,0,0,0" Click="TombolEksporJson_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="Restore Data dari Backup (JSON)" Padding="10" Margin="0,15,0,0">
+            <StackPanel>
+                <TextBlock Text="PENTING: Proses ini akan MENGHAPUS SEMUA DATA LOKAL saat ini dan menggantinya dengan data dari file backup. Gunakan dengan hati-hati." TextWrapping="Wrap" Margin="0,0,0,10" FontWeight="Bold" Foreground="Red"/>
+                <Button x:Name="TombolRestoreJson" Content="Restore Sekarang..." Padding="10,5" HorizontalAlignment="Left" Click="TombolRestoreJson_Click"/>
             </StackPanel>
         </GroupBox>
 
