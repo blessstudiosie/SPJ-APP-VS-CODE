@@ -629,25 +629,7 @@ namespace SPJ_APP.Service
             throw new InvalidOperationException($"ID {fieldName} tidak valid: '{value}'.");
         }
 
-        public static async Task<int> SyncActivityLogsAsync()
-{
-    var localDb = await LocalDatabaseService.GetConnection();
-    var supabase = await SupabaseService.GetClient();
-    var localItems = await localDb.Table<LocalActivityLog>().Where(l => l.IsSynced == false).ToListAsync();
 
-    foreach (var local in localItems)
-    {
-        if (!Guid.TryParse(local.Id, out var id))
-            continue;
-
-        var remote = new ActivityLog { Id = id, UserName = local.UserName, Action = local.Action, Details = local.Details };
-        await supabase.From<ActivityLog>().Insert(remote);
-
-        local.IsSynced = true;
-        await localDb.UpdateAsync(local);
-    }
-    return localItems.Count;
-}
         private static DeliveryDetail ToRemoteDeliveryDetail(LocalDeliveryDetail local)
         {
             if (!Guid.TryParse(local.Id, out var id) || !Guid.TryParse(local.DeliveryId, out var deliveryId) || !Guid.TryParse(local.SaleId, out var saleId))

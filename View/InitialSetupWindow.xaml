@@ -1,0 +1,19 @@
+<Window x:Class="SPJ_APP.View.InitialSetupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Inisialisasi Awal" Height="250" Width="450"
+        WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow">
+    <Grid>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20">
+            <TextBlock Text="Selamat Datang di Aplikasi SPJ" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <TextBlock Text="Sistem mendeteksi ini adalah proses inisialisasi awal." Margin="0,10,0,0" HorizontalAlignment="Center"/>
+            <TextBlock Text="Silakan pilih salah satu opsi berikut:" Margin="0,10,0,20" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+
+            <Button x:Name="CreateAdminButton" Content="Buat Admin Baru &amp; Inisialisasi Sistem" Margin="5" Padding="10" Click="CreateAdminButton_Click"/>
+            <Button x:Name="SyncFromServerButton" Content="Sinkronisasi dari Server yang Sudah Ada" Margin="5" Padding="10" Click="SyncFromServerButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

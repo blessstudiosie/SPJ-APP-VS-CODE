@@ -24,12 +24,13 @@ namespace SPJ_APP.Service
                         Name = "Sales Kantor / Direct",
                         Phone = "-",
                         Role = "Admin Sales",
+                        Password = "1234", // Set default password
                         TargetOmset = 0,
                         IsSynced = false,
                         UpdatedAt = DateTime.Now
                     };
                     await conn.InsertAsync(defaultSales);
-                    OnProgress("Membuat sales person default...");
+                    OnProgress("Membuat user default 'Sales Kantor / Direct' dengan password '1234'.");
                 }
 
                 var customers = await conn.Table<LocalCustomer>().ToListAsync();

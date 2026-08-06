@@ -7,8 +7,8 @@ namespace SPJ_APP.Model
     {
         [PrimaryKey]
         public Guid Id { get; set; }
-        public string UserName { get; set; }
-        public string Action { get; set; }
+        public string UserName { get; set; } = string.Empty;
+        public string Action { get; set; } = string.Empty;
         public string? Details { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsSynced { get; set; }

@@ -10,10 +10,10 @@ namespace SPJ_APP.Model
         public Guid Id { get; set; }
 
         [Column("user_name")]
-        public string UserName { get; set; }
+        public string UserName { get; set; } = string.Empty;
 
         [Column("action")]
-        public string Action { get; set; }
+        public string Action { get; set; } = string.Empty;
 
         [Column("details")]
         public string? Details { get; set; }

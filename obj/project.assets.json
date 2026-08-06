@@ -1303,24 +1303,31 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ADVAN\\.nuget\\packages\\": {}
+    "C:\\Users\\SPJ Admin\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ADVAN\\SPJ APP\\SPJ APP.csproj",
+      "projectUniqueName": "C:\\Users\\SPJ Admin\\source\\repos\\SPJ-APP-VS-CODE\\SPJ APP.csproj",
       "projectName": "SPJ APP",
-      "projectPath": "C:\\Users\\ADVAN\\SPJ APP\\SPJ APP.csproj",
-      "packagesPath": "C:\\Users\\ADVAN\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ADVAN\\SPJ APP\\obj\\",
+      "projectPath": "C:\\Users\\SPJ Admin\\source\\repos\\SPJ-APP-VS-CODE\\SPJ APP.csproj",
+      "packagesPath": "C:\\Users\\SPJ Admin\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\SPJ Admin\\source\\repos\\SPJ-APP-VS-CODE\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\ADVAN\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\SPJ Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net10.0-windows"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },

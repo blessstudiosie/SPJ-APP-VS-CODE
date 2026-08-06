@@ -59,11 +59,50 @@ namespace SPJ_APP
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadingOverlay.Visibility = Visibility.Visible;
-            MainContentPanel.IsEnabled = false;
+            var setupService = new InitialSetupService();
+            var setupAction = await setupService.CheckAndRunInitialSetupIfNeededAsync();
 
-            AppInitializationService.InitializationProgressChanged += AppInitializationService_InitializationProgressChanged;
-            await AppInitializationService.InitializeAppAsync();
+            switch (setupAction)
+            {
+                case InitialSetupAction.ExitApplication:
+                    Application.Current.Shutdown();
+                    return;
+
+                case InitialSetupAction.AdminCreated:
+                    // User is already set, proceed directly to loading main content
+                    break;
+
+                case InitialSetupAction.NotSet:
+                case InitialSetupAction.SyncAndLogin:
+                    // These cases require initialization, then login.
+                    LoadingOverlay.Visibility = Visibility.Visible;
+                    MainContentPanel.IsEnabled = false;
+
+                    AppInitializationService.InitializationProgressChanged += AppInitializationService_InitializationProgressChanged;
+                    await AppInitializationService.InitializeAppAsync();
+                    // The AppInitializationService_InitializationProgressChanged handler will hide the overlay.
+
+                    var loginWindow = new LoginWindow();
+                    if (loginWindow.ShowDialog() != true)
+                    {
+                        Application.Current.Shutdown();
+                        return;
+                    }
+                    break;
+            }
+            
+            // This code runs for AdminCreated, and after successful login for the other cases.
+            Title = $"SPJ App - Selamat Datang, {CurrentUserService.LoggedInUser?.Name ?? "User"}!";
+            
+            // For AdminCreated, the initialization service hasn't run yet. We run it now.
+            // For the other cases, it has already run.
+            if (setupAction == InitialSetupAction.AdminCreated)
+            {
+                LoadingOverlay.Visibility = Visibility.Visible;
+                MainContentPanel.IsEnabled = false;
+                AppInitializationService.InitializationProgressChanged += AppInitializationService_InitializationProgressChanged;
+                await AppInitializationService.InitializeAppAsync();
+            }
         }
 
         private void AppInitializationService_InitializationProgressChanged(object? sender, string message)

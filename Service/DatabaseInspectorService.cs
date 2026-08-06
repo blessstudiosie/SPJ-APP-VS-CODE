@@ -21,12 +21,23 @@ namespace SPJ_APP.Service
             { "Activity Log", typeof(LocalActivityLog) }
         };
 
-        public async Task<List<object>> GetAllRowsAsync(Type tableType)
+        private async Task<List<object>> _GetAllRowsInternalAsync<T>() where T : new()
         {
             var localDb = await LocalDatabaseService.GetConnection();
-            var tableQuery = localDb.Table(tableType);
-            var results = await tableQuery.ToListAsync();
-            return results;
+            return (await localDb.Table<T>().ToListAsync()).Cast<object>().ToList();
+        }
+
+        public async Task<List<object>> GetAllRowsAsync(Type tableType)
+        {
+            var method = GetType().GetMethod(nameof(_GetAllRowsInternalAsync), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (method == null)
+            {
+                throw new InvalidOperationException($"Helper method '{nameof(_GetAllRowsInternalAsync)}' not found.");
+            }
+
+            var genericMethod = method.MakeGenericMethod(tableType);
+            var task = (Task<List<object>>)genericMethod.Invoke(this, null)!;
+            return await task;
         }
 
         public async Task UpdateRowAsync(object item)
