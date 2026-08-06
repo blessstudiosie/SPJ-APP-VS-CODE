@@ -69,7 +69,7 @@ namespace SPJ_APP.Service
                 DeliveriesPushed = deliveriesPushed,
                 PurchaseOrdersPushed = purchaseOrdersPushed,
                 ActivityLogsPushed = activityLogsPushed,
-                Conflicts = productResult.Conflicts.Count
+                Conflicts = productResult.Conflicts.Count,
             };
             return (summary, productResult.Conflicts);
         }
@@ -150,7 +150,7 @@ namespace SPJ_APP.Service
                     id = existingByName.Id;
                 }
 
-                var remote = new SalesPerson { Id = id, Name = local.Name, Phone = local.Phone, Email = local.Email, TargetOmset = local.TargetOmset, Role = local.Role };
+                var remote = new SalesPerson { Id = id, Name = local.Name, Phone = local.Phone, Email = local.Email, TargetOmset = local.TargetOmset, Role = local.Role, Password = local.Password };
                 if (remoteIds.Contains(id)) await supabase.From<SalesPerson>().Update(remote);
                 else await supabase.From<SalesPerson>().Insert(remote);
                 local.IsSynced = true;
@@ -653,6 +653,26 @@ namespace SPJ_APP.Service
             if (!Guid.TryParse(local.Id, out var id) || !Guid.TryParse(local.DeliveryId, out var deliveryId) || !Guid.TryParse(local.SaleId, out var saleId))
                 throw new InvalidOperationException($"Detail pengiriman '{local.Id}' memiliki ID yang tidak valid.");
             return new DeliveryDetail { Id = id, DeliveryId = deliveryId, SaleId = saleId };
+        }
+
+        public static async Task<int> SyncActivityLogsAsync()
+        {
+            var localDb = await LocalDatabaseService.GetConnection();
+            var supabase = await SupabaseService.GetClient();
+            var localItems = await localDb.Table<LocalActivityLog>().Where(l => l.IsSynced == false).ToListAsync();
+
+            foreach (var local in localItems)
+            {
+                if (!Guid.TryParse(local.Id.ToString(), out var id))
+                    continue;
+
+                var remote = new ActivityLog { Id = id, UserName = local.UserName, Action = local.Action, Details = local.Details, CreatedAt = local.CreatedAt };
+                await supabase.From<ActivityLog>().Insert(remote);
+
+                local.IsSynced = true;
+                await localDb.UpdateAsync(local);
+            }
+            return localItems.Count;
         }
     }
 }

@@ -1,13 +1,15 @@
-using System.Windows;
-using System.Windows.Input;
 using SPJ_APP.Model;
 using SPJ_APP.Service;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
 
 namespace SPJ_APP.View
 {
     public partial class LoginWindow : Window
     {
-        public bool LoginSuccess { get; private set; } = false;
+        private List<LocalSalesPerson> _users = new();
 
         public LoginWindow()
         {
@@ -20,13 +22,48 @@ namespace SPJ_APP.View
             try
             {
                 var localDb = await LocalDatabaseService.GetConnection();
-                var salesPersons = await localDb.Table<LocalSalesPerson>().ToListAsync();
-                InputNama.ItemsSource = salesPersons;
+                _users = await localDb.Table<LocalSalesPerson>().ToListAsync();
+                InputNama.ItemsSource = _users;
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
-                TeksStatus.Text = "Gagal memuat daftar user: " + ex.Message;
+                TeksStatus.Text = $"Gagal memuat data user lokal: {ex.Message}";
+                TombolLogin.IsEnabled = false;
             }
+        }
+
+        private async void TombolLogin_Click(object sender, RoutedEventArgs e)
+        {
+            TeksStatus.Text = "";
+            string? inputName = InputNama.Text;
+            string inputPassword = InputPassword.Password;
+
+            if (string.IsNullOrWhiteSpace(inputName))
+            {
+                TeksStatus.Text = "Nama user tidak boleh kosong.";
+                return;
+            }
+
+            var user = _users.FirstOrDefault(u => u.Name.Equals(inputName, System.StringComparison.OrdinalIgnoreCase));
+
+            if (user == null)
+            {
+                TeksStatus.Text = "Nama user tidak ditemukan.";
+                return;
+            }
+
+            // TODO: Ganti validasi plain text dengan verifikasi hash (e.g., BCrypt)
+            if (user.Password != inputPassword)
+            {
+                TeksStatus.Text = "Password salah.";
+                return;
+            }
+
+            // Login sukses
+            CurrentUserService.SetUser(user);
+            await ActivityLogService.LogAsync("LOGIN", $"User '{user.Name}' berhasil login.");
+            DialogResult = true;
+            Close();
         }
 
         private void InputPassword_KeyDown(object sender, KeyEventArgs e)
@@ -34,45 +71,6 @@ namespace SPJ_APP.View
             if (e.Key == Key.Enter)
             {
                 TombolLogin_Click(sender, new RoutedEventArgs());
-            }
-        }
-
-        private async void TombolLogin_Click(object sender, RoutedEventArgs e)
-        {
-            TeksStatus.Text = "";
-
-            string namaInput = (InputNama.SelectedItem as LocalSalesPerson)?.Name ?? InputNama.Text.Trim();
-            string password = InputPassword.Password;
-
-            if (string.IsNullOrWhiteSpace(namaInput) || string.IsNullOrWhiteSpace(password))
-            {
-                TeksStatus.Text = "Nama dan password wajib diisi.";
-                return;
-            }
-
-            try
-            {
-                var localDb = await LocalDatabaseService.GetConnection();
-                var user = await localDb.Table<LocalSalesPerson>()
-                    .Where(s => s.Name == namaInput)
-                    .FirstOrDefaultAsync();
-
-                if (user == null || user.Password != password)
-                {
-                    TeksStatus.Text = "Nama atau password salah.";
-                    return;
-                }
-
-                CurrentUserService.SetUser(user);
-                await ActivityLogService.LogAsync("LOGIN", $"User '{user.Name}' login ke aplikasi");
-
-                LoginSuccess = true;
-                DialogResult = true;
-                Close();
-            }
-            catch (Exception ex)
-            {
-                TeksStatus.Text = "Gagal login: " + DialogHelper.GetFullErrorDetail(ex);
             }
         }
     }

@@ -30,6 +30,7 @@ public DateTime? CreatedAt { get; set; }
 [Column("updated_at", ignoreOnInsert: true, ignoreOnUpdate: true)]
 public DateTime? UpdatedAt { get; set; }
 
+// TODO: Hash password before production use. Currently plain text for initial release.
 [Column("password")]
 public string? Password { get; set; }
 

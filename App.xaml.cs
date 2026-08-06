@@ -1,3 +1,4 @@
+using SPJ_APP.Service;
 using System.Windows;
 using SPJ_APP.View;
 
@@ -5,6 +6,8 @@ namespace SPJ_APP
 {
     public partial class App : Application
     {
+        private BackgroundSyncService _backgroundSyncService = null!;
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -27,6 +30,10 @@ namespace SPJ_APP
 
             if (loginResult == true)
             {
+                // Inisialisasi Background Sync setelah login berhasil
+                _backgroundSyncService = BackgroundSyncService.Instance;
+                _backgroundSyncService.Start();
+
                 var mainWindow = new MainWindow();
                 mainWindow.Show();
             }

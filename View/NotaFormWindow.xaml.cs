@@ -559,6 +559,7 @@ namespace SPJ_APP.View
         });
 
         await ActivityLogService.LogAsync("PRINT_NOTA", $"Nota '{_existingSale.Nota}' dicetak dan status diubah ke ON PROSES.");
+
         DialogHelper.ShowInfo("Status nota diubah menjadi ON PROSES, dan Stok Ready produk sudah dikurangi. (Cetak fisik belum diimplementasikan)");
 
         DialogResult = true;
@@ -765,6 +766,8 @@ namespace SPJ_APP.View
                         conn.Delete(detail);
                     conn.Delete(_existingSale);
                 });
+
+                await ActivityLogService.LogAsync("DELETE_NOTA", $"Nota '{_existingSale.Nota}' dihapus.");
 
                 DialogHelper.ShowInfo("Nota dihapus dari lokal. Perlu sync manual untuk menghapus juga dari server (fitur ini akan disempurnakan).");
 

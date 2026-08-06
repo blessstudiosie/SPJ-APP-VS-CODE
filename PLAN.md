@@ -104,24 +104,24 @@ Dokumen ini melacak semua tugas yang perlu diselesaikan untuk meningkatkan dan m
 ## Tahap 7: Sistem Login & Audit Trail
 *Tujuan: Mengetahui siapa yang menggunakan aplikasi, dan membuka jalan untuk otorisasi berbasis role (terkait Tahap 6).*
 
-- [ ] **Kolom Password di `sales_persons`**
-  - [ ] Tambah kolom `password` (TEXT) di Supabase (production & dev) dan di `Model/SalesPerson.cs` + `Model/LocalSalesPerson.cs`.
-  - [ ] **Utang teknis - PENTING:** password saat ini direncanakan disimpan plain text untuk mempercepat rilis awal. WAJIB diganti ke hashing (BCrypt atau setara) sebelum aplikasi ini dipakai oleh banyak user sungguhan. Jangan tutup task ini sebagai "selesai" sampai hashing diterapkan.
+- [x] **Kolom Password di `sales_persons`**
+  - [x] Tambah kolom `password` (TEXT) di Supabase (production & dev) dan di `Model/SalesPerson.cs` + `Model/LocalSalesPerson.cs`.
+  - [x] **Utang teknis - PENTING:** password saat ini direncanakan disimpan plain text untuk mempercepat rilis awal. WAJIB diganti ke hashing (BCrypt atau setara) sebelum aplikasi ini dipakai oleh banyak user sungguhan. Jangan tutup task ini sebagai "selesai" sampai hashing diterapkan.
 
-- [ ] **Halaman Login**
-  - [ ] Buat `View/LoginWindow.xaml` + `.xaml.cs`: pilih nama dari `sales_persons`, masukkan password, validasi terhadap data lokal.
-  - [ ] **PERIKSA DULU** alur startup yang sudah ada di `AppInitializationService` dan `MainWindow.xaml` (LoadingOverlay) sebelum mengubah `App.xaml.cs` - pastikan Login terintegrasi dengan urutan yang benar (Login → Initialization/Sync awal → MainWindow), bukan saling menimpa.
+- [x] **Halaman Login**
+  - [x] Buat `View/LoginWindow.xaml` + `.xaml.cs`: pilih nama dari `sales_persons`, masukkan password, validasi terhadap data lokal.
+  - [x] **PERIKSA DULU** alur startup yang sudah ada di `AppInitializationService` dan `MainWindow.xaml` (LoadingOverlay) sebelum mengubah `App.xaml.cs` - pastikan Login terintegrasi dengan urutan yang benar (Login → Initialization/Sync awal → MainWindow), bukan saling menimpa.
 
-- [ ] **Session User Aktif**
-  - [ ] Buat `Service/CurrentUserService.cs` (singleton in-memory) untuk menyimpan siapa yang sedang login di sesi berjalan.
+- [x] **Session User Aktif**
+  - [x] Buat `Service/CurrentUserService.cs` (singleton in-memory) untuk menyimpan siapa yang sedang login di sesi berjalan.
 
-- [ ] **Audit Trail via `activity_logs`**
-  - [ ] Buat `Model/ActivityLog.cs` (Supabase) + `Model/LocalActivityLog.cs` (lokal), daftarkan tabel lokal di `LocalDatabaseService.cs`.
-  - [ ] Buat `Service/ActivityLogService.cs` dengan method `LogAsync(action, details)` yang otomatis mengambil nama user dari `CurrentUserService`.
-  - [ ] Tambahkan `SyncActivityLogsAsync` di `SyncService.cs`, masukkan ke `SyncAllAsync`.
-  - [ ] Panggil `ActivityLogService.LogAsync(...)` minimal di titik-titik penting: login, cetak nota, catat pembayaran, selesaikan pengiriman.
+- [x] **Audit Trail via `activity_logs`**
+  - [x] Buat `Model/ActivityLog.cs` (Supabase) + `Model/LocalActivityLog.cs` (lokal), daftarkan tabel lokal di `LocalDatabaseService.cs`.
+  - [x] Buat `Service/ActivityLogService.cs` dengan method `LogAsync(action, details)` yang otomatis mengambil nama user dari `CurrentUserService`.
+  - [x] Tambahkan `SyncActivityLogsAsync` di `SyncService.cs`, masukkan ke `SyncAllAsync`.
+  - [x] Panggil `ActivityLogService.LogAsync(...)` minimal di titik-titik penting: login, cetak nota, catat pembayaran, selesaikan pengiriman.
 
-- [ ] **Sambungkan ke Tahap 6 - Otorisasi Perubahan Status**
+- [ ] **Sambungkan ke Tahap 6 - Otorisasi Perubahan Status** (Tugas Berikutnya)
   - [ ] Task "Implementasi Otorisasi Perubahan Status" di Tahap 6 sekarang **tidak lagi terblokir** - password per-user sudah tersedia. Gunakan `sales_persons.password` + `role` (cek role = 'MANAGER' atau 'OWNER') untuk validasi saat status nota diubah ke `TEMPO`/`DONE`.
 
 ## Tahap 8: Migrasi Data Production → Development
@@ -148,5 +148,5 @@ Tabel/fitur berikut **DIKELUARKAN dari ruang lingkup saat ini** - tidak perlu di
 - [ ] Setelah migrasi final disepakati, `DROP SERVER production_server CASCADE;` untuk keamanan.
 
 ## Tahap 9: Developer Tools
-- [ ] **Database Inspector Page**: alat admin untuk lihat/edit/hapus data lokal (SQLite) langsung lewat UI, tabel dipilih dari dropdown (Produk, Customer, Sales Person, Nota, Item Nota, Pembayaran, Pengiriman, Item Pengiriman, Purchase Order, Activity Log - TIDAK termasuk returns/barang_masuk/stock_opname_details sesuai scope saat ini). Wajib ada peringatan tegas bahwa alat ini melewati validasi bisnis aplikasi (stok, total nota, dll tidak otomatis disesuaikan). Akses lewat menu terpisah "Developer" dengan konfirmasi sebelum masuk.
-- [ ] **Status:** Belum dimulai.
+- [x] **Database Inspector Page**: alat admin untuk lihat/edit/hapus data lokal (SQLite) langsung lewat UI, tabel dipilih dari dropdown (Produk, Customer, Sales Person, Nota, Item Nota, Pembayaran, Pengiriman, Item Pengiriman, Purchase Order, Activity Log - TIDAK termasuk returns/barang_masuk/stock_opname_details sesuai scope saat ini). Wajib ada peringatan tegas bahwa alat ini melewati validasi bisnis aplikasi (stok, total nota, dll tidak otomatis disesuaikan). Akses lewat menu terpisah "Developer" dengan konfirmasi sebelum masuk.
+- [x] **Status:** Selesai.

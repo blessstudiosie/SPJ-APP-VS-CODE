@@ -104,12 +104,12 @@ Fitur/tabel berikut **tidak diprioritaskan** untuk saat ini - jangan bangun atau
 Alasan: belum dibutuhkan untuk tahap operasional saat ini. Bisa diaktifkan kembali nanti dengan mencabut catatan ini.
 
 ## Developer Tools: Database Inspector (rancangan awal bersama Claude)
-Halaman generik untuk CRUD langsung ke tabel SQLite lokal, untuk keperluan debug/perbaikan darurat - BUKAN untuk alur kerja normal. Poin desain penting:
-- Dropdown pilih tabel (dari daftar model lokal yang relevan - lihat PLAN.md Tahap 9 untuk daftar tabelnya).
-- DataGrid dengan `AutoGenerateColumns="True"` untuk generik menampilkan semua property model.
-- Tombol Simpan Perubahan (commit edit + `UpdateAsync` per baris) dan Hapus Baris (multi-select, `DeleteAsync`).
-- **WAJIB** ada dialog konfirmasi bertuliskan bahwa alat ini melewati validasi bisnis aplikasi, baik saat masuk ke halaman maupun saat simpan/hapus.
-- Akses lewat menu terpisah "Developer" di `MainWindow.xaml`, bukan menu operasional biasa.
+Halaman generik untuk CRUD langsung ke tabel SQLite lokal, untuk keperluan debug/perbaikan darurat - BUKAN untuk alur kerja normal. **Sudah diimplementasikan.** Poin desain yang diterapkan:
+- `Service/DatabaseInspectorService.cs` menyediakan daftar tabel yang bisa diinspeksi dan metode generik untuk operasi data.
+- `View/Pages/DatabaseInspectorPage.xaml` menggunakan `DataGrid` dengan `AutoGenerateColumns="True"` untuk menampilkan data secara dinamis.
+- Tombol "Simpan Perubahan" dan "Hapus Baris Terpilih" disediakan dengan dialog konfirmasi yang tegas.
+- Peringatan permanen ditampilkan di halaman untuk mengingatkan pengguna akan risiko penggunaan alat ini.
+- Akses ke halaman ini melalui menu "Developer" di `MainWindow.xaml`, yang juga dilindungi oleh dialog konfirmasi.
 
 ---
 *Last updated by Gemini on 2026-08-06*

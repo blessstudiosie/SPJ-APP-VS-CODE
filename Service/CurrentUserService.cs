@@ -7,9 +7,6 @@ namespace SPJ_APP.Service
         private static LocalSalesPerson? _loggedInUser;
         public static LocalSalesPerson? LoggedInUser => _loggedInUser;
 
-        public static void SetUser(LocalSalesPerson user)
-        {
-            _loggedInUser = user;
-        }
+        public static void SetUser(LocalSalesPerson user) => _loggedInUser = user;
     }
 }
