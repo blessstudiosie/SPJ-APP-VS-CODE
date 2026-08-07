@@ -115,7 +115,8 @@ namespace SPJ_APP
 
                 // Default tampilan utama adalah Beranda (HomePage)
                 AreaKonten.Content = new HomePage();
-                SetActiveMenu(NavBeranda, "Beranda Utama");
+                SetActiveMenu(NavBeranda, "Beranda Utama", typeof(HomePage));
+
             }
             catch (System.Exception ex)
             {
@@ -170,34 +171,84 @@ namespace SPJ_APP
         }
 
 
-        private void SetActiveMenu(MenuItem activeItem, string pageName)
+        private Type? _currentActivePageType;
+
+        private bool SetActiveMenu(MenuItem activeItem, string pageName, Type pageType)
         {
+            // Jika user menekan menu untuk halaman yang sedang terbuka saat ini, abaikan agar tidak reload berkali-kali
+            if (_currentActivePageType == pageType)
+            {
+                return false;
+            }
+
+            _currentActivePageType = pageType;
+
+            // Reset style visual semua menu ke kondisi normal
+            ResetAllMenuStyles();
+
+            // Highlight menu yang sedang aktif agar terlihat menonjol
+            if (activeItem != null)
+            {
+                activeItem.Background = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#4F46E5"));
+                activeItem.Foreground = System.Windows.Media.Brushes.White;
+                activeItem.FontWeight = FontWeights.Bold;
+            }
+
             var currentUser = CurrentUserService.LoggedInUser;
             StatusText.Text = $"Menu Aktif: {pageName} | User: {currentUser?.Name ?? "User"} ({currentUser?.Role ?? "SALES"})";
+            return true;
+        }
+
+        private void ResetAllMenuStyles()
+        {
+            MenuItem[] topMenus = new[]
+            {
+                NavBeranda, NavProduk, NavMasterData, NavTransaksi,
+                NavInbox, NavPembayaran, NavPengiriman, NavLaporan,
+                NavPengaturan, MenuDeveloperTools
+            };
+
+            foreach (var menu in topMenus)
+            {
+                if (menu != null)
+                {
+                    menu.Background = System.Windows.Media.Brushes.Transparent;
+                    menu.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#1E293B"));
+                    menu.FontWeight = FontWeights.SemiBold;
+                }
+            }
         }
 
         private void MenuBeranda_Click(object sender, RoutedEventArgs e)
         {
-            AreaKonten.Content = new HomePage();
-            SetActiveMenu(NavBeranda, "Beranda Utama");
+            if (SetActiveMenu(NavBeranda, "Beranda Utama", typeof(HomePage)))
+            {
+                AreaKonten.Content = new HomePage();
+            }
         }
 
         private void MenuProduk_Click(object sender, RoutedEventArgs e)
         {
-            AreaKonten.Content = new ProductListPage();
-            SetActiveMenu(NavProduk, "Daftar Produk & Stok");
+            if (SetActiveMenu(NavProduk, "Daftar Produk & Stok", typeof(ProductListPage)))
+            {
+                AreaKonten.Content = new ProductListPage();
+            }
         }
 
         private void MenuSalesPerson_Click(object sender, RoutedEventArgs e)
         {
-            AreaKonten.Content = new SalesPersonListPage();
-            SetActiveMenu(NavMasterData, "Master Data Sales");
+            if (SetActiveMenu(NavMasterData, "Master Data Sales", typeof(SalesPersonListPage)))
+            {
+                AreaKonten.Content = new SalesPersonListPage();
+            }
         }
 
         private void MenuCustomer_Click(object sender, RoutedEventArgs e)
         {
-            AreaKonten.Content = new CustomerListPage();
-            SetActiveMenu(NavMasterData, "Master Data Customer");
+            if (SetActiveMenu(NavMasterData, "Master Data Customer", typeof(CustomerListPage)))
+            {
+                AreaKonten.Content = new CustomerListPage();
+            }
         }
 
         private void MenuAutoPO_Click(object sender, RoutedEventArgs e)
@@ -208,60 +259,72 @@ namespace SPJ_APP
 
         private void MenuTransaksi_Click(object sender, RoutedEventArgs e)
         {
-            AreaKonten.Content = new NotaListPage();
-            SetActiveMenu(NavTransaksi, "Daftar Nota Penjualan");
+            if (SetActiveMenu(NavTransaksi, "Daftar Nota Penjualan", typeof(NotaListPage)))
+            {
+                AreaKonten.Content = new NotaListPage();
+            }
         }
 
         private void MenuInboxSO_Click(object sender, RoutedEventArgs e)
         {
-            AreaKonten.Content = new InboxSalesOrderPage();
-            SetActiveMenu(NavInbox, "Inbox Sales Order Mobile");
+            if (SetActiveMenu(NavInbox, "Inbox Sales Order Mobile", typeof(InboxSalesOrderPage)))
+            {
+                AreaKonten.Content = new InboxSalesOrderPage();
+            }
         }
 
         private void MenuInboxKunjungan_Click(object sender, RoutedEventArgs e)
         {
-            AreaKonten.Content = new InboxVisitPage();
-            SetActiveMenu(NavInbox, "Inbox Kunjungan Sales");
+            if (SetActiveMenu(NavInbox, "Inbox Kunjungan Sales", typeof(InboxVisitPage)))
+            {
+                AreaKonten.Content = new InboxVisitPage();
+            }
         }
 
         private void MenuKonfirmasiPembayaran_Click(object sender, RoutedEventArgs e)
         {
-            AreaKonten.Content = new PaymentConfirmationPage();
-            SetActiveMenu(NavPembayaran, "Konfirmasi Pembayaran");
+            if (SetActiveMenu(NavPembayaran, "Konfirmasi Pembayaran", typeof(PaymentConfirmationPage)))
+            {
+                AreaKonten.Content = new PaymentConfirmationPage();
+            }
         }
-		
-		private void MenuPengiriman_Click(object sender, RoutedEventArgs e)
-		{
-			AreaKonten.Content = new DeliveryPage();
-            SetActiveMenu(NavPengiriman, "Pengiriman Barang");
-		}
+
+        private void MenuPengiriman_Click(object sender, RoutedEventArgs e)
+        {
+            if (SetActiveMenu(NavPengiriman, "Log Pengiriman", typeof(DeliveryPage)))
+            {
+                AreaKonten.Content = new DeliveryPage();
+            }
+        }
 
         private void MenuLaporan_Click(object sender, RoutedEventArgs e)
         {
-            AreaKonten.Content = new ReportPage();
-            SetActiveMenu(NavLaporan, "Laporan Penjualan");
+            if (SetActiveMenu(NavLaporan, "Laporan Penjualan", typeof(ReportPage)))
+            {
+                AreaKonten.Content = new ReportPage();
+            }
         }
 
         private void MenuPengaturan_Click(object sender, RoutedEventArgs e)
         {
             var settingsWindow = new SettingsWindow { Owner = this };
             settingsWindow.ShowDialog();
-            SetActiveMenu(NavPengaturan, "Pengaturan System");
         }
 
         private void MenuUbahPassword_Click(object sender, RoutedEventArgs e)
         {
             var changePassWindow = new ChangePasswordWindow { Owner = this };
             changePassWindow.ShowDialog();
-            SetActiveMenu(NavPengaturan, "Ubah Password");
         }
-
 
         private void MenuDatabaseInspector_Click(object sender, RoutedEventArgs e)
         {
-            AreaKonten.Content = new DatabaseInspectorPage();
-            SetActiveMenu(MenuDeveloperTools, "Database Inspector (Developer)");
+            if (SetActiveMenu(MenuDeveloperTools, "Database Inspector (Developer)", typeof(DatabaseInspectorPage)))
+            {
+                AreaKonten.Content = new DatabaseInspectorPage();
+            }
         }
+
 
         private async void MenuSync_Click(object sender, RoutedEventArgs e)
         {
@@ -305,7 +368,8 @@ namespace SPJ_APP
                 SyncProgressBar.Visibility = Visibility.Collapsed;
                 SyncStatusTextRight.Text = $"✅ Sync selesai ({DateTime.Now:HH:mm:ss})";
                 SyncStatusTextRight.Visibility = Visibility.Visible;
-                SetActiveMenu(NavBeranda, "Beranda Utama");
+                SetActiveMenu(NavBeranda, "Beranda Utama", typeof(HomePage));
+
 
                 _ = Task.Run(async () =>
                 {
