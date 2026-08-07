@@ -426,7 +426,9 @@ namespace SPJ_APP.Service
             var pendingPayments = (await supabase.From<Payment>().Get()).Models
                 .Where(payment => string.Equals(payment.Status, "PENDING", StringComparison.OrdinalIgnoreCase));
 
+            int newPaymentCount = 0;
             foreach (var remote in pendingPayments)
+
             {
                 var local = await localDb.FindAsync<LocalPayment>(remote.Id.ToString());
                 var mapped = new LocalPayment
@@ -440,11 +442,21 @@ namespace SPJ_APP.Service
                     Notes = remote.Notes,
                     IsSynced = true
                 };
-                if (local is null) await localDb.InsertAsync(mapped);
+                if (local is null)
+                {
+                    await localDb.InsertAsync(mapped);
+                    newPaymentCount++;
+                }
                 else await localDb.UpdateAsync(mapped);
             }
 
+            if (newPaymentCount > 0)
+            {
+                NotificationService.Notify("💳 Konfirmasi Pembayaran Baru", $"Ada {newPaymentCount} konfirmasi pembayaran baru dari pelanggan menanti persetujuan!", typeof(SPJ_APP.View.Pages.PaymentConfirmationPage));
+            }
+
             return await localDb.Table<LocalPayment>().Where(payment => payment.Status == "PENDING").ToListAsync();
+
         }
 
         public static async Task ConfirmPaymentAsync(LocalPayment payment, bool approve)
@@ -801,7 +813,14 @@ namespace SPJ_APP.Service
                         await localDb.UpdateAsync(existing);
                     }
                 }
+
+                if (pulled > 0)
+                {
+                    NotificationService.Notify("📥 Mobile Sales Order (SO) Baru", $"Ada {pulled} pesanan Sales Order (SO) baru yang di-input sales via mobile!", typeof(SPJ_APP.View.Pages.InboxSalesOrderPage));
+                }
+
                 return pulled;
+
             }
             catch
             {
@@ -859,7 +878,14 @@ namespace SPJ_APP.Service
                         await localDb.UpdateAsync(existing);
                     }
                 }
+
+                if (pulled > 0)
+                {
+                    NotificationService.Notify("📍 Check-in Kunjungan Sales Baru", $"Ada {pulled} log kunjungan check-in baru yang dilakukan sales!", typeof(SPJ_APP.View.Pages.InboxVisitPage));
+                }
+
                 return pulled;
+
             }
             catch
             {

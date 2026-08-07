@@ -16,7 +16,37 @@ namespace SPJ_APP
 
             BackgroundSyncService.Instance.SyncStatusChanged += BackgroundSyncService_SyncStatusChanged;
             SyncService.OnSyncProgress += SyncService_OnSyncProgress;
+            NotificationService.OnNotificationReceived += NotificationService_OnNotificationReceived;
         }
+
+        private System.Threading.CancellationTokenSource? _toastCts;
+        private Type? _toastTargetPageType;
+
+        private void NotificationService_OnNotificationReceived(object? sender, NotificationEventArgs e)
+        {
+            Dispatcher.Invoke(async () =>
+            {
+                _toastTargetPageType = e.TargetPageType;
+                ToastTitleText.Text = e.Title;
+                ToastMessageText.Text = e.Message;
+                ToastNotificationCard.Visibility = Visibility.Visible;
+
+                _toastCts?.Cancel();
+                _toastCts = new System.Threading.CancellationTokenSource();
+                var token = _toastCts.Token;
+
+                try
+                {
+                    await Task.Delay(10000, token);
+                    if (!token.IsCancellationRequested)
+                    {
+                        ToastNotificationCard.Visibility = Visibility.Collapsed;
+                    }
+                }
+                catch (TaskCanceledException) { }
+            });
+        }
+
 
         private void SyncService_OnSyncProgress(string statusMessage)
         {
@@ -396,6 +426,36 @@ namespace SPJ_APP
             }
         }
 
+        private void ToastNotificationCard_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ToastNotificationCard.Visibility = Visibility.Collapsed;
+            _toastCts?.Cancel();
 
+            if (_toastTargetPageType != null)
+            {
+                if (_toastTargetPageType == typeof(InboxSalesOrderPage))
+                {
+                    if (SetActiveMenu(NavInbox, "Inbox Sales Order Mobile", typeof(InboxSalesOrderPage)))
+                        AreaKonten.Content = new InboxSalesOrderPage();
+                }
+                else if (_toastTargetPageType == typeof(InboxVisitPage))
+                {
+                    if (SetActiveMenu(NavInbox, "Inbox Kunjungan Sales", typeof(InboxVisitPage)))
+                        AreaKonten.Content = new InboxVisitPage();
+                }
+                else if (_toastTargetPageType == typeof(PaymentConfirmationPage))
+                {
+                    if (SetActiveMenu(NavTransaksi, "Konfirmasi Pembayaran", typeof(PaymentConfirmationPage)))
+                        AreaKonten.Content = new PaymentConfirmationPage();
+                }
+            }
+        }
+
+        private void CloseToast_Click(object sender, RoutedEventArgs e)
+        {
+            _toastCts?.Cancel();
+            ToastNotificationCard.Visibility = Visibility.Collapsed;
+        }
     }
 }
+

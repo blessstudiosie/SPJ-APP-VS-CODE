@@ -116,7 +116,47 @@
                 </StackPanel>
             </Border>
         </Grid>
+
+        <!-- Bottom-Right Toast Notification Popup Container -->
+
+        <Border x:Name="ToastNotificationCard" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Bottom" 
+                Margin="0,0,24,45" 
+                Background="#0F172A" 
+                BorderBrush="#6366F1" 
+                BorderThickness="1.5" 
+                CornerRadius="12" 
+                Padding="16,12" 
+                Width="360" 
+                Visibility="Collapsed" 
+                Cursor="Hand"
+                MouseLeftButtonDown="ToastNotificationCard_MouseLeftButtonDown">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="20" ShadowDepth="6" Direction="270" Color="#000000" Opacity="0.35"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <Border Grid.Column="0" Background="#4F46E5" CornerRadius="20" Width="36" Height="36" Margin="0,0,12,0" VerticalAlignment="Center">
+                    <TextBlock Text="🔔" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock x:Name="ToastTitleText" Text="Data Baru Diterima!" Foreground="White" FontSize="13" FontWeight="Bold"/>
+                    <TextBlock x:Name="ToastMessageText" Text="Ada data baru yang diunduh dari server." Foreground="#94A3B8" FontSize="11.5" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                    <TextBlock Text="👉 Klik di sini untuk membuka halaman (Shortcut)" Foreground="#A5B4FC" FontSize="10.5" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                </StackPanel>
+
+                <Button Grid.Column="2" Content="✕" Width="24" Height="24" Background="Transparent" Foreground="#94A3B8" BorderThickness="0" FontSize="12" FontWeight="Bold" VerticalAlignment="Top" Click="CloseToast_Click"/>
+            </Grid>
+        </Border>
     </Grid>
 </Window>
+
 
 
