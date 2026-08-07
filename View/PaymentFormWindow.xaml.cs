@@ -77,6 +77,39 @@ namespace SPJ_APP.View
 
                 var localDb = await LocalDatabaseService.GetConnection();
 
+                // --- Authorization Pre-check ---
+                bool requiresAuth = false;
+                if (_sale.Status != "TEMPO" && _sale.Status != "DONE")
+                {
+                    decimal newRemaining = Math.Max(0, _sale.Total - (_sale.Paid + jumlah));
+                    string newStatus = newRemaining == 0 ? "DONE" : "TEMPO";
+                    if (newStatus == "TEMPO" || newStatus == "DONE")
+                    {
+                        requiresAuth = true;
+                    }
+                }
+
+                if (requiresAuth)
+                {
+                    var passwordDialog = new PasswordPromptWindow();
+                    if (passwordDialog.ShowDialog() == true)
+                    {
+                        bool authorized = await AuthorizationService.AuthorizeManagerActionAsync(passwordDialog.Password);
+                        if (!authorized)
+                        {
+                            DialogHelper.ShowError("Password otorisasi salah atau tidak ada Manager/Owner yang terdaftar.", "Otorisasi Gagal");
+                            return;
+                        }
+                        await ActivityLogService.LogAsync("AUTH_SUCCESS", $"Otorisasi Manager berhasil untuk mencatat pembayaran pada nota '{_sale.Nota}'.");
+                    }
+                    else
+                    {
+                        // User cancelled the password dialog
+                        return;
+                    }
+                }
+                // --- End Authorization ---
+
                 var payment = new LocalPayment
                 {
                     Id = Guid.NewGuid().ToString(),

@@ -123,6 +123,14 @@ Dokumen ini melacak semua tugas yang perlu diselesaikan untuk meningkatkan dan m
 
 - [ ] **Sambungkan ke Tahap 6 - Otorisasi Perubahan Status** (Tugas Berikutnya)
   - [ ] Task "Implementasi Otorisasi Perubahan Status" di Tahap 6 sekarang **tidak lagi terblokir** - password per-user sudah tersedia. Gunakan `sales_persons.password` + `role` (cek role = 'MANAGER' atau 'OWNER') untuk validasi saat status nota diubah ke `TEMPO`/`DONE`.
+  
+  ## Tahap 6 (REVISI): Sistem Komunikasi & Otorisasi
+*Catatan: nama tabel disesuaikan dengan yang SUDAH diimplementasikan di Android app (`sales_orders_queue`, `visit_logs_queue`), BUKAN `change_requests` generik seperti draf awal.*
+
+- [ ] Buat tabel `sales_orders_queue` dan `visit_logs_queue` di Supabase (SQL sudah disiapkan bersama Claude, 7 Agustus 2026 - cocokkan struktur JSON dengan payload aktual dari Android sebelum dijalankan).
+- [ ] Halaman "Inbox Sales Order" (desktop) - tampilkan `sales_orders_queue` status pending, bisa edit qty/hapus item sebelum approve, approve = buat Nota baru (status SO) di database lokal desktop + update queue jadi approved.
+- [ ] Halaman "Inbox Kunjungan" (desktop) - tampilkan `visit_logs_queue` status pending, review foto & lokasi, approve = insert ke `check_in_logs` (+ buat `customers` baru kalau `is_new_customer = true`) + update queue jadi approved.
+- [ ] Otorisasi perubahan status nota ke TEMPO/DONE pakai password Manager/Owner (sudah tidak terblokir sejak Tahap 7 Login selesai).
 
 ## Tahap 8: Migrasi Data Production → Development
 *Tujuan: Memindahkan data asli dari Supabase production ke Supabase development yang sudah diperbaiki strukturnya (UUID-based).*

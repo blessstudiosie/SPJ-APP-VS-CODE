@@ -40,6 +40,7 @@ namespace SPJ_APP.Service
                 await _database.CreateTableAsync<LocalPurchaseOrder>();
                 await _database.CreateTableAsync<LocalPurchaseOrderDetail>();
                 await _database.CreateTableAsync<LocalActivityLog>();
+
             }
 
             return _database;

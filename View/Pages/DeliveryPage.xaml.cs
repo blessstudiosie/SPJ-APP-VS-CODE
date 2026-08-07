@@ -227,7 +227,43 @@ namespace SPJ_APP.View.Pages
             try
             {
                 var localDb = await LocalDatabaseService.GetConnection();
+                bool requiresAuth = false;
 
+                // Pre-check if authorization is needed
+                foreach (var item in deliveryDisplay.Items)
+                {
+                    var sale = item.Original.Original;
+                    // Do not re-prompt for auth if status is already TEMPO or DONE
+                    if (sale.Status == "TEMPO" || sale.Status == "DONE") continue;
+                    
+                    string newStatus = sale.Remaining <= 0 ? "DONE" : "TEMPO";
+                    if (newStatus == "TEMPO" || newStatus == "DONE")
+                    {
+                        requiresAuth = true;
+                        break;
+                    }
+                }
+
+                if (requiresAuth)
+                {
+                    var passwordDialog = new PasswordPromptWindow();
+                    if (passwordDialog.ShowDialog() == true)
+                    {
+                        bool authorized = await AuthorizationService.AuthorizeManagerActionAsync(passwordDialog.Password);
+                        if (!authorized)
+                        {
+                            DialogHelper.ShowError("Password otorisasi salah atau tidak ada Manager/Owner yang terdaftar.", "Otorisasi Gagal");
+                            return;
+                        }
+                        await ActivityLogService.LogAsync("AUTH_SUCCESS", "Otorisasi Manager berhasil untuk menyelesaikan pengiriman tanpa perubahan.");
+                    }
+                    else
+                    {
+                        // User cancelled the password dialog
+                        return;
+                    }
+                }
+                
                 await localDb.RunInTransactionAsync(conn =>
                 {
                     foreach (var item in deliveryDisplay.Items)

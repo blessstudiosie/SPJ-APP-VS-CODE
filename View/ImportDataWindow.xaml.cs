@@ -52,9 +52,11 @@ namespace SPJ_APP.View
         {
             if (ComboBoxTipeData.SelectedItem == null) return;
             
-            var selectedKey = ComboBoxTipeData.SelectedItem.ToString();
-            var selectedType = _importTypeMappings[selectedKey];
-            ConfigureWindowForImportType(selectedType);
+            var selectedKey = ComboBoxTipeData.SelectedItem.ToString()!;
+            if (_importTypeMappings.TryGetValue(selectedKey, out var selectedType))
+            {
+                ConfigureWindowForImportType(selectedType);
+            }
         }
 
         private void ButtonPilihFile_Click(object sender, RoutedEventArgs e)
@@ -94,8 +96,11 @@ namespace SPJ_APP.View
 
             try
             {
-                var selectedKey = ComboBoxTipeData.SelectedItem.ToString();
-                var importType = _importTypeMappings[selectedKey];
+                var selectedKey = ComboBoxTipeData.SelectedItem.ToString()!;
+                if (!_importTypeMappings.TryGetValue(selectedKey, out var importType))
+                {
+                    throw new InvalidOperationException("Tipe impor tidak ditemukan atau tidak valid.");
+                }
                 ImportResult result;
 
                 switch (importType)

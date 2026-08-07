@@ -74,6 +74,55 @@ namespace SPJ_APP.View
             try
             {
                 var localDb = await LocalDatabaseService.GetConnection();
+                bool requiresAuth = false;
+
+                // Pre-check if authorization is needed without starting a transaction
+                var itemsBySalePreCheck = _verificationItems.GroupBy(x => x.SaleId);
+                foreach (var group in itemsBySalePreCheck)
+                {
+                    var sale = await localDb.Table<LocalSale>().FirstOrDefaultAsync(s => s.Id == group.Key);
+                    if (sale is null) continue;
+
+                    // Do not re-prompt for auth if status is already TEMPO or DONE
+                    if (sale.Status == "TEMPO" || sale.Status == "DONE") continue;
+                    
+                    decimal newTotal = 0;
+                    foreach (var vItem in group)
+                    {
+                        decimal actualQty = decimal.TryParse(vItem.ActualQtyText, out decimal q) ? q : 0;
+                        actualQty = Math.Min(Math.Max(actualQty, 0), vItem.OriginalQty);
+                        newTotal += vItem.Price * actualQty;
+                    }
+
+                    decimal newRemaining = Math.Max(0, newTotal - sale.Paid);
+                    string newStatus = newRemaining <= 0 ? "DONE" : "TEMPO";
+
+                    if (newStatus == "TEMPO" || newStatus == "DONE")
+                    {
+                        requiresAuth = true;
+                        break; 
+                    }
+                }
+
+                if (requiresAuth)
+                {
+                    var passwordDialog = new PasswordPromptWindow();
+                    if (passwordDialog.ShowDialog() == true)
+                    {
+                        bool authorized = await AuthorizationService.AuthorizeManagerActionAsync(passwordDialog.Password);
+                        if (!authorized)
+                        {
+                            DialogHelper.ShowError("Password otorisasi salah atau tidak ada Manager/Owner yang terdaftar.", "Otorisasi Gagal");
+                            return;
+                        }
+                        await ActivityLogService.LogAsync("AUTH_SUCCESS", "Otorisasi Manager berhasil untuk menutup pengiriman.");
+                    }
+                    else
+                    {
+                        // User cancelled the password dialog
+                        return;
+                    }
+                }
 
                 await localDb.RunInTransactionAsync(conn =>
                 {

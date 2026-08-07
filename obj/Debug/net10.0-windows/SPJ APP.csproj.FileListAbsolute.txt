@@ -348,3 +348,11 @@ C:\Users\SPJ Admin\source\repos\SPJ-APP-VS-CODE\obj\Debug\net10.0-windows\View\C
 C:\Users\SPJ Admin\source\repos\SPJ-APP-VS-CODE\obj\Debug\net10.0-windows\View\InitialSetupWindow.baml
 C:\Users\SPJ Admin\source\repos\SPJ-APP-VS-CODE\obj\Debug\net10.0-windows\View\CreateAdminWindow.g.cs
 C:\Users\SPJ Admin\source\repos\SPJ-APP-VS-CODE\obj\Debug\net10.0-windows\View\InitialSetupWindow.g.cs
+C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\CreateAdminWindow.baml
+C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\InitialSetupWindow.baml
+C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\Pages\DatabaseInspectorPage.baml
+C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\CreateAdminWindow.g.cs
+C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\InitialSetupWindow.g.cs
+C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\Pages\DatabaseInspectorPage.g.cs
+C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\PasswordPromptWindow.baml
+C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\PasswordPromptWindow.g.cs
