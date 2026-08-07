@@ -106,42 +106,60 @@ namespace SPJ_APP.View
 
         private async void TombolLogin_Click(object sender, RoutedEventArgs e)
         {
-            TeksStatus.Text = "";
-            string? inputName = InputNama.Text;
-            string inputPassword = InputPassword.Password;
-
-            if (string.IsNullOrWhiteSpace(inputName))
+            try
             {
-                TeksStatus.Text = "Nama user tidak boleh kosong.";
-                return;
-            }
+                TeksStatus.Text = "";
+                string? inputName = InputNama.Text;
+                string inputPassword = InputPassword.Password;
 
-            LocalSalesPerson? user = InputNama.SelectedItem as LocalSalesPerson;
-            if (user == null)
+                if (string.IsNullOrWhiteSpace(inputName))
+                {
+                    TeksStatus.Text = "Nama user tidak boleh kosong.";
+                    return;
+                }
+
+                LocalSalesPerson? user = InputNama.SelectedItem as LocalSalesPerson;
+                if (user == null)
+                {
+                    string searchName = inputName.Trim();
+                    user = _users.FirstOrDefault(u => string.Equals(u.Name?.Trim(), searchName, System.StringComparison.OrdinalIgnoreCase));
+                }
+
+                if (user == null)
+                {
+                    TeksStatus.Text = $"Nama user '{inputName}' tidak ditemukan.";
+                    return;
+                }
+
+                // Gunakan PasswordHasherService.VerifyPassword yang aman & fleksibel
+                if (!PasswordHasherService.VerifyPassword(inputPassword, user.Password))
+                {
+                    TeksStatus.Text = "Password salah. Silakan periksa kembali (coba default: admin123 / ganti123 / 123456 / dev123).";
+                    return;
+                }
+
+                // Login sukses
+                CurrentUserService.SetUser(user);
+
+                try
+                {
+                    await ActivityLogService.LogAsync("LOGIN", $"User '{user.Name}' berhasil login.");
+                }
+                catch
+                {
+                    // Abaikan kesalahan log aktivitas agar login tetap berjalan lancar
+                }
+
+                DialogResult = true;
+                Close();
+            }
+            catch (System.Exception ex)
             {
-                string searchName = inputName.Trim();
-                user = _users.FirstOrDefault(u => string.Equals(u.Name?.Trim(), searchName, System.StringComparison.OrdinalIgnoreCase));
+                TeksStatus.Text = $"Terjadi kesalahan saat login: {ex.Message}";
+                App.LogAndShowError("Proses Login Terhenti", ex);
             }
-
-            if (user == null)
-            {
-                TeksStatus.Text = $"Nama user '{inputName}' tidak ditemukan.";
-                return;
-            }
-
-            // Gunakan PasswordHasherService.VerifyPassword yang aman & fleksibel
-            if (!PasswordHasherService.VerifyPassword(inputPassword, user.Password))
-            {
-                TeksStatus.Text = "Password salah. Silakan periksa kembali (coba default: admin123 / ganti123 / 123456).";
-                return;
-            }
-
-            // Login sukses
-            CurrentUserService.SetUser(user);
-            await ActivityLogService.LogAsync("LOGIN", $"User '{user.Name}' berhasil login.");
-            DialogResult = true;
-            Close();
         }
+
 
 
 

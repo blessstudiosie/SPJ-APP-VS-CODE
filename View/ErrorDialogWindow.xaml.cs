@@ -15,6 +15,19 @@ namespace SPJ_APP.View
             DataContext = this;
         }
 
+        private void CopyButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Clipboard.SetText(ErrorMessage);
+                MessageBox.Show("Detail error telah berhasil disalin ke Clipboard!", "Tersalin", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show($"Gagal menyalin detail error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
@@ -22,3 +35,4 @@ namespace SPJ_APP.View
         }
     }
 }
+

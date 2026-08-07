@@ -59,59 +59,30 @@ namespace SPJ_APP
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var setupService = new InitialSetupService();
-            var setupAction = await setupService.CheckAndRunInitialSetupIfNeededAsync();
-
-            switch (setupAction)
+            try
             {
-                case InitialSetupAction.ExitApplication:
-                    Application.Current.Shutdown();
-                    return;
+                var currentUser = CurrentUserService.LoggedInUser;
+                Title = $"SPJ App - Selamat Datang, {currentUser?.Name ?? "User"}!";
 
-                case InitialSetupAction.AdminCreated:
-                    // User is already set, proceed directly to loading main content
-                    break;
+                // Tampilkan Developer Tools untuk Akun Developer / Admin
+                var currentUserRole = currentUser?.Role?.ToUpperInvariant();
+                var currentUserName = currentUser?.Name;
+                if (currentUserRole == "DEVELOPER" || currentUserRole == "ADMIN" || currentUserName == "Developer")
+                {
+                    MenuDeveloperTools.Visibility = Visibility.Visible;
+                }
 
-                case InitialSetupAction.NotSet:
-                case InitialSetupAction.SyncAndLogin:
-                    // These cases require initialization, then login.
-                    LoadingOverlay.Visibility = Visibility.Visible;
-                    MainContentPanel.IsEnabled = false;
+                StatusText.Text = $"Login sebagai {currentUser?.Name ?? "User"} ({currentUser?.Role ?? "SALES"})";
 
-                    AppInitializationService.InitializationProgressChanged += AppInitializationService_InitializationProgressChanged;
-                    await AppInitializationService.InitializeAppAsync();
-                    // The AppInitializationService_InitializationProgressChanged handler will hide the overlay.
-
-                    var loginWindow = new LoginWindow();
-                    if (loginWindow.ShowDialog() != true)
-                    {
-                        Application.Current.Shutdown();
-                        return;
-                    }
-                    break;
+                // Muat Halaman Utama Beranda
+                AreaKonten.Content = new HomePage();
             }
-            
-            // This code runs for AdminCreated, and after successful login for the other cases.
-            Title = $"SPJ App - Selamat Datang, {CurrentUserService.LoggedInUser?.Name ?? "User"}!";
-            
-            // Tampilkan Developer Tools untuk Akun Developer / Admin
-            var currentUserRole = CurrentUserService.LoggedInUser?.Role?.ToUpperInvariant();
-            var currentUserName = CurrentUserService.LoggedInUser?.Name;
-            if (currentUserRole == "DEVELOPER" || currentUserRole == "ADMIN" || currentUserName == "Developer")
+            catch (System.Exception ex)
             {
-                MenuDeveloperTools.Visibility = Visibility.Visible;
-            }
-
-            // For AdminCreated, the initialization service hasn't run yet. We run it now.
-            // For the other cases, it has already run.
-            if (setupAction == InitialSetupAction.AdminCreated)
-            {
-                LoadingOverlay.Visibility = Visibility.Visible;
-                MainContentPanel.IsEnabled = false;
-                AppInitializationService.InitializationProgressChanged += AppInitializationService_InitializationProgressChanged;
-                await AppInitializationService.InitializeAppAsync();
+                App.LogAndShowError("Gagal Memuat Jendela Utama MainWindow", ex);
             }
         }
+
 
         private void MenuDatabaseInspector_Click(object sender, RoutedEventArgs e)
         {
