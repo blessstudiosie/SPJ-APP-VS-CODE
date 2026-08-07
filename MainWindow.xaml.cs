@@ -23,9 +23,12 @@ namespace SPJ_APP
             Dispatcher.Invoke(() =>
             {
                 LoadingStatusText.Text = statusMessage;
-                StatusText.Text = statusMessage;
+                SyncStatusTextRight.Text = statusMessage;
+                SyncStatusTextRight.Visibility = Visibility.Visible;
+                SyncProgressBar.Visibility = Visibility.Visible;
             });
         }
+
 
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -59,12 +62,28 @@ namespace SPJ_APP
             }
         }
         
-        private void BackgroundSyncService_SyncStatusChanged(object? sender, SyncStatusEventArgs e)
+        private async void BackgroundSyncService_SyncStatusChanged(object? sender, SyncStatusEventArgs e)
         {
-            Dispatcher.Invoke(() =>
+            await Dispatcher.Invoke(async () =>
             {
-                StatusText.Text = e.Message;
-                SyncProgressBar.Visibility = e.IsSyncing ? Visibility.Visible : Visibility.Collapsed;
+                if (e.IsSyncing)
+                {
+                    SyncStatusTextRight.Text = string.IsNullOrWhiteSpace(e.Message) ? "Sinkronisasi otomatis..." : e.Message;
+                    SyncStatusTextRight.Visibility = Visibility.Visible;
+                    SyncProgressBar.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    SyncProgressBar.Visibility = Visibility.Collapsed;
+                    SyncStatusTextRight.Text = $"✅ Sync selesai ({DateTime.Now:HH:mm:ss})";
+                    SyncStatusTextRight.Visibility = Visibility.Visible;
+
+                    await Task.Delay(5000);
+                    if (SyncProgressBar.Visibility == Visibility.Collapsed)
+                    {
+                        SyncStatusTextRight.Visibility = Visibility.Collapsed;
+                    }
+                }
             });
         }
 
@@ -228,9 +247,25 @@ namespace SPJ_APP
                 if (menuItem != null) menuItem.IsEnabled = true;
                 LoadingOverlay.Visibility = Visibility.Collapsed;
                 MainContentPanel.IsEnabled = true;
+                SyncProgressBar.Visibility = Visibility.Collapsed;
+                SyncStatusTextRight.Text = $"✅ Sync selesai ({DateTime.Now:HH:mm:ss})";
+                SyncStatusTextRight.Visibility = Visibility.Visible;
                 SetActiveMenu(NavBeranda, "Beranda Utama");
+
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(5000);
+                    Dispatcher.Invoke(() =>
+                    {
+                        if (SyncProgressBar.Visibility == Visibility.Collapsed)
+                        {
+                            SyncStatusTextRight.Visibility = Visibility.Collapsed;
+                        }
+                    });
+                });
             }
         }
+
 
     }
 }

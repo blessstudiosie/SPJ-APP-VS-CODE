@@ -17,9 +17,13 @@
                     </StackPanel>
                 </StatusBarItem>
                 <StatusBarItem HorizontalAlignment="Right">
-                    <ProgressBar x:Name="SyncProgressBar" Width="120" Height="10" IsIndeterminate="True" Visibility="Collapsed"/>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock x:Name="SyncStatusTextRight" Text="" Foreground="#4F46E5" FontSize="11.5" FontWeight="SemiBold" Margin="0,0,10,0" VerticalAlignment="Center" Visibility="Collapsed"/>
+                        <ProgressBar x:Name="SyncProgressBar" Width="110" Height="8" IsIndeterminate="True" Visibility="Collapsed" VerticalAlignment="Center"/>
+                    </StackPanel>
                 </StatusBarItem>
             </StatusBar>
+
             
             <!-- Modern Top Header Navigation Bar -->
             <Border DockPanel.Dock="Top" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="12,6">
