@@ -295,7 +295,7 @@ namespace SPJ_APP.Service
                         JalurPengiriman = local.JalurPengiriman ?? "",
                         Latitude = local.Latitude,
                         Longitude = local.Longitude,
-                        SalesPerson = local.SalesPersonId,
+                        SalesPersonId = local.SalesPersonId,
                         LimitPiutang = local.LimitPiutang
                     };
 
@@ -682,12 +682,13 @@ namespace SPJ_APP.Service
 
         private static Sale ToRemoteSale(LocalSale local) => new()
         {
+            Id = string.IsNullOrEmpty(local.Id) ? Guid.NewGuid().ToString() : local.Id,
             Nota = local.Nota,
-            CustomerName = local.CustomerId,
+            CustomerId = local.CustomerId,
             OrderDate = local.OrderDate,
             DeliveryDate = local.DeliveryDate,
             Status = local.Status,
-            SalesPerson = local.SalesPersonId,
+            SalesPersonId = local.SalesPersonId,
             Total = local.Total,
             Paid = local.Paid,
             Remaining = local.Remaining,
@@ -979,7 +980,7 @@ namespace SPJ_APP.Service
                             JalurPengiriman = remote.JalurPengiriman ?? "",
                             Latitude = remote.Latitude,
                             Longitude = remote.Longitude,
-                            SalesPersonId = remote.SalesPerson,
+                            SalesPersonId = remote.SalesPersonId,
                             LimitPiutang = remote.LimitPiutang,
                             IsSynced = true
                         };
@@ -993,7 +994,8 @@ namespace SPJ_APP.Service
                         localCustomer.JalurPengiriman = remote.JalurPengiriman ?? localCustomer.JalurPengiriman;
                         localCustomer.Latitude = remote.Latitude;
                         localCustomer.Longitude = remote.Longitude;
-                        localCustomer.SalesPersonId = remote.SalesPerson;
+                        localCustomer.SalesPersonId = remote.SalesPersonId;
+
                         localCustomer.LimitPiutang = remote.LimitPiutang;
                         localCustomer.IsSynced = true;
                         await localDb.UpdateAsync(localCustomer);
@@ -1060,8 +1062,8 @@ namespace SPJ_APP.Service
                     {
                         Id = saleId,
                         Nota = cleanNota,
-                        CustomerId = remoteSale.CustomerName,
-                        SalesPersonId = remoteSale.SalesPerson,
+                        CustomerId = remoteSale.CustomerId,
+                        SalesPersonId = remoteSale.SalesPersonId,
                         OrderDate = remoteSale.OrderDate,
                         DeliveryDate = remoteSale.DeliveryDate,
                         Status = remoteSale.Status,

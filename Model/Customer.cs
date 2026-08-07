@@ -1,12 +1,16 @@
 using Postgrest.Attributes;
 using Postgrest.Models;
+using System;
 
 namespace SPJ_APP.Model
 {
     [Table("customers")]
     public class Customer : BaseModel
     {
-        [PrimaryKey("name", false)]
+        [PrimaryKey("id", false)]
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+
+        [Column("name")]
         public string Name { get; set; } = string.Empty;
 
         [Column("owner_name")]
@@ -27,8 +31,8 @@ namespace SPJ_APP.Model
         [Column("longitude")]
         public double? Longitude { get; set; }
 
-        [Column("sales_person")]
-        public string? SalesPerson { get; set; }
+        [Column("sales_person_id")]
+        public string? SalesPersonId { get; set; }
 
         [Column("limit_piutang")]
         public decimal LimitPiutang { get; set; }
@@ -39,4 +43,4 @@ namespace SPJ_APP.Model
         [Column("updated_at", ignoreOnInsert: true, ignoreOnUpdate: true)]
         public DateTime? UpdatedAt { get; set; }
     }
-}
+}

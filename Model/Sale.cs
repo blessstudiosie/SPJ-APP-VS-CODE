@@ -1,19 +1,23 @@
 using Postgrest.Attributes;
 using Postgrest.Models;
+using System;
 
 namespace SPJ_APP.Model
 {
     [Table("sales")]
     public class Sale : BaseModel
     {
-        [PrimaryKey("nota", false)]
+        [PrimaryKey("id", false)]
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+
+        [Column("nota")]
         public string Nota { get; set; } = string.Empty;
 
-        [Column("customer_name")]
-        public string? CustomerName { get; set; }
+        [Column("customer_id")]
+        public string? CustomerId { get; set; }
 
         [Column("order_date")]
-        public DateTime OrderDate { get; set; }
+        public DateTime OrderDate { get; set; } = DateTime.Now;
 
         [Column("delivery_date")]
         public DateTime? DeliveryDate { get; set; }
@@ -21,8 +25,8 @@ namespace SPJ_APP.Model
         [Column("status")]
         public string Status { get; set; } = "SO";
 
-        [Column("sales_person")]
-        public string? SalesPerson { get; set; }
+        [Column("sales_person_id")]
+        public string? SalesPersonId { get; set; }
 
         [Column("total")]
         public decimal Total { get; set; }
@@ -42,4 +46,4 @@ namespace SPJ_APP.Model
         [Column("updated_at", ignoreOnInsert: true, ignoreOnUpdate: true)]
         public DateTime? UpdatedAt { get; set; }
     }
-}
+}
