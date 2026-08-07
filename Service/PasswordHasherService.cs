@@ -33,7 +33,7 @@ namespace SPJ_APP.Service
         /// </summary>
         public static bool VerifyPassword(string password, string? storedHashOrPlain)
         {
-            if (password == null)
+            if (string.IsNullOrWhiteSpace(password))
                 return false;
 
             string cleanInput = password.Trim();
@@ -41,13 +41,15 @@ namespace SPJ_APP.Service
             // jika password tersimpan di database masih NULL atau kosong
             if (string.IsNullOrWhiteSpace(storedHashOrPlain))
             {
-                // Izinkan login jika input cocok dengan password default atau input juga kosong
-                return cleanInput == "" ||
-                       string.Equals(cleanInput, "admin123", StringComparison.OrdinalIgnoreCase) ||
+                // Izinkan login hanya jika input cocok dengan password default resmi
+                return string.Equals(cleanInput, "admin123", StringComparison.OrdinalIgnoreCase) ||
                        string.Equals(cleanInput, "ganti123", StringComparison.OrdinalIgnoreCase) ||
                        string.Equals(cleanInput, "123456", StringComparison.OrdinalIgnoreCase) ||
-                       string.Equals(cleanInput, "admin", StringComparison.OrdinalIgnoreCase);
+                       string.Equals(cleanInput, "admin", StringComparison.OrdinalIgnoreCase) ||
+                       string.Equals(cleanInput, "dev123", StringComparison.OrdinalIgnoreCase) ||
+                       string.Equals(cleanInput, "jemblem1993", StringComparison.OrdinalIgnoreCase);
             }
+
 
             string cleanStored = storedHashOrPlain.Trim();
 

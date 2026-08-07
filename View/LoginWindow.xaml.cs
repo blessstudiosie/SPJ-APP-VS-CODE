@@ -119,6 +119,13 @@ namespace SPJ_APP.View
                     return;
                 }
 
+                if (string.IsNullOrWhiteSpace(inputPassword))
+                {
+                    TeksStatus.Text = "Password tidak boleh kosong. Silakan masukkan password Anda.";
+                    return;
+                }
+
+
                 LocalSalesPerson? user = InputNama.SelectedItem as LocalSalesPerson;
                 if (user == null)
                 {
