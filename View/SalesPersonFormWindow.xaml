@@ -32,9 +32,12 @@
         <TextBlock Text="Target Omset"/>
 <TextBox x:Name="InputTargetOmset" Margin="0,2,0,10" TextChanged="InputAngka_TextChanged"/>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-            <Button x:Name="TombolBatal" Content="Batal" Padding="15,5" Margin="0,0,10,0" Click="TombolBatal_Click"/>
-            <Button x:Name="TombolSimpan" Content="Simpan" Padding="15,5" Click="TombolSimpan_Click"/>
-        </StackPanel>
+        <Grid Margin="0,10,0,0">
+            <Button x:Name="TombolHapus" Content="🗑️ Hapus Sales" Height="34" Padding="12,5" HorizontalAlignment="Left" Background="#EF4444" Foreground="White" FontWeight="Bold" Visibility="Collapsed" Click="TombolHapus_Click"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="TombolBatal" Content="Batal" Height="34" Padding="15,5" Margin="0,0,10,0" Background="#F1F5F9" Foreground="#334155" BorderBrush="#CBD5E1" Click="TombolBatal_Click"/>
+                <Button x:Name="TombolSimpan" Content="Simpan" Height="34" Padding="15,5" Click="TombolSimpan_Click"/>
+            </StackPanel>
+        </Grid>
     </StackPanel>
-</Window>
+</Window>
