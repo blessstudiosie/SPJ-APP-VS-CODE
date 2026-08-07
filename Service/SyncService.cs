@@ -1,8 +1,10 @@
 using SPJ_APP.Model;
 using SQLite;
+using Postgrest.Models;
 
 namespace SPJ_APP.Service
 {
+
     public sealed class ConflictItem
     {
         public LocalProduct LocalVersion { get; init; } = null!;
@@ -76,7 +78,45 @@ namespace SPJ_APP.Service
             return (summary, productResult.Conflicts);
         }
 
+        /// <summary>
+        /// Mengambil SELURUH baris data dari Supabase tanpa batas 1.000 data (PostgREST Limit).
+        /// Fungsi ini melakukan penarikan bertahap (Pagination Range) 1.000 item per request
+        /// hingga seluruh data (5.000, 10.000, 50.000+ item) berhasil diunduh tanpa ada yang terpotong.
+        /// </summary>
+        private static async Task<List<T>> FetchAllFromSupabaseAsync<T>(int pageSize = 1000) where T : BaseModel, new()
+
+        {
+            var supabase = await SupabaseService.GetClient();
+            var allItems = new List<T>();
+            int offset = 0;
+
+            while (true)
+            {
+                var response = await supabase.From<T>()
+                                             .Range(offset, offset + pageSize - 1)
+                                             .Get();
+
+                if (response?.Models == null || response.Models.Count == 0)
+                {
+                    break;
+                }
+
+                allItems.AddRange(response.Models);
+
+                // Jika jumlah item yang dikembalikan kurang dari pageSize, berarti ini adalah halaman terakhir
+                if (response.Models.Count < pageSize)
+                {
+                    break;
+                }
+
+                offset += pageSize;
+            }
+
+            return allItems;
+        }
+
         public static async Task<int> SyncPurchaseOrdersAsync()
+
         {
             var localDb = await LocalDatabaseService.GetConnection();
             var supabase = await SupabaseService.GetClient();
@@ -133,9 +173,8 @@ namespace SPJ_APP.Service
         public static async Task<int> SyncSalesPersonsAsync()
         {
             var localDb = await LocalDatabaseService.GetConnection();
-            var supabase = await SupabaseService.GetClient();
             var localItems = await localDb.Table<LocalSalesPerson>().ToListAsync();
-            var remoteList = (await supabase.From<SalesPerson>().Get()).Models;
+            var remoteList = await FetchAllFromSupabaseAsync<SalesPerson>();
             var remoteNames = remoteList.Select(item => item.Name).Where(n => !string.IsNullOrWhiteSpace(n)).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             int pushedCount = 0;
@@ -157,6 +196,7 @@ namespace SPJ_APP.Service
 
                 try
                 {
+                    var supabase = await SupabaseService.GetClient();
                     string cleanName = local.Name.Trim();
                     var remote = new SalesPerson
                     {
@@ -194,9 +234,8 @@ namespace SPJ_APP.Service
         public static async Task<int> SyncCustomersAsync()
         {
             var localDb = await LocalDatabaseService.GetConnection();
-            var supabase = await SupabaseService.GetClient();
             var localItems = await localDb.Table<LocalCustomer>().ToListAsync();
-            var remoteList = (await supabase.From<Customer>().Get()).Models;
+            var remoteList = await FetchAllFromSupabaseAsync<Customer>();
             var remoteNames = remoteList.Select(item => item.Name).Where(n => !string.IsNullOrWhiteSpace(n)).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             int pushedCount = 0;
@@ -209,6 +248,7 @@ namespace SPJ_APP.Service
 
                 try
                 {
+                    var supabase = await SupabaseService.GetClient();
                     string cleanName = local.Name.Trim();
                     var remote = new Customer
                     {
@@ -253,13 +293,15 @@ namespace SPJ_APP.Service
         public static async Task<SalesSyncResult> SyncSalesAsync()
         {
             var localDb = await LocalDatabaseService.GetConnection();
-            var supabase = await SupabaseService.GetClient();
             var result = new SalesSyncResult();
 
             var localSales = await localDb.Table<LocalSale>().ToListAsync();
             var localDetails = await localDb.Table<LocalSalesDetail>().ToListAsync();
-            var remoteSales = (await supabase.From<Sale>().Get()).Models.ToDictionary(sale => sale.Nota, StringComparer.OrdinalIgnoreCase);
-            var remoteDetails = (await supabase.From<SaleDetail>().Get()).Models
+            var remoteSalesList = await FetchAllFromSupabaseAsync<Sale>();
+            var remoteSales = remoteSalesList.ToDictionary(sale => sale.Nota, StringComparer.OrdinalIgnoreCase);
+            
+            var remoteDetailsList = await FetchAllFromSupabaseAsync<SaleDetail>();
+            var remoteDetails = remoteDetailsList
                 .Where(detail => !string.IsNullOrWhiteSpace(detail.Nota))
                 .GroupBy(detail => detail.Nota)
                 .ToDictionary(group => group.Key, group => group.ToList(), StringComparer.OrdinalIgnoreCase);
@@ -273,6 +315,7 @@ namespace SPJ_APP.Service
 
                 try
                 {
+                    var supabase = await SupabaseService.GetClient();
                     var remoteSale = ToRemoteSale(localSale);
                     if (remoteSales.ContainsKey(localSale.Nota))
                         await supabase.From<Sale>().Where(x => x.Nota == localSale.Nota).Update(remoteSale);
@@ -307,9 +350,9 @@ namespace SPJ_APP.Service
         public static async Task<int> SyncPaymentsAsync()
         {
             var localDb = await LocalDatabaseService.GetConnection();
-            var supabase = await SupabaseService.GetClient();
             var localItems = await localDb.Table<LocalPayment>().ToListAsync();
-            var remoteIds = (await supabase.From<Payment>().Get()).Models.Select(item => item.Id).ToHashSet();
+            var remoteList = await FetchAllFromSupabaseAsync<Payment>();
+            var remoteIds = remoteList.Select(item => item.Id).ToHashSet();
 
             int pushedCount = 0;
             foreach (var local in localItems)
@@ -319,6 +362,7 @@ namespace SPJ_APP.Service
 
                 try
                 {
+                    var supabase = await SupabaseService.GetClient();
                     var remote = new Payment { Id = id, SaleId = saleId, PaymentDate = local.PaymentDate, Amount = local.Amount, PaymentMethod = local.PaymentMethod, Status = local.Status, Notes = local.Notes };
                     if (remoteIds.Contains(id)) await supabase.From<Payment>().Where(x => x.Id == id).Update(remote);
                     else await supabase.From<Payment>().Insert(remote);
@@ -333,6 +377,7 @@ namespace SPJ_APP.Service
             }
             return pushedCount;
         }
+
 
 
         public static async Task<List<LocalPayment>> PullPendingPaymentsAsync()
@@ -810,21 +855,16 @@ namespace SPJ_APP.Service
             }
         }
 
-        /// <summary>
-        /// Menarik SELURUH data dari Supabase cloud (SalesPerson, Customer, Produk, Sales, SalesDetail, Payment, Queue)
-        /// dan menyimpannya ke database SQLite lokal perangkat ini.
-        /// </summary>
         public static async Task<string> PullAllFromSupabaseAsync()
         {
             var localDb = await LocalDatabaseService.GetConnection();
-            var supabase = await SupabaseService.GetClient();
             var sb = new System.Text.StringBuilder();
-            sb.AppendLine("=== HASIL TARIK FULL DATA SUPABASE ===");
+            sb.AppendLine("=== HASIL TARIK FULL DATA SUPABASE (UNLIMITED BATCH) ===");
 
             // 1. Pull SalesPersons
             try
             {
-                var remoteUsers = (await supabase.From<SalesPerson>().Get()).Models;
+                var remoteUsers = await FetchAllFromSupabaseAsync<SalesPerson>();
                 int userCount = 0;
                 foreach (var remote in remoteUsers)
                 {
@@ -866,7 +906,7 @@ namespace SPJ_APP.Service
                         }
                     }
                 }
-                sb.AppendLine($"✓ SalesPerson: {userCount} akun ditarik.");
+                sb.AppendLine($"✓ SalesPerson: {userCount} akun ditarik (dari {remoteUsers.Count} total remote).");
             }
             catch (Exception ex)
             {
@@ -876,7 +916,7 @@ namespace SPJ_APP.Service
             // 2. Pull Customers
             try
             {
-                var remoteCustomers = (await supabase.From<Customer>().Get()).Models;
+                var remoteCustomers = await FetchAllFromSupabaseAsync<Customer>();
                 int customerCount = 0;
                 foreach (var remote in remoteCustomers)
                 {
@@ -920,7 +960,7 @@ namespace SPJ_APP.Service
                     }
                     customerCount++;
                 }
-                sb.AppendLine($"✓ Customer: {customerCount} pelanggan ditarik.");
+                sb.AppendLine($"✓ Customer: {customerCount} pelanggan ditarik (dari {remoteCustomers.Count} total remote).");
             }
             catch (Exception ex)
             {
@@ -930,7 +970,7 @@ namespace SPJ_APP.Service
             // 3. Pull Products
             try
             {
-                var remoteProducts = (await supabase.From<Product>().Get()).Models;
+                var remoteProducts = await FetchAllFromSupabaseAsync<Product>();
                 int prodCount = 0;
                 foreach (var remote in remoteProducts)
                 {
@@ -946,7 +986,7 @@ namespace SPJ_APP.Service
                     else await localDb.UpdateAsync(mapped);
                     prodCount++;
                 }
-                sb.AppendLine($"✓ Produk: {prodCount} item ditarik.");
+                sb.AppendLine($"✓ Produk: {prodCount} item ditarik (dari {remoteProducts.Count} total remote).");
             }
             catch (Exception ex)
             {
@@ -956,8 +996,8 @@ namespace SPJ_APP.Service
             // 4. Pull Sales & SaleDetails
             try
             {
-                var remoteSales = (await supabase.From<Sale>().Get()).Models;
-                var remoteDetails = (await supabase.From<SaleDetail>().Get()).Models;
+                var remoteSales = await FetchAllFromSupabaseAsync<Sale>();
+                var remoteDetails = await FetchAllFromSupabaseAsync<SaleDetail>();
                 var detailsGrouped = remoteDetails.Where(d => !string.IsNullOrWhiteSpace(d.Nota))
                                                   .GroupBy(d => d.Nota)
                                                   .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
@@ -1018,7 +1058,7 @@ namespace SPJ_APP.Service
                     }
                     saleCount++;
                 }
-                sb.AppendLine($"✓ Transaksi Nota (Sales): {saleCount} nota ditarik.");
+                sb.AppendLine($"✓ Transaksi Nota (Sales): {saleCount} nota ditarik (dari {remoteSales.Count} total remote).");
             }
             catch (Exception ex)
             {
@@ -1028,7 +1068,7 @@ namespace SPJ_APP.Service
             // 5. Pull Payments
             try
             {
-                var remotePayments = (await supabase.From<Payment>().Get()).Models;
+                var remotePayments = await FetchAllFromSupabaseAsync<Payment>();
                 int payCount = 0;
                 foreach (var remote in remotePayments)
                 {
@@ -1049,7 +1089,7 @@ namespace SPJ_APP.Service
                     else await localDb.UpdateAsync(mapped);
                     payCount++;
                 }
-                sb.AppendLine($"✓ Pembayaran (Payments): {payCount} record ditarik.");
+                sb.AppendLine($"✓ Pembayaran (Payments): {payCount} record ditarik (dari {remotePayments.Count} total remote).");
             }
             catch (Exception ex)
             {
@@ -1065,5 +1105,6 @@ namespace SPJ_APP.Service
         }
     }
 }
+
 
 
