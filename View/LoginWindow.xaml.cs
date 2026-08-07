@@ -23,7 +23,60 @@ namespace SPJ_APP.View
             {
                 var localDb = await LocalDatabaseService.GetConnection();
                 _users = await localDb.Table<LocalSalesPerson>().ToListAsync();
+
+                // jika database lokal masih kosong, coba tarik dari Supabase atau buat default Admin
+                if (_users.Count == 0)
+                {
+                    try
+                    {
+                        var supabase = await SupabaseService.GetClient();
+                        var remoteList = (await supabase.From<SalesPerson>().Get()).Models;
+                        if (remoteList.Count > 0)
+                        {
+                            foreach (var remote in remoteList)
+                            {
+                                var localUser = new LocalSalesPerson
+                                {
+                                    Id = Guid.NewGuid().ToString(),
+                                    Name = remote.Name,
+                                    Phone = remote.Phone,
+                                    Email = remote.Email,
+                                    TargetOmset = remote.TargetOmset,
+                                    Role = remote.Role ?? "SALES",
+                                    Password = remote.Password,
+                                    IsSynced = true
+                                };
+                                await localDb.InsertAsync(localUser);
+                            }
+                            _users = await localDb.Table<LocalSalesPerson>().ToListAsync();
+                        }
+                    }
+                    catch
+                    {
+                        // Supabase offline / offline first fallback
+                    }
+
+                    // Jika masih 0, daftarkan default admin lokal
+                    if (_users.Count == 0)
+                    {
+                        var defaultAdmin = new LocalSalesPerson
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Name = "Admin",
+                            Password = PasswordHasherService.HashPassword("admin123"),
+                            Role = "ADMIN",
+                            IsSynced = false
+                        };
+                        await localDb.InsertAsync(defaultAdmin);
+                        _users.Add(defaultAdmin);
+                    }
+                }
+
                 InputNama.ItemsSource = _users;
+                if (_users.Count > 0)
+                {
+                    InputNama.SelectedIndex = 0;
+                }
             }
             catch (System.Exception ex)
             {
@@ -52,8 +105,8 @@ namespace SPJ_APP.View
                 return;
             }
 
-            // TODO: Ganti validasi plain text dengan verifikasi hash (e.g., BCrypt)
-            if (user.Password != inputPassword)
+            // Gunakan PasswordHasherService.VerifyPassword yang mendukung HASH & fallback PlainText
+            if (!PasswordHasherService.VerifyPassword(inputPassword, user.Password))
             {
                 TeksStatus.Text = "Password salah.";
                 return;
@@ -65,6 +118,7 @@ namespace SPJ_APP.View
             DialogResult = true;
             Close();
         }
+
 
         private void InputPassword_KeyDown(object sender, KeyEventArgs e)
         {
