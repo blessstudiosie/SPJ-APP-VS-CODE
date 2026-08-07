@@ -54,7 +54,7 @@ namespace SPJ_APP.View
             var currentUser = CurrentUserService.LoggedInUser;
             if (currentUser != null && 
                 IsManagerRole(currentUser.Role) && 
-                string.Equals(currentUser.Password, enteredPassword))
+                PasswordHasherService.VerifyPassword(enteredPassword, currentUser.Password))
             {
                 return true;
             }
@@ -67,7 +67,7 @@ namespace SPJ_APP.View
 
                 var authorizedUser = allSales.FirstOrDefault(sp => 
                     IsManagerRole(sp.Role) && 
-                    string.Equals(sp.Password, enteredPassword));
+                    PasswordHasherService.VerifyPassword(enteredPassword, sp.Password));
 
                 if (authorizedUser != null)
                 {
@@ -78,6 +78,7 @@ namespace SPJ_APP.View
             {
                 // Fallback jika database lokal belum terinisialisasi
             }
+
 
             DialogHelper.ShowError($"Password otorisasi salah! Anda tidak memiliki akses untuk {actionDescription}.");
             return false;
