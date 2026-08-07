@@ -46,6 +46,12 @@ namespace SPJ_APP.View.Pages
         {
             InitializeComponent();
             Loaded += HomePage_Loaded;
+            Unloaded += HomePage_Unloaded;
+        }
+
+        private void HomePage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            BackgroundSyncService.Instance.SyncStatusChanged -= BackgroundSync_SyncStatusChanged;
         }
 
         public void RefreshData()
@@ -55,7 +61,17 @@ namespace SPJ_APP.View.Pages
 
         private async void HomePage_Loaded(object sender, RoutedEventArgs e)
         {
+            BackgroundSyncService.Instance.SyncStatusChanged -= BackgroundSync_SyncStatusChanged;
+            BackgroundSyncService.Instance.SyncStatusChanged += BackgroundSync_SyncStatusChanged;
             await LoadDashboardDataAsync();
+        }
+
+        private void BackgroundSync_SyncStatusChanged(object? sender, SyncStatusEventArgs e)
+        {
+            if (!e.IsSyncing)
+            {
+                Dispatcher.Invoke(() => RefreshData());
+            }
         }
 
         private async void TombolRefresh_Click(object sender, RoutedEventArgs e)
@@ -68,9 +84,6 @@ namespace SPJ_APP.View.Pages
             try
             {
                 var now = DateTime.Now;
-                var startDate = new DateTime(now.Year, now.Month, 1);
-                var endDate = startDate.AddMonths(1).AddTicks(-1);
-
                 string monthName = now.ToString("MMMM yyyy", _cultureIndo);
                 TeksPeriodeHeader.Text = $"📅 Bulan Berjalan: {monthName}";
 
@@ -82,14 +95,18 @@ namespace SPJ_APP.View.Pages
                 var allVisits = await db.Table<LocalVisitLogQueue>().ToListAsync();
                 var customers = await db.Table<LocalCustomer>().ToListAsync();
 
-                // 2. Filter Sales in Current Month based on DeliveryDate for Delivered Sales (TEMPO & DONE)
+                // 2. Filter Sales in Current Month based on DeliveryDate (or OrderDate fallback) for Delivered Sales (TEMPO & DONE)
                 var currentMonthDeliveredSales = allSales
-                    .Where(s => s.DeliveryDate.HasValue &&
-                                s.DeliveryDate.Value >= startDate &&
-                                s.DeliveryDate.Value <= endDate &&
-                                (string.Equals(s.Status, "DONE", StringComparison.OrdinalIgnoreCase) ||
-                                 string.Equals(s.Status, "TEMPO", StringComparison.OrdinalIgnoreCase)))
+                    .Where(s => {
+                        bool isDeliveredStatus = string.Equals(s.Status, "DONE", StringComparison.OrdinalIgnoreCase) ||
+                                                string.Equals(s.Status, "TEMPO", StringComparison.OrdinalIgnoreCase);
+                        if (!isDeliveredStatus) return false;
+
+                        DateTime dateToCheck = s.DeliveryDate ?? s.OrderDate;
+                        return dateToCheck.Year == now.Year && dateToCheck.Month == now.Month;
+                    })
                     .ToList();
+
 
                 // 3. Calculate Executive KPI Card Metrics
                 var doneSales = currentMonthDeliveredSales.Where(s => string.Equals(s.Status, "DONE", StringComparison.OrdinalIgnoreCase)).ToList();
@@ -185,8 +202,9 @@ namespace SPJ_APP.View.Pages
 
                 // 5. Build Sales Person Performance List (ONLY Sales Persons in sales_persons table)
                 var currentMonthVisits = allVisits
-                    .Where(v => v.CreatedAt >= startDate && v.CreatedAt <= endDate)
+                    .Where(v => v.CreatedAt.Year == now.Year && v.CreatedAt.Month == now.Month)
                     .ToList();
+
 
                 var salesPerformanceList = new List<SalesPersonPerformanceDisplayItem>();
 

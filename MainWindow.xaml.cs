@@ -117,6 +117,12 @@ namespace SPJ_APP
                     SyncStatusTextRight.Text = $"✅ Sync selesai ({DateTime.Now:HH:mm:ss})";
                     SyncStatusTextRight.Visibility = Visibility.Visible;
 
+                    // Refresh otomatis halaman yang sedang terbuka (seperti HomePage Dashboard) ketika sync latar belakang selesai
+                    if (AreaKonten.Content is IRefreshablePage refreshable)
+                    {
+                        refreshable.RefreshData();
+                    }
+
                     await Task.Delay(5000);
                     if (SyncProgressBar.Visibility == Visibility.Collapsed)
                     {
@@ -125,6 +131,7 @@ namespace SPJ_APP
                 }
             });
         }
+
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
