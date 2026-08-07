@@ -546,3 +546,5 @@ C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\ChangePass
 C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\ChangePasswordWindow.g.cs
 C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\SyncProgressWindow.baml
 C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\SyncProgressWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\SalesWorkflowHelpWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\SalesWorkflowHelpWindow.g.cs

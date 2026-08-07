@@ -353,6 +353,13 @@ namespace SPJ_APP
             settingsWindow.ShowDialog();
         }
 
+        private void TombolBantuanSop_Click(object sender, RoutedEventArgs e)
+        {
+            var sopWindow = new SalesWorkflowHelpWindow { Owner = this };
+            sopWindow.ShowDialog();
+        }
+
+
         private void MenuUbahPassword_Click(object sender, RoutedEventArgs e)
         {
             var changePassWindow = new ChangePasswordWindow { Owner = this };

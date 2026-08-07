@@ -1,0 +1,153 @@
+<Window x:Class="SPJ_APP.View.SalesWorkflowHelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="❓ Panduan Alur Kerja Operasional Penjualan (SOP)" Height="560" Width="720"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Background="#F8FAFC">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header Panel -->
+        <Border Grid.Row="0" Background="#4F46E5" CornerRadius="12" Padding="20" Margin="0,0,0,16">
+            <StackPanel Orientation="Horizontal">
+                <Border Background="White" CornerRadius="10" Width="44" Height="44" Margin="0,0,14,0" VerticalAlignment="Center">
+                    <TextBlock Text="📖" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="SOP &amp; Alur Kerja Operasional Penjualan" FontSize="17" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Text="CV. Sarana Prima Jaya - Standar Operasional &amp; Pengakuan Omset Sah" FontSize="12" Foreground="#C7D2FE" Margin="0,2,0,0"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Main SOP Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,10,0">
+                
+                <!-- 1. Visual Pipeline Flow Chart -->
+                <TextBlock Text="🔄 PIPELINE ALUR KERJA PENJUALAN:" FontSize="13" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,10"/>
+                
+                <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="16" Margin="0,0,0,18">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Step 1: SO -->
+                        <Border Grid.Column="0" Background="#F1F5F9" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Padding="10">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="📝 SO" FontSize="13" FontWeight="Bold" Foreground="#475569" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Draft Order Mobile/Desktop" FontSize="9.5" Foreground="#64748B" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Grid.Column="1" Text="➔" FontSize="16" Foreground="#94A3B8" VerticalAlignment="Center" Margin="6,0"/>
+
+                        <!-- Step 2: ON PROSES -->
+                        <Border Grid.Column="2" Background="#FEF3C7" BorderBrush="#FCD34D" BorderThickness="1" CornerRadius="8" Padding="10">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="⚙️ ON PROSES" FontSize="13" FontWeight="Bold" Foreground="#B45309" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Gudang / Cetak Nota Surat Jalan" FontSize="9.5" Foreground="#92400E" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Grid.Column="3" Text="➔" FontSize="16" Foreground="#94A3B8" VerticalAlignment="Center" Margin="6,0"/>
+
+                        <!-- Step 3: DALAM PENGIRIMAN -->
+                        <Border Grid.Column="4" Background="#F3E8FF" BorderBrush="#D8B4FE" BorderThickness="1" CornerRadius="8" Padding="10">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="🚚 PENGIRIMAN" FontSize="13" FontWeight="Bold" Foreground="#6D28D9" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Barang Di Jalan / Armada Kurir" FontSize="9.5" Foreground="#5B21B6" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Grid.Column="5" Text="➔" FontSize="16" Foreground="#10B981" FontWeight="Bold" VerticalAlignment="Center" Margin="6,0"/>
+
+                        <!-- Step 4: OMSET SAH (TEMPO / DONE) -->
+                        <Border Grid.Column="6" Background="#ECFDF5" BorderBrush="#6EE7B7" BorderThickness="1.5" CornerRadius="8" Padding="10">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="🎉 TEMPO / DONE" FontSize="13" FontWeight="Bold" Foreground="#047857" HorizontalAlignment="Center"/>
+                                <TextBlock Text="✅ OMSET SAH! (Diterima Customer)" FontSize="9.5" FontWeight="Bold" Foreground="#065F46" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- 2. Detailed Business Rules Card -->
+                <TextBlock Text="📌 ATURAN PENGAKUAN OMSET &amp; OPERASIONAL:" FontSize="13" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,10"/>
+
+                <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="16">
+                    <StackPanel>
+                        <!-- Rule 1 -->
+                        <DockPanel Margin="0,0,0,12">
+                            <Border DockPanel.Dock="Left" Background="#EEF2FF" CornerRadius="12" Width="26" Height="26" Margin="0,0,12,0" VerticalAlignment="Top">
+                                <TextBlock Text="1" FontSize="12" FontWeight="Bold" Foreground="#4F46E5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel>
+                                <TextBlock Text="Acuan Tanggal Pengakuan Omset (Delivery Date)" FontSize="13" FontWeight="Bold" Foreground="#0F172A"/>
+                                <TextBlock Text="Tanggal pengakuan omset WAJIB menggunakan Tanggal Kirim (DeliveryDate), bukan tanggal input order (OrderDate). Hal ini karena omset baru sah diakui saat barang benar-benar dikirim &amp; diterima pelanggan." Foreground="#475569" FontSize="11.5" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </DockPanel>
+
+                        <Separator Margin="0,4,0,12"/>
+
+                        <!-- Rule 2 -->
+                        <DockPanel Margin="0,0,0,12">
+                            <Border DockPanel.Dock="Left" Background="#ECFDF5" CornerRadius="12" Width="26" Height="26" Margin="0,0,12,0" VerticalAlignment="Top">
+                                <TextBlock Text="2" FontSize="12" FontWeight="Bold" Foreground="#047857" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel>
+                                <TextBlock Text="Kualifikasi Status Omset Sah (TEMPO &amp; DONE)" FontSize="13" FontWeight="Bold" Foreground="#0F172A"/>
+                                <TextBlock Text="Hanya transaksi berstatus TEMPO (dikirim dengan sisa tagihan piutang) atau DONE (dikirim &amp; lunas) yang dihitung sebagai Omset Sah Perusahaan." Foreground="#475569" FontSize="11.5" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </DockPanel>
+
+                        <Separator Margin="0,4,0,12"/>
+
+                        <!-- Rule 3 -->
+                        <DockPanel Margin="0,0,0,12">
+                            <Border DockPanel.Dock="Left" Background="#FEF3C7" CornerRadius="12" Width="26" Height="26" Margin="0,0,12,0" VerticalAlignment="Top">
+                                <TextBlock Text="3" FontSize="12" FontWeight="Bold" Foreground="#B45309" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel>
+                                <TextBlock Text="Status Non-Omset (Order Pipeline)" FontSize="13" FontWeight="Bold" Foreground="#0F172A"/>
+                                <TextBlock Text="Status SO (Draft Sales Order), ON PROSES (Gudang/Cetak Nota), dan DALAM PENGIRIMAN (Di Jalan) adalah pipa alur kerja operasional dan TIDAK BOLEH dihitung sebagai omset." Foreground="#475569" FontSize="11.5" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </DockPanel>
+
+                        <Separator Margin="0,4,0,12"/>
+
+                        <!-- Rule 4 -->
+                        <DockPanel>
+                            <Border DockPanel.Dock="Left" Background="#F3E8FF" CornerRadius="12" Width="26" Height="26" Margin="0,0,12,0" VerticalAlignment="Top">
+                                <TextBlock Text="4" FontSize="12" FontWeight="Bold" Foreground="#6D28D9" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel>
+                                <TextBlock Text="Monitoring Jalur Pengiriman Wilayah" FontSize="13" FontWeight="Bold" Foreground="#0F172A"/>
+                                <TextBlock Text="Setiap nota outstanding dikelompokkan berdasarkan Jalur Pengiriman Customer (LOTIM, LOTENG, KLU, LOBAR-MATARAM) untuk mempermudah dispatch armada supir." Foreground="#475569" FontSize="11.5" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </DockPanel>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Bottom Action Button -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+            <Button Content="✅ Mengerti &amp; Tutup" Width="140" Height="36" Background="#4F46E5" Foreground="White" FontWeight="Bold" IsDefault="True" Click="TombolTutup_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
