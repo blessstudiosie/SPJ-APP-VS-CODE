@@ -1,39 +1,40 @@
 <Window x:Class="SPJ_APP.View.LoginWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Login - SPJ APP" Height="420" Width="440" WindowStartupLocation="CenterScreen"
+        Title="Login - SPJ APP" Height="520" Width="480" WindowStartupLocation="CenterScreen"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
         Background="#F8FAFC">
     <Grid Margin="20">
-        <Border Background="White" CornerRadius="12" Padding="28" BorderBrush="#E2E8F0" BorderThickness="1">
+        <Border Background="White" CornerRadius="14" Padding="32,24" BorderBrush="#E2E8F0" BorderThickness="1">
             <Border.Effect>
-                <DropShadowEffect BlurRadius="20" ShadowDepth="4" Direction="270" Color="#000000" Opacity="0.06"/>
+                <DropShadowEffect BlurRadius="24" ShadowDepth="4" Direction="270" Color="#000000" Opacity="0.08"/>
             </Border.Effect>
             
-            <StackPanel VerticalAlignment="Center">
-                <!-- App Logo & Branding Header -->
-                <StackPanel HorizontalAlignment="Center" Margin="0,0,0,20">
-                    <Border Width="48" Height="48" CornerRadius="12" Background="#4F46E5" Margin="0,0,0,10" HorizontalAlignment="Center">
-                        <TextBlock Text="SPJ" Foreground="White" FontWeight="Bold" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <TextBlock Text="CV. Sarana Prima Jaya" FontSize="16" FontWeight="Bold" Foreground="#0F172A" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Sistem Manajemen ERP &amp; POS Desktop" FontSize="12" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel VerticalAlignment="Center">
+                    <!-- App Logo & Branding Header -->
+                    <StackPanel HorizontalAlignment="Center" Margin="0,0,0,20">
+                        <Image Source="/Assets/logo_spj.png" Height="72" Width="72" Margin="0,0,0,12" RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Center"/>
+                        <TextBlock Text="CV. Sarana Prima Jaya" FontSize="18" FontWeight="Bold" Foreground="#0F172A" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Sistem Manajemen ERP &amp; POS Desktop" FontSize="12" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <!-- Input User -->
+                    <TextBlock Text="Nama User / Akun" FontSize="12" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                    <ComboBox x:Name="InputNama" Margin="0,0,0,14" DisplayMemberPath="Name" IsEditable="True" Height="40" Padding="8,6"/>
+
+                    <!-- Input Password -->
+                    <TextBlock Text="Password" FontSize="12" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+                    <PasswordBox x:Name="InputPassword" Margin="0,0,0,16" KeyDown="InputPassword_KeyDown" Height="40"/>
+
+                    <!-- Error / Info Status Text -->
+                    <TextBlock x:Name="TeksStatus" Foreground="#DC2626" FontSize="12" Margin="0,0,0,14" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+
+                    <!-- Submit Button -->
+                    <Button x:Name="TombolLogin" Content="Masuk ke Aplikasi" Height="44" FontSize="14" FontWeight="Bold" Click="TombolLogin_Click"/>
                 </StackPanel>
-
-                <!-- Input User -->
-                <TextBlock Text="Nama User / Akun" FontSize="12" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,4"/>
-                <ComboBox x:Name="InputNama" Margin="0,0,0,14" DisplayMemberPath="Name" IsEditable="True" Height="38" Padding="6,4"/>
-
-                <!-- Input Password -->
-                <TextBlock Text="Password" FontSize="12" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,4"/>
-                <PasswordBox x:Name="InputPassword" Margin="0,0,0,16" KeyDown="InputPassword_KeyDown" Height="38"/>
-
-                <!-- Error / Info Status Text -->
-                <TextBlock x:Name="TeksStatus" Foreground="#DC2626" FontSize="12" Margin="0,0,0,12" TextWrapping="Wrap" HorizontalAlignment="Center"/>
-
-                <!-- Submit Button -->
-                <Button x:Name="TombolLogin" Content="Masuk ke Aplikasi" Height="42" FontSize="14" FontWeight="Bold" Click="TombolLogin_Click"/>
-            </StackPanel>
+            </ScrollViewer>
         </Border>
     </Grid>
-</Window>
+</Window>
+

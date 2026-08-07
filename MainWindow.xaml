@@ -21,35 +21,56 @@
             </StatusBar>
             
             <!-- Modern Top Header Navigation Bar -->
-            <Border DockPanel.Dock="Top" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="12,4">
-                <Menu Background="Transparent" FontSize="13" FontWeight="SemiBold">
-                    <MenuItem Header="🏠 Beranda" Click="MenuBeranda_Click" Padding="10,8"/>
-                    <MenuItem Header="📦 Produk" Padding="10,8">
-                        <MenuItem Header="Daftar Produk &amp; Stok" Click="MenuProduk_Click"/>
-                    </MenuItem>
-                    <MenuItem Header="👥 Master Data" Padding="10,8">
-                        <MenuItem Header="Daftar Sales" Click="MenuSalesPerson_Click"/>
-                        <MenuItem Header="Daftar Customer / Toko" Click="MenuCustomer_Click"/>
-                    </MenuItem>
-                    <MenuItem Header="📑 Transaksi" Padding="10,8">
-                        <MenuItem Header="Purchase Order (PO) Otomatis..." Click="MenuAutoPO_Click"/>
-                        <MenuItem Header="Daftar Nota Penjualan" Click="MenuTransaksi_Click"/>
-                    </MenuItem>
-                    <MenuItem Header="📥 Inbox Mobile" Padding="10,8">
-                        <MenuItem Header="Inbox Sales Order (Mobile SO)" Click="MenuInboxSO_Click"/>
-                        <MenuItem Header="Inbox Kunjungan Sales (Check-in)" Click="MenuInboxKunjungan_Click"/>
-                    </MenuItem>
-                    <MenuItem Header="💳 Pembayaran" Click="MenuKonfirmasiPembayaran_Click" Padding="10,8"/>
-                    <MenuItem Header="🚚 Pengiriman" Click="MenuPengiriman_Click" Padding="10,8"/>
-                    <MenuItem Header="📊 Laporan" Click="MenuLaporan_Click" Padding="10,8"/>
-                    <MenuItem Header="⚙️ Pengaturan" Click="MenuPengaturan_Click" Padding="10,8"/>
-                    <MenuItem x:Name="MenuDeveloperTools" Header="🛠️ Developer Tools" Visibility="Collapsed" Padding="10,8">
-                        <MenuItem Header="Database Inspector (UI Local DB)" Click="MenuDatabaseInspector_Click"/>
-                        <MenuItem Header="Import / Export Data Maintenance" Click="MenuPengaturan_Click"/>
-                    </MenuItem>
-                    <MenuItem Header="🔄 Sync Sekarang" Click="MenuSync_Click" Foreground="#4F46E5" FontWeight="Bold" Padding="12,8"/>
-                </Menu>
+            <Border DockPanel.Dock="Top" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="12,6">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- App Logo & Brand Title -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,16,0" VerticalAlignment="Center">
+                        <Image Source="/Assets/logo_spj.png" Height="32" Width="32" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="SPJ APP" FontWeight="Bold" FontSize="14" Foreground="#0F172A"/>
+                            <TextBlock Text="CV. Sarana Prima Jaya" FontSize="10" Foreground="#64748B"/>
+                        </StackPanel>
+                        <Border Width="1" Height="24" Background="#E2E8F0" Margin="14,0"/>
+                    </StackPanel>
+
+                    <!-- Top Menu Links -->
+                    <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                        <Menu Background="Transparent" FontSize="12.5" FontWeight="SemiBold" VerticalAlignment="Center">
+                            <MenuItem Header="🏠 Beranda" Click="MenuBeranda_Click" Padding="8,6"/>
+                            <MenuItem Header="📦 Produk" Padding="8,6">
+                                <MenuItem Header="Daftar Produk &amp; Stok" Click="MenuProduk_Click"/>
+                            </MenuItem>
+                            <MenuItem Header="👥 Master Data" Padding="8,6">
+                                <MenuItem Header="Daftar Sales" Click="MenuSalesPerson_Click"/>
+                                <MenuItem Header="Daftar Customer / Toko" Click="MenuCustomer_Click"/>
+                            </MenuItem>
+                            <MenuItem Header="📑 Transaksi" Padding="8,6">
+                                <MenuItem Header="Purchase Order (PO) Otomatis..." Click="MenuAutoPO_Click"/>
+                                <MenuItem Header="Daftar Nota Penjualan" Click="MenuTransaksi_Click"/>
+                            </MenuItem>
+                            <MenuItem Header="📥 Inbox Mobile" Padding="8,6">
+                                <MenuItem Header="Inbox Sales Order (Mobile SO)" Click="MenuInboxSO_Click"/>
+                                <MenuItem Header="Inbox Kunjungan Sales (Check-in)" Click="MenuInboxKunjungan_Click"/>
+                            </MenuItem>
+                            <MenuItem Header="💳 Pembayaran" Click="MenuKonfirmasiPembayaran_Click" Padding="8,6"/>
+                            <MenuItem Header="🚚 Pengiriman" Click="MenuPengiriman_Click" Padding="8,6"/>
+                            <MenuItem Header="📊 Laporan" Click="MenuLaporan_Click" Padding="8,6"/>
+                            <MenuItem Header="⚙️ Pengaturan" Click="MenuPengaturan_Click" Padding="8,6"/>
+                            <MenuItem x:Name="MenuDeveloperTools" Header="🛠️ Developer Tools" Visibility="Collapsed" Padding="8,6">
+                                <MenuItem Header="Database Inspector (UI Local DB)" Click="MenuDatabaseInspector_Click"/>
+                                <MenuItem Header="Import / Export Data Maintenance" Click="MenuPengaturan_Click"/>
+                            </MenuItem>
+                            <MenuItem Header="🔄 Sync Sekarang" Click="MenuSync_Click" Foreground="#4F46E5" FontWeight="Bold" Padding="10,6"/>
+                        </Menu>
+                    </ScrollViewer>
+                </Grid>
             </Border>
+
 
             <!-- Main Content Container -->
             <ContentControl x:Name="AreaKonten" Margin="16"/>
