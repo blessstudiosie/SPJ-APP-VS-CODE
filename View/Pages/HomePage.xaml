@@ -4,7 +4,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24">
             <!-- Executive Banner Header -->
-            <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="24" Margin="0,0,0,24">
+            <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,0,20">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="16" ShadowDepth="3" Direction="270" Color="#000000" Opacity="0.04"/>
                 </Border.Effect>
@@ -13,24 +13,134 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
+                    
                     <StackPanel Grid.Column="0">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                             <Border Background="#EEF2FF" CornerRadius="6" Padding="8,4" Margin="0,0,10,0">
                                 <TextBlock Text="✨ CV. SARANA PRIMA JAYA" FontSize="11" FontWeight="Bold" Foreground="#4F46E5"/>
                             </Border>
-                            <TextBlock Text="Sistem Operasional SPJ APP" FontSize="12" Foreground="#64748B" VerticalAlignment="Center"/>
+                            <Border Background="#ECFDF5" BorderBrush="#A7F3D0" BorderThickness="1" CornerRadius="6" Padding="8,4">
+                                <TextBlock x:Name="TeksPeriodeHeader" Text="📅 Bulan Berjalan: Agustus 2026" FontSize="11" FontWeight="Bold" Foreground="#047857"/>
+                            </Border>
                         </StackPanel>
-                        <TextBlock Text="Dashboard Alur Kerja &amp; Manajemen Distribusi" FontSize="22" FontWeight="Bold" Foreground="#0F172A"/>
-                        <TextBlock Text="Ikuti alur kerja terstruktur di bawah ini untuk memastikan konsistensi stok, transaksi, pengiriman, dan pembayaran." Foreground="#475569" FontSize="13" Margin="0,4,0,0"/>
+                        
+                        <TextBlock Text="Dashboard Laporan Kinerja Operasional" FontSize="22" FontWeight="Bold" Foreground="#0F172A"/>
+                        <TextBlock Text="Laporan kinerja berdasarkan Tanggal Kirim (Delivery Date) untuk nota berstatus TEMPO &amp; DONE." Foreground="#475569" FontSize="12.5" Margin="0,4,0,0"/>
                     </StackPanel>
-                    <Image Grid.Column="1" Source="/Assets/logo_spj.png" Height="56" Width="56" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"/>
+
+                    <Button Grid.Column="1" x:Name="TombolRefresh" Content="🔄 Refresh Data" Padding="12,6" Background="#EEF2FF" Foreground="#4F46E5" BorderBrush="#C7D2FE" FontWeight="Bold" VerticalAlignment="Center" Click="TombolRefresh_Click"/>
                 </Grid>
             </Border>
 
-            <!-- 5-Step Operational Workflow Cards -->
-            <TextBlock Text="📍 Alur Kerja Operasional Penjualan" FontSize="16" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,14"/>
+            <!-- 4 Executive KPI Summary Cards -->
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="14"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="14"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="14"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-            <Grid Margin="0,0,0,12">
+                <!-- Card 1: Total Omset Terkirim (TEMPO + DONE) -->
+                <Border Grid.Column="0" Background="#4F46E5" CornerRadius="12" Padding="16">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="💰 " FontSize="14"/>
+                            <TextBlock Text="TOTAL OMSET TERKIRIM" FontSize="10.5" FontWeight="Bold" Foreground="#C7D2FE"/>
+                        </StackPanel>
+                        <TextBlock x:Name="TeksTotalOmset" Text="Rp 0" FontSize="18" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock x:Name="TeksTotalOmsetNota" Text="0 Nota (TEMPO + DONE)" FontSize="10.5" Foreground="#E0E7FF" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Card 2: Omset Lunas (DONE) -->
+                <Border Grid.Column="2" Background="White" BorderBrush="#10B981" BorderThickness="1.5" CornerRadius="12" Padding="16">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="✅ " FontSize="14"/>
+                            <TextBlock Text="OMSET LUNAS (DONE)" FontSize="10.5" FontWeight="Bold" Foreground="#047857"/>
+                        </StackPanel>
+                        <TextBlock x:Name="TeksOmsetDone" Text="Rp 0" FontSize="18" FontWeight="Bold" Foreground="#064E3B"/>
+                        <TextBlock x:Name="TeksOmsetDoneNota" Text="0 Nota Lunas" FontSize="10.5" Foreground="#059669" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Card 3: Omset Piutang (TEMPO) -->
+                <Border Grid.Column="4" Background="White" BorderBrush="#F59E0B" BorderThickness="1.5" CornerRadius="12" Padding="16">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="⏳ " FontSize="14"/>
+                            <TextBlock Text="OMSET PIUTANG (TEMPO)" FontSize="10.5" FontWeight="Bold" Foreground="#B45309"/>
+                        </StackPanel>
+                        <TextBlock x:Name="TeksOmsetTempo" Text="Rp 0" FontSize="18" FontWeight="Bold" Foreground="#78350F"/>
+                        <TextBlock x:Name="TeksOmsetTempoNota" Text="0 Nota Sisa Tagihan" FontSize="10.5" Foreground="#D97706" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Card 4: Dalam Pengiriman & Proses -->
+                <Border Grid.Column="6" Background="White" BorderBrush="#8B5CF6" BorderThickness="1.5" CornerRadius="12" Padding="16">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="🚚 " FontSize="14"/>
+                            <TextBlock Text="PROSES &amp; PENGIRIMAN" FontSize="10.5" FontWeight="Bold" Foreground="#6D28D9"/>
+                        </StackPanel>
+                        <TextBlock x:Name="TeksTotalPengiriman" Text="0 Nota" FontSize="18" FontWeight="Bold" Foreground="#4C1D95"/>
+                        <TextBlock x:Name="TeksNominalPengiriman" Text="Rp 0 (Belum Kirim)" FontSize="10.5" Foreground="#7C3AED" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- 2-Column Split: Ringkasan Status Nota & Kinerja Sales -->
+            <Grid Margin="0,0,0,24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="6*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left Panel: Breakdown Status Nota -->
+                <Border Grid.Column="0" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="📑 Status Nota Bulan Ini (Tgl Kirim)" FontSize="14" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,12"/>
+
+                        <DataGrid x:Name="TabelStatusNota" AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9" RowHeight="36" Background="Transparent" BorderThickness="0">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Status Nota" Binding="{Binding StatusDisplay}" Width="*"/>
+                                <DataGridTextColumn Header="Jumlah" Binding="{Binding CountDisplay}" Width="Auto"/>
+                                <DataGridTextColumn Header="Total Nominal (Rp)" Binding="{Binding TotalDisplay}" Width="Auto"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Right Panel: Kinerja per Sales Person -->
+                <Border Grid.Column="2" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="16">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <TextBlock Text="👥 Kinerja Sales Person Bulan Ini" FontSize="14" FontWeight="Bold" Foreground="#0F172A"/>
+                            <TextBlock Text=" (Omset Tgl Kirim &amp; Kunjungan)" FontSize="12" Foreground="#64748B" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <DataGrid x:Name="TabelKinerjaSales" AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9" RowHeight="38" Background="Transparent" BorderThickness="0">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Nama Sales" Binding="{Binding SalesPersonName}" Width="1.5*"/>
+                                <DataGridTextColumn Header="Role" Binding="{Binding Role}" Width="*"/>
+                                <DataGridTextColumn Header="Kunjungan" Binding="{Binding VisitCountDisplay}" Width="Auto"/>
+                                <DataGridTextColumn Header="Nota Kirim" Binding="{Binding OrderCountDisplay}" Width="Auto"/>
+                                <DataGridTextColumn Header="Total Omset (Rp)" Binding="{Binding OmsetDisplay}" Width="1.5*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- 5-Step Operational Workflow Cards -->
+            <TextBlock Text="📍 Alur Kerja Operasional Penjualan" FontSize="15" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,12"/>
+
+            <Grid Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -40,44 +150,44 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Step 1 -->
-                <Border Grid.Column="0" Background="White" BorderBrush="#3B82F6" BorderThickness="1.5" CornerRadius="10" Padding="14">
+                <Border Grid.Column="0" Background="White" BorderBrush="#3B82F6" BorderThickness="1.5" CornerRadius="10" Padding="12">
                     <StackPanel>
-                        <Border Background="#EFF6FF" CornerRadius="6" Padding="6,3" HorizontalAlignment="Left" Margin="0,0,0,8">
+                        <Border Background="#EFF6FF" CornerRadius="6" Padding="6,3" HorizontalAlignment="Left" Margin="0,0,0,6">
                             <TextBlock Text="Langkah 1" FontSize="10" FontWeight="Bold" Foreground="#1D4ED8"/>
                         </Border>
-                        <TextBlock Text="1. Input Sales Order" FontWeight="Bold" FontSize="14" Foreground="#1E3A8A"/>
-                        <TextBlock Text="Buat nota penjualan atau terima SO mobile. Status awal: SO." FontSize="11" Foreground="#475569" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                        <TextBlock Text="1. Input Sales Order" FontWeight="Bold" FontSize="13" Foreground="#1E3A8A"/>
+                        <TextBlock Text="Buat nota penjualan atau terima SO mobile. Status awal: SO." FontSize="10.5" Foreground="#475569" TextWrapping="Wrap" Margin="0,4,0,0"/>
                     </StackPanel>
                 </Border>
 
-                <TextBlock Grid.Column="1" Text="➔" VerticalAlignment="Center" Margin="8,0" FontSize="18" Foreground="#94A3B8"/>
+                <TextBlock Grid.Column="1" Text="➔" VerticalAlignment="Center" Margin="6,0" FontSize="16" Foreground="#94A3B8"/>
 
                 <!-- Step 2 -->
-                <Border Grid.Column="2" Background="White" BorderBrush="#F59E0B" BorderThickness="1.5" CornerRadius="10" Padding="14">
+                <Border Grid.Column="2" Background="White" BorderBrush="#F59E0B" BorderThickness="1.5" CornerRadius="10" Padding="12">
                     <StackPanel>
-                        <Border Background="#FFFBEB" CornerRadius="6" Padding="6,3" HorizontalAlignment="Left" Margin="0,0,0,8">
+                        <Border Background="#FFFBEB" CornerRadius="6" Padding="6,3" HorizontalAlignment="Left" Margin="0,0,0,6">
                             <TextBlock Text="Langkah 2" FontSize="10" FontWeight="Bold" Foreground="#B45309"/>
                         </Border>
-                        <TextBlock Text="2. Cetak Nota" FontWeight="Bold" FontSize="14" Foreground="#78350F"/>
-                        <TextBlock Text="Cetak nota untuk memproses pesanan. Status menjadi ON PROSES dan Stok Ready berkurang." FontSize="11" Foreground="#475569" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                        <TextBlock Text="2. Cetak Nota" FontWeight="Bold" FontSize="13" Foreground="#78350F"/>
+                        <TextBlock Text="Cetak nota untuk memproses pesanan. Status: ON PROSES." FontSize="10.5" Foreground="#475569" TextWrapping="Wrap" Margin="0,4,0,0"/>
                     </StackPanel>
                 </Border>
 
-                <TextBlock Grid.Column="3" Text="➔" VerticalAlignment="Center" Margin="8,0" FontSize="18" Foreground="#94A3B8"/>
+                <TextBlock Grid.Column="3" Text="➔" VerticalAlignment="Center" Margin="6,0" FontSize="16" Foreground="#94A3B8"/>
 
                 <!-- Step 3 -->
-                <Border Grid.Column="4" Background="White" BorderBrush="#8B5CF6" BorderThickness="1.5" CornerRadius="10" Padding="14">
+                <Border Grid.Column="4" Background="White" BorderBrush="#8B5CF6" BorderThickness="1.5" CornerRadius="10" Padding="12">
                     <StackPanel>
-                        <Border Background="#F5F3FF" CornerRadius="6" Padding="6,3" HorizontalAlignment="Left" Margin="0,0,0,8">
+                        <Border Background="#F5F3FF" CornerRadius="6" Padding="6,3" HorizontalAlignment="Left" Margin="0,0,0,6">
                             <TextBlock Text="Langkah 3" FontSize="10" FontWeight="Bold" Foreground="#6D28D9"/>
                         </Border>
-                        <TextBlock Text="3. Pengiriman Log" FontWeight="Bold" FontSize="14" Foreground="#4C1D95"/>
-                        <TextBlock Text="Masukkan nota ke daftar pengiriman armada. Status menjadi DALAM PENGIRIMAN." FontSize="11" Foreground="#475569" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                        <TextBlock Text="3. Pengiriman Log" FontWeight="Bold" FontSize="13" Foreground="#4C1D95"/>
+                        <TextBlock Text="Masukkan nota ke armada. Status: DALAM PENGIRIMAN." FontSize="10.5" Foreground="#475569" TextWrapping="Wrap" Margin="0,4,0,0"/>
                     </StackPanel>
                 </Border>
             </Grid>
 
-            <Grid Margin="0,0,0,24">
+            <Grid Margin="0,0,0,20">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -85,38 +195,31 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Step 4 -->
-                <Border Grid.Column="0" Background="White" BorderBrush="#10B981" BorderThickness="1.5" CornerRadius="10" Padding="14">
+                <Border Grid.Column="0" Background="White" BorderBrush="#10B981" BorderThickness="1.5" CornerRadius="10" Padding="12">
                     <StackPanel>
-                        <Border Background="#ECFDF5" CornerRadius="6" Padding="6,3" HorizontalAlignment="Left" Margin="0,0,0,8">
+                        <Border Background="#ECFDF5" CornerRadius="6" Padding="6,3" HorizontalAlignment="Left" Margin="0,0,0,6">
                             <TextBlock Text="Langkah 4" FontSize="10" FontWeight="Bold" Foreground="#047857"/>
                         </Border>
-                        <TextBlock Text="4. Konfirmasi Terima / Retur" FontWeight="Bold" FontSize="14" Foreground="#064E3B"/>
-                        <TextBlock Text="Konfirmasi barang diterima pelanggan. Jika ada sisa tagihan, status menjadi TEMPO." FontSize="11" Foreground="#475569" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                        <TextBlock Text="4. Konfirmasi Terima (TEMPO)" FontWeight="Bold" FontSize="13" Foreground="#064E3B"/>
+                        <TextBlock Text="Konfirmasi barang diterima. Dihitung Omset Sah. Status: TEMPO." FontSize="10.5" Foreground="#475569" TextWrapping="Wrap" Margin="0,4,0,0"/>
                     </StackPanel>
                 </Border>
 
-                <TextBlock Grid.Column="1" Text="➔" VerticalAlignment="Center" Margin="12,0" FontSize="18" Foreground="#94A3B8"/>
+                <TextBlock Grid.Column="1" Text="➔" VerticalAlignment="Center" Margin="10,0" FontSize="16" Foreground="#94A3B8"/>
 
                 <!-- Step 5 -->
-                <Border Grid.Column="2" Background="White" BorderBrush="#06B6D4" BorderThickness="1.5" CornerRadius="10" Padding="14">
+                <Border Grid.Column="2" Background="White" BorderBrush="#06B6D4" BorderThickness="1.5" CornerRadius="10" Padding="12">
                     <StackPanel>
-                        <Border Background="#ECFEFF" CornerRadius="6" Padding="6,3" HorizontalAlignment="Left" Margin="0,0,0,8">
+                        <Border Background="#ECFEFF" CornerRadius="6" Padding="6,3" HorizontalAlignment="Left" Margin="0,0,0,6">
                             <TextBlock Text="Langkah 5" FontSize="10" FontWeight="Bold" Foreground="#0E7490"/>
                         </Border>
-                        <TextBlock Text="5. Pembayaran &amp; Lunas" FontWeight="Bold" FontSize="14" Foreground="#164E63"/>
-                        <TextBlock Text="Catat pelunasan pembayaran. Saat sisa tagihan = 0, status transaksi otomatis menjadi DONE." FontSize="11" Foreground="#475569" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                        <TextBlock Text="5. Pembayaran &amp; Lunas (DONE)" FontWeight="Bold" FontSize="13" Foreground="#164E63"/>
+                        <TextBlock Text="Catat pelunasan pembayaran. Dihitung Omset Sah. Status: DONE." FontSize="10.5" Foreground="#475569" TextWrapping="Wrap" Margin="0,4,0,0"/>
                     </StackPanel>
                 </Border>
             </Grid>
-
-            <!-- Support Footer Note -->
-            <Border Background="#F1F5F9" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Padding="14,10">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="💡 PETUNJUK:" FontWeight="Bold" FontSize="12" Foreground="#334155" Margin="0,0,8,0"/>
-                    <TextBlock Text="Gunakan navigasi di bagian atas untuk mengakses Produk, Master Data, Transaksi, Pembayaran, Pengiriman, dan Laporan." FontSize="12" Foreground="#475569"/>
-                </StackPanel>
-            </Border>
         </StackPanel>
     </ScrollViewer>
 </UserControl>
+
 
