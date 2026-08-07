@@ -29,6 +29,15 @@ namespace SPJ_APP.View.Pages
         public string OmsetDisplay { get; set; } = "Rp 0";
     }
 
+    public class JalurPengirimanDisplayItem
+    {
+        public string JalurName { get; set; } = "Tanpa Jalur";
+        public int OrderCount { get; set; }
+        public string OrderCountDisplay => $"{OrderCount} Nota";
+        public decimal TotalNominal { get; set; }
+        public string TotalNominalDisplay => $"Rp {TotalNominal:N0}";
+    }
+
     public partial class HomePage : UserControl, IRefreshablePage
     {
         private readonly CultureInfo _cultureIndo = new CultureInfo("id-ID");
@@ -68,10 +77,10 @@ namespace SPJ_APP.View.Pages
                 var db = await LocalDatabaseService.GetConnection();
 
                 // 1. Fetch All Master Data & Transactions from SQLite
-
                 var salesPersons = await db.Table<LocalSalesPerson>().ToListAsync();
                 var allSales = await db.Table<LocalSale>().ToListAsync();
                 var allVisits = await db.Table<LocalVisitLogQueue>().ToListAsync();
+                var customers = await db.Table<LocalCustomer>().ToListAsync();
 
                 // 2. Filter Sales in Current Month based on DeliveryDate for Delivered Sales (TEMPO & DONE)
                 var currentMonthDeliveredSales = allSales
@@ -210,6 +219,62 @@ namespace SPJ_APP.View.Pages
 
                 // Sort Sales Persons by Omset descending
                 TabelKinerjaSales.ItemsSource = salesPerformanceList.OrderByDescending(s => s.OmsetTotal).ToList();
+
+                // 6. Build Undelivered Sales Nominal Grouped by Delivery Route (Jalur Pengiriman)
+                var customerDictById = new Dictionary<string, LocalCustomer>(StringComparer.OrdinalIgnoreCase);
+                var customerDictByName = new Dictionary<string, LocalCustomer>(StringComparer.OrdinalIgnoreCase);
+
+                foreach (var c in customers)
+                {
+                    if (!string.IsNullOrEmpty(c.Id)) customerDictById[c.Id] = c;
+                    if (!string.IsNullOrWhiteSpace(c.Name)) customerDictByName[c.Name.Trim()] = c;
+                }
+
+                LocalCustomer? GetCustomerForSale(string? customerIdOrName)
+                {
+                    if (string.IsNullOrWhiteSpace(customerIdOrName)) return null;
+                    string key = customerIdOrName.Trim();
+                    if (customerDictById.TryGetValue(key, out var c1)) return c1;
+                    if (customerDictByName.TryGetValue(key, out var c2)) return c2;
+                    return null;
+                }
+
+                var undeliveredSalesList = allSales
+                    .Where(s => string.Equals(s.Status, "ON PROSES", StringComparison.OrdinalIgnoreCase) ||
+                                string.Equals(s.Status, "DALAM PENGIRIMAN", StringComparison.OrdinalIgnoreCase) ||
+                                string.Equals(s.Status, "SO", StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                var jalurGroups = undeliveredSalesList
+                    .GroupBy(s => {
+                        var cust = GetCustomerForSale(s.CustomerId);
+                        if (cust != null && !string.IsNullOrWhiteSpace(cust.JalurPengiriman))
+                        {
+                            return cust.JalurPengiriman.Trim();
+                        }
+                        return "Tanpa Jalur / Umum";
+                    })
+                    .Select(g => new JalurPengirimanDisplayItem
+                    {
+                        JalurName = g.Key.StartsWith("🚚") ? g.Key : $"🚚 {g.Key}",
+                        OrderCount = g.Count(),
+                        TotalNominal = g.Sum(s => s.Total)
+                    })
+                    .OrderByDescending(j => j.TotalNominal)
+                    .ToList();
+
+
+                if (!jalurGroups.Any())
+                {
+                    jalurGroups.Add(new JalurPengirimanDisplayItem
+                    {
+                        JalurName = "✅ Semua Nota Telah Terkirim (0 Pending)",
+                        OrderCount = 0,
+                        TotalNominal = 0
+                    });
+                }
+
+                TabelJalurPengiriman.ItemsSource = jalurGroups;
             }
             catch (Exception ex)
             {
@@ -218,3 +283,4 @@ namespace SPJ_APP.View.Pages
         }
     }
 }
+

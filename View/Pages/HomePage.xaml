@@ -137,8 +137,31 @@
                 </Border>
             </Grid>
 
+            <!-- Row 2 Panel: Nominal Nota Belum Dikirim per Jalur Pengiriman -->
+
+            <Border Background="White" BorderBrush="#8B5CF6" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,0,24">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                        <Border Background="#F5F3FF" CornerRadius="6" Padding="6,3" Margin="0,0,8,0">
+                            <TextBlock Text="🚚 JALUR PENGIRIMAN" FontSize="11" FontWeight="Bold" Foreground="#6D28D9"/>
+                        </Border>
+                        <TextBlock Text="Nominal Nota Belum Dikirim per Jalur Pengiriman" FontSize="14" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                        <TextBlock Text=" (Status: SO, ON PROSES, DALAM PENGIRIMAN)" FontSize="12" Foreground="#64748B" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <DataGrid x:Name="TabelJalurPengiriman" AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9" RowHeight="36" Background="Transparent" BorderThickness="0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Jalur Pengiriman (Customer Route)" Binding="{Binding JalurName}" Width="2*"/>
+                            <DataGridTextColumn Header="Jumlah Nota Belum Kirim" Binding="{Binding OrderCountDisplay}" Width="*"/>
+                            <DataGridTextColumn Header="Total Nominal Rp (Pending Delivery)" Binding="{Binding TotalNominalDisplay}" Width="1.5*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+
             <!-- 5-Step Operational Workflow Cards -->
             <TextBlock Text="📍 Alur Kerja Operasional Penjualan" FontSize="15" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,12"/>
+
 
             <Grid Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>

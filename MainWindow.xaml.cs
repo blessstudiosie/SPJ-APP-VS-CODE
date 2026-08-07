@@ -204,7 +204,7 @@ namespace SPJ_APP
             MenuItem[] topMenus = new[]
             {
                 NavBeranda, NavProduk, NavMasterData, NavTransaksi,
-                NavInbox, NavPembayaran, NavPengiriman, NavLaporan,
+                NavInbox, NavPengiriman, NavLaporan,
                 NavPengaturan, MenuDeveloperTools
             };
 
@@ -218,6 +218,7 @@ namespace SPJ_APP
                 }
             }
         }
+
 
         private void MenuBeranda_Click(object sender, RoutedEventArgs e)
         {
@@ -283,11 +284,12 @@ namespace SPJ_APP
 
         private void MenuKonfirmasiPembayaran_Click(object sender, RoutedEventArgs e)
         {
-            if (SetActiveMenu(NavPembayaran, "Konfirmasi Pembayaran", typeof(PaymentConfirmationPage)))
+            if (SetActiveMenu(NavTransaksi, "Konfirmasi Pembayaran", typeof(PaymentConfirmationPage)))
             {
                 AreaKonten.Content = new PaymentConfirmationPage();
             }
         }
+
 
         private void MenuPengiriman_Click(object sender, RoutedEventArgs e)
         {
