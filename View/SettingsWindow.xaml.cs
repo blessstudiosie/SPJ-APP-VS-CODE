@@ -14,6 +14,13 @@ namespace SPJ_APP.View
             InitializeComponent();
         }
 
+        private void TombolUbahPassword_Click(object sender, RoutedEventArgs e)
+        {
+            var changePassWindow = new ChangePasswordWindow { Owner = this };
+            changePassWindow.ShowDialog();
+        }
+
+
         private async void TombolTarikFullData_Click(object sender, RoutedEventArgs e)
         {
             var confirm = MessageBox.Show(

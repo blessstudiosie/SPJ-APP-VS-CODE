@@ -61,7 +61,11 @@
                             <MenuItem x:Name="NavPembayaran" Header="💳 Pembayaran" Click="MenuKonfirmasiPembayaran_Click" Padding="10,6"/>
                             <MenuItem x:Name="NavPengiriman" Header="🚚 Pengiriman" Click="MenuPengiriman_Click" Padding="10,6"/>
                             <MenuItem x:Name="NavLaporan" Header="📊 Laporan" Click="MenuLaporan_Click" Padding="10,6"/>
-                            <MenuItem x:Name="NavPengaturan" Header="⚙️ Pengaturan" Click="MenuPengaturan_Click" Padding="10,6"/>
+                            <MenuItem x:Name="NavPengaturan" Header="⚙️ Pengaturan" Padding="10,6">
+                                <MenuItem Header="🔑 Ubah Password Saya..." Click="MenuUbahPassword_Click"/>
+                                <MenuItem Header="⚙️ Pengaturan System &amp; Data..." Click="MenuPengaturan_Click"/>
+                            </MenuItem>
+
                             <MenuItem x:Name="MenuDeveloperTools" Header="🛠️ Developer Tools" Visibility="Collapsed" Padding="10,6">
                                 <MenuItem Header="Database Inspector (UI Local DB)" Click="MenuDatabaseInspector_Click"/>
                                 <MenuItem Header="Import / Export Data Maintenance" Click="MenuPengaturan_Click"/>

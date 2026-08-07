@@ -4,7 +4,15 @@
         Title="Pengaturan, Sync &amp; Backup" Height="580" Width="550" WindowStartupLocation="CenterOwner">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="16">
+            <GroupBox Header="🔒 Keamanan &amp; Akun" Padding="12" Margin="0,0,0,15">
+                <StackPanel>
+                    <TextBlock Text="Ubah kata sandi login untuk menjaga keamanan akun Anda." TextWrapping="Wrap" Margin="0,0,0,10" Foreground="#334155"/>
+                    <Button x:Name="TombolUbahPassword" Content="🔑 Ubah Password Saya..." Height="36" Padding="12,5" HorizontalAlignment="Left" Background="#4F46E5" Foreground="White" FontWeight="SemiBold" Click="TombolUbahPassword_Click"/>
+                </StackPanel>
+            </GroupBox>
+
             <GroupBox Header="🔄 Pull Full Data dari Supabase Cloud" Padding="12">
+
                 <StackPanel>
                     <TextBlock Text="Unduh seluruh data terbaru dari database cloud Supabase (Akun Sales, Customer, Produk, Transaksi Nota, Pembayaran, Antrean PO/Kunjungan) dan simpan ke SQLite lokal." TextWrapping="Wrap" Margin="0,0,0,10" Foreground="#334155"/>
                     <Button x:Name="TombolTarikFullData" Content="⬇️ Tarik Penuh Semua Data dari Supabase..." Height="38" Padding="14,6" HorizontalAlignment="Left" Background="#4F46E5" Foreground="White" FontWeight="Bold" Click="TombolTarikFullData_Click"/>

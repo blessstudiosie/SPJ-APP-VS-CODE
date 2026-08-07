@@ -164,6 +164,14 @@ namespace SPJ_APP
             SetActiveMenu(NavPengaturan, "Pengaturan System");
         }
 
+        private void MenuUbahPassword_Click(object sender, RoutedEventArgs e)
+        {
+            var changePassWindow = new ChangePasswordWindow { Owner = this };
+            changePassWindow.ShowDialog();
+            SetActiveMenu(NavPengaturan, "Ubah Password");
+        }
+
+
         private void MenuDatabaseInspector_Click(object sender, RoutedEventArgs e)
         {
             AreaKonten.Content = new DatabaseInspectorPage();
