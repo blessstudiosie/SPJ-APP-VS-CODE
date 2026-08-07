@@ -6,10 +6,7 @@ namespace SPJ_APP.Model
     [Table("customers")]
     public class Customer : BaseModel
     {
-        [PrimaryKey("id", false)]
-        public Guid Id { get; set; }
-
-        [Column("name")]
+        [PrimaryKey("name", false)]
         public string Name { get; set; } = string.Empty;
 
         [Column("owner_name")]
@@ -30,16 +27,16 @@ namespace SPJ_APP.Model
         [Column("longitude")]
         public double? Longitude { get; set; }
 
-        [Column("sales_person_id")]
-        public Guid? SalesPersonId { get; set; }
+        [Column("sales_person")]
+        public string? SalesPerson { get; set; }
 
         [Column("limit_piutang")]
         public decimal LimitPiutang { get; set; }
 
         [Column("created_at", ignoreOnInsert: true, ignoreOnUpdate: true)]
-public DateTime? CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
-[Column("updated_at", ignoreOnInsert: true, ignoreOnUpdate: true)]
-public DateTime? UpdatedAt { get; set; }
+        [Column("updated_at", ignoreOnInsert: true, ignoreOnUpdate: true)]
+        public DateTime? UpdatedAt { get; set; }
     }
-}
+}

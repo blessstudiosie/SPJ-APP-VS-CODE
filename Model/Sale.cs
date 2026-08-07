@@ -6,14 +6,11 @@ namespace SPJ_APP.Model
     [Table("sales")]
     public class Sale : BaseModel
     {
-        [PrimaryKey("id", false)]
-        public Guid Id { get; set; }
-
-        [Column("nota")]
+        [PrimaryKey("nota", false)]
         public string Nota { get; set; } = string.Empty;
 
-        [Column("customer_id")]
-        public Guid? CustomerId { get; set; }
+        [Column("customer_name")]
+        public string? CustomerName { get; set; }
 
         [Column("order_date")]
         public DateTime OrderDate { get; set; }
@@ -24,8 +21,8 @@ namespace SPJ_APP.Model
         [Column("status")]
         public string Status { get; set; } = "SO";
 
-        [Column("sales_person_id")]
-        public Guid? SalesPersonId { get; set; }
+        [Column("sales_person")]
+        public string? SalesPerson { get; set; }
 
         [Column("total")]
         public decimal Total { get; set; }
@@ -45,4 +42,4 @@ namespace SPJ_APP.Model
         [Column("updated_at", ignoreOnInsert: true, ignoreOnUpdate: true)]
         public DateTime? UpdatedAt { get; set; }
     }
-}
+}

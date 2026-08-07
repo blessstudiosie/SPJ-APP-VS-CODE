@@ -7,13 +7,13 @@ namespace SPJ_APP.Model
     public class SaleDetail : BaseModel
     {
         [PrimaryKey("id", false)]
-        public Guid Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
-        [Column("sale_id")]
-        public Guid SaleId { get; set; }
+        [Column("nota")]
+        public string Nota { get; set; } = string.Empty;
 
-        [Column("product_id")]
-        public Guid ProductId { get; set; }
+        [Column("item_name")]
+        public string ItemName { get; set; } = string.Empty;
 
         [Column("qty")]
         public decimal Qty { get; set; }
@@ -30,4 +30,4 @@ namespace SPJ_APP.Model
         [Column("created_at")]
         public DateTime? CreatedAt { get; set; }
     }
-}
+}

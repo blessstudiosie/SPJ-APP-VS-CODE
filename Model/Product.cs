@@ -6,10 +6,7 @@ namespace SPJ_APP.Model
     [Table("products")]
     public class Product : BaseModel
     {
-        [PrimaryKey("id", false)]
-        public Guid Id { get; set; }
-
-        [Column("name")]
+        [PrimaryKey("name", false)]
         public string Name { get; set; } = string.Empty;
 
         [Column("stok_ready")]
@@ -48,7 +45,10 @@ namespace SPJ_APP.Model
         [Column("description")]
         public string? Description { get; set; }
 
-[Column("updated_at", ignoreOnInsert: true, ignoreOnUpdate: true)]
-public DateTime? UpdatedAt { get; set; }
+        [Column("created_at", ignoreOnInsert: true, ignoreOnUpdate: true)]
+        public DateTime? CreatedAt { get; set; }
+
+        [Column("updated_at", ignoreOnInsert: true, ignoreOnUpdate: true)]
+        public DateTime? UpdatedAt { get; set; }
     }
-}
+}

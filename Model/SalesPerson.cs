@@ -6,10 +6,7 @@ namespace SPJ_APP.Model
     [Table("sales_persons")]
     public class SalesPerson : BaseModel
     {
-        [PrimaryKey("id", false)]
-        public Guid Id { get; set; }
-
-        [Column("name")]
+        [PrimaryKey("name", false)]
         public string Name { get; set; } = string.Empty;
 
         [Column("phone")]
@@ -25,14 +22,12 @@ namespace SPJ_APP.Model
         public string? Role { get; set; }
 
         [Column("created_at", ignoreOnInsert: true, ignoreOnUpdate: true)]
-public DateTime? CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
-[Column("updated_at", ignoreOnInsert: true, ignoreOnUpdate: true)]
-public DateTime? UpdatedAt { get; set; }
+        [Column("updated_at", ignoreOnInsert: true, ignoreOnUpdate: true)]
+        public DateTime? UpdatedAt { get; set; }
 
-// TODO: Hash password before production use. Currently plain text for initial release.
-[Column("password")]
-public string? Password { get; set; }
-
+        [Column("password")]
+        public string? Password { get; set; }
     }
-}
+}
