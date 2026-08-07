@@ -31,6 +31,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     
                     <!-- App Logo & Brand Title -->
@@ -68,6 +69,8 @@
                             <MenuItem x:Name="NavPengaturan" Header="⚙️ Pengaturan" Padding="10,6">
                                 <MenuItem Header="🔑 Ubah Password Saya..." Click="MenuUbahPassword_Click"/>
                                 <MenuItem Header="⚙️ Pengaturan System &amp; Data..." Click="MenuPengaturan_Click"/>
+                                <Separator/>
+                                <MenuItem Header="🚪 Log Out (Keluar Akun)..." Click="MenuLogout_Click" Foreground="#EF4444" FontWeight="Bold"/>
                             </MenuItem>
 
                             <MenuItem x:Name="MenuDeveloperTools" Header="🛠️ Developer Tools" Visibility="Collapsed" Padding="10,6">
@@ -77,8 +80,21 @@
                             <MenuItem Header="🔄 Sync Sekarang" Click="MenuSync_Click" Foreground="#4F46E5" FontWeight="Bold" Padding="12,6"/>
                         </Menu>
                     </ScrollViewer>
+
+                    <!-- Right User Profile & Log Out Button -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
+                        <Border Background="#F1F5F9" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Padding="8,4" Margin="0,0,8,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="👤 " FontSize="12"/>
+                                <TextBlock x:Name="TeksUserBadge" Text="blessstudiosie (DEVELOPER)" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Button x:Name="TombolLogout" Content="🚪 Log Out" Padding="10,5" Height="32" Background="#FEF2F2" Foreground="#EF4444" BorderBrush="#FCA5A5" FontWeight="Bold" Click="MenuLogout_Click"/>
+                    </StackPanel>
                 </Grid>
             </Border>
+
 
             <!-- Main Content Container -->
             <ContentControl x:Name="AreaKonten" Margin="16"/>

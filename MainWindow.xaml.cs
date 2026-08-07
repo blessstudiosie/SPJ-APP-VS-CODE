@@ -94,15 +94,23 @@ namespace SPJ_APP
                 var currentUser = CurrentUserService.LoggedInUser;
                 Title = $"SPJ App - Selamat Datang, {currentUser?.Name ?? "User"}!";
 
+                if (TeksUserBadge != null && currentUser != null)
+                {
+                    TeksUserBadge.Text = $"{currentUser.Name} ({currentUser.Role})";
+                }
+
                 // Tampilkan Developer Tools untuk Akun Developer / Admin
                 var currentUserRole = currentUser?.Role?.ToUpperInvariant();
                 var currentUserName = currentUser?.Name;
                 if (currentUserRole == "DEVELOPER" ||
-                    string.Equals(currentUserName, "blessstudiosie", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(currentUserName, "Developer", StringComparison.OrdinalIgnoreCase) ||
-                    currentUserRole == "ADMIN")
+                    currentUserRole == "ADMIN" ||
+                    string.Equals(currentUserName, "blessstudiosie", StringComparison.OrdinalIgnoreCase))
                 {
                     MenuDeveloperTools.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    MenuDeveloperTools.Visibility = Visibility.Collapsed;
                 }
 
                 // Default tampilan utama adalah Beranda (HomePage)
@@ -114,6 +122,53 @@ namespace SPJ_APP
                 App.LogAndShowError("Gagal Memuat Jendela Utama MainWindow", ex);
             }
         }
+
+        private void MenuLogout_Click(object sender, RoutedEventArgs e)
+        {
+            var currentUser = CurrentUserService.LoggedInUser;
+            string userName = currentUser?.Name ?? "User";
+
+            bool confirm = DialogHelper.ShowConfirm(
+                $"Apakah Anda yakin ingin keluar (Log Out) dari akun '{userName}'?",
+                "Konfirmasi Log Out");
+
+            if (!confirm) return;
+
+            try
+            {
+                // Hentikan background sync timer
+                BackgroundSyncService.Instance.Stop();
+
+                // Reset user session
+                CurrentUserService.LoggedInUser = null;
+
+                // Atur ShutdownMode agar penutupan MainWindow tidak langsung menghentikan app
+                Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                Close();
+
+                // Buka dialog login kembali
+                var loginWindow = new LoginWindow();
+                bool? loginResult = loginWindow.ShowDialog();
+
+                if (loginResult == true && CurrentUserService.LoggedInUser != null)
+                {
+                    BackgroundSyncService.Instance.Start();
+                    var newMainWindow = new MainWindow();
+                    Application.Current.MainWindow = newMainWindow;
+                    Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
+                    newMainWindow.Show();
+                }
+                else
+                {
+                    Application.Current.Shutdown();
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError($"Gagal melakukan Log Out:\n{ex.Message}");
+            }
+        }
+
 
         private void SetActiveMenu(MenuItem activeItem, string pageName)
         {
