@@ -52,8 +52,9 @@ namespace SPJ_APP.View
             if (_isEditMode)
             {
                 TeksNota.Text = $"Nota: {_existingSale!.Nota}";
-                InputCustomer.SelectedItem = _customers.FirstOrDefault(c => c.Id == _existingSale.CustomerId);
-                InputSales.SelectedItem = _salesPersons.FirstOrDefault(s => s.Id == _existingSale.SalesPersonId);
+                InputCustomer.SelectedItem = _customers.FirstOrDefault(c => c.Id == _existingSale.CustomerId || string.Equals(c.Name, _existingSale.CustomerId, StringComparison.OrdinalIgnoreCase));
+                InputSales.SelectedItem = _salesPersons.FirstOrDefault(s => s.Id == _existingSale.SalesPersonId || string.Equals(s.Name, _existingSale.SalesPersonId, StringComparison.OrdinalIgnoreCase));
+
 
                 var localDb = await LocalDatabaseService.GetConnection();
                 var details = await localDb.Table<LocalSalesDetail>()

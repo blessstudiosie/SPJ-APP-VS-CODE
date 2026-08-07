@@ -42,19 +42,24 @@ namespace SPJ_APP.Service
             var pageItems = sorted
                 .Skip((pageNumber - 1) * PageSize)
                 .Take(PageSize)
-                .Select(s => new SaleDisplayItem
+                .Select(s =>
                 {
-                    Id = s.Id,
-                    Nota = s.Nota,
-                    CustomerName = customers.FirstOrDefault(c => c.Id == s.CustomerId)?.Name ?? "-",
-                    SalesPersonName = salesPersons.FirstOrDefault(sp => sp.Id == s.SalesPersonId)?.Name ?? "-",
-                    OrderDate = s.OrderDate,
-                    DeliveryDate = s.DeliveryDate,
-                    Status = s.Status,
-                    Total = s.Total,
-                    Paid = s.Paid,
-                    Remaining = s.Remaining,
-                    Original = s
+                    var cust = customers.FirstOrDefault(c => c.Id == s.CustomerId || string.Equals(c.Name, s.CustomerId, StringComparison.OrdinalIgnoreCase));
+                    var sp = salesPersons.FirstOrDefault(x => x.Id == s.SalesPersonId || string.Equals(x.Name, s.SalesPersonId, StringComparison.OrdinalIgnoreCase));
+                    return new SaleDisplayItem
+                    {
+                        Id = s.Id,
+                        Nota = s.Nota,
+                        CustomerName = cust?.Name ?? (string.IsNullOrWhiteSpace(s.CustomerId) ? "-" : s.CustomerId),
+                        SalesPersonName = sp?.Name ?? (string.IsNullOrWhiteSpace(s.SalesPersonId) ? "-" : s.SalesPersonId),
+                        OrderDate = s.OrderDate,
+                        DeliveryDate = s.DeliveryDate,
+                        Status = s.Status,
+                        Total = s.Total,
+                        Paid = s.Paid,
+                        Remaining = s.Remaining,
+                        Original = s
+                    };
                 })
                 .ToList();
 
@@ -62,30 +67,35 @@ namespace SPJ_APP.Service
         }
 		
 		public static async Task<List<SaleDisplayItem>> GetSalesByStatusAsync(string status)
-{
-    var localDb = await LocalDatabaseService.GetConnection();
-
-    var sales = await localDb.Table<LocalSale>().Where(s => s.Status == status).ToListAsync();
-    var customers = await localDb.Table<LocalCustomer>().ToListAsync();
-    var salesPersons = await localDb.Table<LocalSalesPerson>().ToListAsync();
-
-    return sales
-        .OrderByDescending(s => s.OrderDate)
-        .Select(s => new SaleDisplayItem
         {
-            Id = s.Id,
-            Nota = s.Nota,
-            CustomerName = customers.FirstOrDefault(c => c.Id == s.CustomerId)?.Name ?? "-",
-            SalesPersonName = salesPersons.FirstOrDefault(sp => sp.Id == s.SalesPersonId)?.Name ?? "-",
-            OrderDate = s.OrderDate,
-            DeliveryDate = s.DeliveryDate,
-            Status = s.Status,
-            Total = s.Total,
-            Paid = s.Paid,
-            Remaining = s.Remaining,
-            Original = s
-        })
-        .ToList();
-}
+            var localDb = await LocalDatabaseService.GetConnection();
+
+            var sales = await localDb.Table<LocalSale>().Where(s => s.Status == status).ToListAsync();
+            var customers = await localDb.Table<LocalCustomer>().ToListAsync();
+            var salesPersons = await localDb.Table<LocalSalesPerson>().ToListAsync();
+
+            return sales
+                .OrderByDescending(s => s.OrderDate)
+                .Select(s =>
+                {
+                    var cust = customers.FirstOrDefault(c => c.Id == s.CustomerId || string.Equals(c.Name, s.CustomerId, StringComparison.OrdinalIgnoreCase));
+                    var sp = salesPersons.FirstOrDefault(x => x.Id == s.SalesPersonId || string.Equals(x.Name, s.SalesPersonId, StringComparison.OrdinalIgnoreCase));
+                    return new SaleDisplayItem
+                    {
+                        Id = s.Id,
+                        Nota = s.Nota,
+                        CustomerName = cust?.Name ?? (string.IsNullOrWhiteSpace(s.CustomerId) ? "-" : s.CustomerId),
+                        SalesPersonName = sp?.Name ?? (string.IsNullOrWhiteSpace(s.SalesPersonId) ? "-" : s.SalesPersonId),
+                        OrderDate = s.OrderDate,
+                        DeliveryDate = s.DeliveryDate,
+                        Status = s.Status,
+                        Total = s.Total,
+                        Paid = s.Paid,
+                        Remaining = s.Remaining,
+                        Original = s
+                    };
+                })
+                .ToList();
+        }
     }
-}
+}
