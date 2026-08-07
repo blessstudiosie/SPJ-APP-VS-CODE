@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET10_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NET10_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\Users\ADVAN\Antigravity SPJ\SPJ APP\App.xaml
-32745424181
+33-991651670
 
-861169810269
+87-1101129533
 2291562877282
-MainWindow.xaml;View\AutoPurchaseOrderWindow.xaml;View\ChangePasswordWindow.xaml;View\ConflictResolutionWindow.xaml;View\CreateAdminWindow.xaml;View\CustomerFormWindow.xaml;View\DeliveryAssigmentWindow.xaml;View\DeliveryVerificationWindow.xaml;View\ErrorDialogWindow.xaml;View\GoodsReceiptFormWindow.xaml;View\ImportDataWindow.xaml;View\InitialSetupWindow.xaml;View\LoginWindow.xaml;View\NotaFormWindow.xaml;View\Pages\CustomerListPage.xaml;View\Pages\DashboardPage.xaml;View\Pages\DatabaseInspectorPage.xaml;View\Pages\DeliverPage.xaml;View\Pages\HomePage.xaml;View\Pages\InboxSalesOrderPage.xaml;View\Pages\InboxVisitPage.xaml;View\Pages\NotaListPage.xaml;View\Pages\PaymentConfirmationPage.xaml;View\Pages\ProductListPage.xaml;View\Pages\ReportPage.xaml;View\Pages\SalesPersonListPage.xaml;View\PasswordPromptWindow.xaml;View\PaymentFormWindow.xaml;View\ProductFormWindow.xaml;View\SalesPersonFormWindow.xaml;View\SettingsWindow.xaml;View\StockOpnameWindow.xaml;
+MainWindow.xaml;View\AutoPurchaseOrderWindow.xaml;View\ChangePasswordWindow.xaml;View\ConflictResolutionWindow.xaml;View\CreateAdminWindow.xaml;View\CustomerFormWindow.xaml;View\DeliveryAssigmentWindow.xaml;View\DeliveryVerificationWindow.xaml;View\ErrorDialogWindow.xaml;View\GoodsReceiptFormWindow.xaml;View\ImportDataWindow.xaml;View\InitialSetupWindow.xaml;View\LoginWindow.xaml;View\NotaFormWindow.xaml;View\Pages\CustomerListPage.xaml;View\Pages\DashboardPage.xaml;View\Pages\DatabaseInspectorPage.xaml;View\Pages\DeliverPage.xaml;View\Pages\HomePage.xaml;View\Pages\InboxSalesOrderPage.xaml;View\Pages\InboxVisitPage.xaml;View\Pages\NotaListPage.xaml;View\Pages\PaymentConfirmationPage.xaml;View\Pages\ProductListPage.xaml;View\Pages\ReportPage.xaml;View\Pages\SalesPersonListPage.xaml;View\PasswordPromptWindow.xaml;View\PaymentFormWindow.xaml;View\ProductFormWindow.xaml;View\SalesPersonFormWindow.xaml;View\SettingsWindow.xaml;View\StockOpnameWindow.xaml;View\SyncProgressWindow.xaml;
 
 False
 

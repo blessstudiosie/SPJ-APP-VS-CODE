@@ -367,64 +367,23 @@ namespace SPJ_APP
         }
 
 
-        private async void MenuSync_Click(object sender, RoutedEventArgs e)
+        private void MenuSync_Click(object sender, RoutedEventArgs e)
         {
-            var menuItem = sender as MenuItem;
-            if (menuItem != null) menuItem.IsEnabled = false;
+            var syncWindow = new SyncProgressWindow { Owner = this };
+            syncWindow.ShowDialog();
 
-            // Tampilkan Modal Blocking Loading Overlay agar user menunggu hingga selesai 100%
-            LoadingHeaderTitle.Text = "Sedang Melakukan Sinkronisasi Data...";
-            LoadingHeaderSubtitle.Text = "Harap tunggu, sistem sedang bertukar data dengan server cloud Supabase.";
-            LoadingStatusText.Text = "Menghubungkan ke server...";
-            LoadingOverlay.Visibility = Visibility.Visible;
-            MainContentPanel.IsEnabled = false;
-
-            try
+            if (syncWindow.Conflicts.Any())
             {
-                var (summary, conflicts) = await SyncService.SyncAllAsync();
-                
-                if (conflicts.Any())
-                {
-                    var conflictWindow = new ConflictResolutionWindow(conflicts) { Owner = this };
-                    conflictWindow.ShowDialog();
-                }
-
-                // Refresh halaman yang sedang aktif, kalau halaman itu mendukung refresh
-                if (AreaKonten.Content is IRefreshablePage refreshable)
-                {
-                    refreshable.RefreshData();
-                }
-
-                DialogHelper.ShowInfo(summary.ToDisplayText(), "Sinkronisasi Berhasil Selesai");
+                var conflictWindow = new ConflictResolutionWindow(syncWindow.Conflicts) { Owner = this };
+                conflictWindow.ShowDialog();
             }
-            catch (Exception ex)
-            {
-                DialogHelper.ShowError(DialogHelper.GetFullErrorDetail(ex), "Gagal Sinkronisasi");
-            }
-            finally
-            {
-                if (menuItem != null) menuItem.IsEnabled = true;
-                LoadingOverlay.Visibility = Visibility.Collapsed;
-                MainContentPanel.IsEnabled = true;
-                SyncProgressBar.Visibility = Visibility.Collapsed;
-                SyncStatusTextRight.Text = $"✅ Sync selesai ({DateTime.Now:HH:mm:ss})";
-                SyncStatusTextRight.Visibility = Visibility.Visible;
-                SetActiveMenu(NavBeranda, "Beranda Utama", typeof(HomePage));
 
-
-                _ = Task.Run(async () =>
-                {
-                    await Task.Delay(5000);
-                    Dispatcher.Invoke(() =>
-                    {
-                        if (SyncProgressBar.Visibility == Visibility.Collapsed)
-                        {
-                            SyncStatusTextRight.Visibility = Visibility.Collapsed;
-                        }
-                    });
-                });
+            if (AreaKonten.Content is IRefreshablePage refreshable)
+            {
+                refreshable.RefreshData();
             }
         }
+
 
         private void ToastNotificationCard_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

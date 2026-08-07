@@ -544,3 +544,5 @@ C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\SPJ APP_MarkupC
 C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\App.baml
 C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\ChangePasswordWindow.baml
 C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\ChangePasswordWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\SyncProgressWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\SyncProgressWindow.g.cs
