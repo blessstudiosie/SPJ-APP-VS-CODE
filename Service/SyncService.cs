@@ -141,11 +141,13 @@ namespace SPJ_APP.Service
             foreach (var local in localItems)
             {
                 if (string.Equals(local.Role, "DEVELOPER", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(local.Name, "blessstudiosie", StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(local.Name, "Developer", StringComparison.OrdinalIgnoreCase))
                 {
                     // Akun Developer khusus lokal - jangan kirim ke Supabase
                     continue;
                 }
+
 
                 var remote = new SalesPerson { Name = local.Name, Phone = local.Phone, Email = local.Email, TargetOmset = local.TargetOmset, Role = local.Role, Password = local.Password };
                 if (remoteNames.Contains(local.Name)) await supabase.From<SalesPerson>().Update(remote);

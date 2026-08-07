@@ -67,10 +67,14 @@ namespace SPJ_APP
                 // Tampilkan Developer Tools untuk Akun Developer / Admin
                 var currentUserRole = currentUser?.Role?.ToUpperInvariant();
                 var currentUserName = currentUser?.Name;
-                if (currentUserRole == "DEVELOPER" || currentUserRole == "ADMIN" || currentUserName == "Developer")
+                if (currentUserRole == "DEVELOPER" ||
+                    string.Equals(currentUserName, "blessstudiosie", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(currentUserName, "Developer", StringComparison.OrdinalIgnoreCase) ||
+                    currentUserRole == "ADMIN")
                 {
                     MenuDeveloperTools.Visibility = Visibility.Visible;
                 }
+
 
                 StatusText.Text = $"Login sebagai {currentUser?.Name ?? "User"} ({currentUser?.Role ?? "SALES"})";
 

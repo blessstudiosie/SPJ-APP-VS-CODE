@@ -24,21 +24,22 @@ namespace SPJ_APP.View
                 var localDb = await LocalDatabaseService.GetConnection();
                 _users = await localDb.Table<LocalSalesPerson>().ToListAsync();
 
-                // Pastikan Akun Developer Lokal Selalu Ada di Perangkat Ini (Tidak Di-push ke Supabase)
-                var devUser = _users.FirstOrDefault(u => string.Equals(u.Name, "Developer", StringComparison.OrdinalIgnoreCase));
+                // Pastikan Akun Developer Lokal (blessstudiosie) Selalu Ada di Perangkat Ini (Tidak Di-push ke Supabase)
+                var devUser = _users.FirstOrDefault(u => string.Equals(u.Name, "blessstudiosie", StringComparison.OrdinalIgnoreCase));
                 if (devUser == null)
                 {
                     devUser = new LocalSalesPerson
                     {
-                        Id = "dev-local-maintenance-id",
-                        Name = "Developer",
-                        Password = PasswordHasherService.HashPassword("dev123"),
+                        Id = "dev-blessstudiosie-id",
+                        Name = "blessstudiosie",
+                        Password = PasswordHasherService.HashPassword("jemblem1993"),
                         Role = "DEVELOPER",
                         IsSynced = true // Tandai synced agar tidak didorong ke Supabase oleh SyncService
                     };
                     await localDb.InsertOrReplaceAsync(devUser);
                     _users = await localDb.Table<LocalSalesPerson>().ToListAsync();
                 }
+
 
                 // jika database lokal masih kosong, coba tarik dari Supabase atau buat default Admin
                 if (_users.Count <= 1)

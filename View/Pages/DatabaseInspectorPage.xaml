@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Margin="15">
+             d:DesignHeight="600" d:DesignWidth="900">
+    <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -13,20 +13,35 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="LightYellow" BorderBrush="Orange" BorderThickness="1" Padding="10" Margin="0,0,0,10">
-            <TextBlock Text="PERINGATAN: Alat ini memodifikasi database lokal secara langsung dan melewati semua validasi bisnis (misal: stok, total nota tidak akan dihitung ulang). Gunakan hanya untuk perbaikan darurat. Risiko data korup ditanggung pengguna." TextWrapping="Wrap" FontWeight="Bold" Foreground="Red"/>
+        <!-- Header Title & Warning Card -->
+        <Border Grid.Row="0" Background="#FEF2F2" BorderBrush="#FECACA" BorderThickness="1" CornerRadius="10" Padding="14,12" Margin="0,0,0,14">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <TextBlock Text="🛠️ Developer Database Inspector (SQLite Local)" FontSize="15" FontWeight="Bold" Foreground="#991B1B"/>
+                </StackPanel>
+                <TextBlock Text="Modul ini mengizinkan pengeditan langsung pada tabel database lokal perangkat ini. Perubahan yang disimpan akan langsung memperbarui SQLite lokal. Gunakan hanya untuk pemeliharaan data darurat agar sistem berjalan lancar." TextWrapping="Wrap" FontSize="12" Foreground="#B91C1C"/>
+            </StackPanel>
         </Border>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
-            <TextBlock Text="Pilih Tabel:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <ComboBox x:Name="ComboTables" Width="200" SelectionChanged="ComboTables_SelectionChanged"/>
-        </StackPanel>
+        <!-- Table Selector Bar -->
+        <Border Grid.Row="1" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,12">
+            <Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="🔍 Pilih Tabel Database:" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="13" Foreground="#334155" Margin="0,0,12,0"/>
+                    <ComboBox x:Name="ComboTables" Width="260" Height="36" Padding="8,4" SelectionChanged="ComboTables_SelectionChanged" VerticalContentAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Border>
 
-        <DataGrid x:Name="DataGridContent" Grid.Row="2" AutoGenerateColumns="True" CanUserAddRows="False"/>
+        <!-- Data Grid View -->
+        <Border Grid.Row="2" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Padding="2">
+            <DataGrid x:Name="DataGridContent" AutoGenerateColumns="True" CanUserAddRows="False" GridLinesVisibility="Horizontal" HeadersVisibility="Column" Background="White"/>
+        </Border>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-            <Button x:Name="BtnSaveChanges" Content="Simpan Perubahan" Padding="10,5" Click="BtnSaveChanges_Click"/>
-            <Button x:Name="BtnDeleteSelected" Content="Hapus Baris Terpilih" Padding="10,5" Margin="10,0,0,0" Click="BtnDeleteSelected_Click"/>
+        <!-- Action Control Buttons -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+            <Button x:Name="BtnSaveChanges" Content="💾 Simpan Perubahan Edit" Height="40" Padding="18,8" Background="#4F46E5" Foreground="White" FontWeight="Bold" Click="BtnSaveChanges_Click"/>
+            <Button x:Name="BtnDeleteSelected" Content="🗑️ Hapus Baris Terpilih" Height="40" Padding="18,8" Margin="10,0,0,0" Background="#EF4444" Foreground="White" FontWeight="Bold" Click="BtnDeleteSelected_Click"/>
         </StackPanel>
     </Grid>
-</UserControl>
+</UserControl>

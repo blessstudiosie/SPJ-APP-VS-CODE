@@ -21,11 +21,12 @@
 
                     <!-- Input User -->
                     <TextBlock Text="Nama User / Akun" FontSize="12" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
-                    <ComboBox x:Name="InputNama" Margin="0,0,0,14" DisplayMemberPath="Name" IsEditable="True" Height="40" Padding="8,6"/>
+                    <ComboBox x:Name="InputNama" Margin="0,0,0,14" DisplayMemberPath="Name" IsEditable="True" MinHeight="38" Padding="8,6" VerticalContentAlignment="Center"/>
 
                     <!-- Input Password -->
                     <TextBlock Text="Password" FontSize="12" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
-                    <PasswordBox x:Name="InputPassword" Margin="0,0,0,16" KeyDown="InputPassword_KeyDown" Height="40"/>
+                    <PasswordBox x:Name="InputPassword" Margin="0,0,0,16" KeyDown="InputPassword_KeyDown" MinHeight="38" Padding="8,6" VerticalContentAlignment="Center"/>
+
 
                     <!-- Error / Info Status Text -->
                     <TextBlock x:Name="TeksStatus" Foreground="#DC2626" FontSize="12" Margin="0,0,0,14" TextWrapping="Wrap" HorizontalAlignment="Center"/>
