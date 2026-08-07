@@ -13,9 +13,20 @@ namespace SPJ_APP
         {
             InitializeComponent();
             AreaKonten.Content = new HomePage();
-            
+
             BackgroundSyncService.Instance.SyncStatusChanged += BackgroundSyncService_SyncStatusChanged;
+            SyncService.OnSyncProgress += SyncService_OnSyncProgress;
         }
+
+        private void SyncService_OnSyncProgress(string statusMessage)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                LoadingStatusText.Text = statusMessage;
+                StatusText.Text = statusMessage;
+            });
+        }
+
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {

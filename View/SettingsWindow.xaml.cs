@@ -32,11 +32,22 @@ namespace SPJ_APP.View
             if (confirm != MessageBoxResult.Yes) return;
 
             TombolTarikFullData.IsEnabled = false;
+            TeksProgressTarikData.Visibility = Visibility.Visible;
+            TeksProgressTarikData.Text = "⚡ Memulai proses penarikan data penuh...";
             var originalCursor = Cursor;
             Cursor = System.Windows.Input.Cursors.Wait;
 
+            Action<string> progressHandler = (statusMessage) =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    TeksProgressTarikData.Text = statusMessage;
+                });
+            };
+
             try
             {
+                SyncService.OnSyncProgress += progressHandler;
                 string result = await SyncService.PullAllFromSupabaseAsync();
                 MessageBox.Show(result, "Tarik Full Data Selesai", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -46,10 +57,13 @@ namespace SPJ_APP.View
             }
             finally
             {
+                SyncService.OnSyncProgress -= progressHandler;
                 TombolTarikFullData.IsEnabled = true;
                 Cursor = originalCursor;
+                TeksProgressTarikData.Text = "✅ Penarikan data selesai.";
             }
         }
+
 
         private async void TombolBackupLokal_Click(object sender, RoutedEventArgs e)
 

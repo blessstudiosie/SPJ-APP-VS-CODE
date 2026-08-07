@@ -16,7 +16,9 @@
                 <StackPanel>
                     <TextBlock Text="Unduh seluruh data terbaru dari database cloud Supabase (Akun Sales, Customer, Produk, Transaksi Nota, Pembayaran, Antrean PO/Kunjungan) dan simpan ke SQLite lokal." TextWrapping="Wrap" Margin="0,0,0,10" Foreground="#334155"/>
                     <Button x:Name="TombolTarikFullData" Content="⬇️ Tarik Penuh Semua Data dari Supabase..." Height="38" Padding="14,6" HorizontalAlignment="Left" Background="#4F46E5" Foreground="White" FontWeight="Bold" Click="TombolTarikFullData_Click"/>
+                    <TextBlock x:Name="TeksProgressTarikData" Text="" Foreground="#059669" FontSize="12.5" FontWeight="SemiBold" Margin="0,8,0,0" TextWrapping="Wrap" Visibility="Collapsed"/>
                 </StackPanel>
+
             </GroupBox>
 
             <GroupBox Header="Backup Database Lokal" Padding="10" Margin="0,15,0,0">

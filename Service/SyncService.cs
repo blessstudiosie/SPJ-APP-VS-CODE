@@ -47,19 +47,50 @@ namespace SPJ_APP.Service
 
     public static class SyncService
     {
+        public static event Action<string>? OnSyncProgress;
+
+        public static void ReportProgress(string message)
+        {
+            OnSyncProgress?.Invoke(message);
+        }
+
         public static async Task<(SyncSummary, List<ConflictItem>)> SyncAllAsync()
         {
+            ReportProgress("⚡ Memulai Sinkronisasi Data dengan Cloud Server...");
+
+            ReportProgress("📥 (1/10) Menarik konfirmasi pembayaran dari Android/Supabase...");
             await PullPendingPaymentsAsync();
+
+            ReportProgress("👥 (2/10) Menyinkronkan Master Data Sales Person...");
             var salesPersonsPushed = await SyncSalesPersonsAsync();
+
+            ReportProgress("🏪 (3/10) Menyinkronkan Master Data Pelanggan / Customer...");
             var customersPushed = await SyncCustomersAsync();
+
+            ReportProgress("📦 (4/10) Menyinkronkan Katalog Produk & Stok...");
             var productResult = await SyncProductsAsync();
+
+            ReportProgress("📑 (5/10) Menyinkronkan Transaksi Penjualan / Nota...");
             var salesResult = await SyncSalesAsync();
+
+            ReportProgress("💳 (6/10) Menyinkronkan Log Pembayaran Transaksi...");
             var paymentsPushed = await SyncPaymentsAsync();
+
+            ReportProgress("🚚 (7/10) Menyinkronkan Surat Jalan & Pengiriman...");
             var deliveriesPushed = await SyncDeliveriesAsync();
+
+            ReportProgress("📝 (8/10) Menyinkronkan Purchase Order Otomatis (PO)...");
             var purchaseOrdersPushed = await SyncPurchaseOrdersAsync();
+
+            ReportProgress("📋 (9/10) Menyinkronkan Audit Log Aktivitas...");
             var activityLogsPushed = await SyncActivityLogsAsync();
+
+            ReportProgress("📲 Menyinkronkan Antrian Mobile Sales Order & Visit Log...");
             await SyncSalesOrdersQueueAsync();
             await SyncVisitLogsQueueAsync();
+
+            ReportProgress("✅ (10/10) Sinkronisasi Data Selesai 100%!");
+
 
             var summary = new SyncSummary
             {
@@ -84,14 +115,17 @@ namespace SPJ_APP.Service
         /// hingga seluruh data (5.000, 10.000, 50.000+ item) berhasil diunduh tanpa ada yang terpotong.
         /// </summary>
         private static async Task<List<T>> FetchAllFromSupabaseAsync<T>(int pageSize = 1000) where T : BaseModel, new()
-
         {
             var supabase = await SupabaseService.GetClient();
             var allItems = new List<T>();
             int offset = 0;
+            int page = 1;
+            string entityName = typeof(T).Name;
 
             while (true)
             {
+                ReportProgress($"📥 Unduh {entityName} (Halaman {page}, Total diunduh: {allItems.Count} data)...");
+
                 var response = await supabase.From<T>()
                                              .Range(offset, offset + pageSize - 1)
                                              .Get();
@@ -110,8 +144,10 @@ namespace SPJ_APP.Service
                 }
 
                 offset += pageSize;
+                page++;
             }
 
+            ReportProgress($"✓ Unduh {entityName} selesai: Total {allItems.Count} data.");
             return allItems;
         }
 
@@ -857,6 +893,7 @@ namespace SPJ_APP.Service
 
         public static async Task<string> PullAllFromSupabaseAsync()
         {
+            ReportProgress("⚡ Memulai Penarikan Penuh Seluruh Data dari Supabase Cloud...");
             var localDb = await LocalDatabaseService.GetConnection();
             var sb = new System.Text.StringBuilder();
             sb.AppendLine("=== HASIL TARIK FULL DATA SUPABASE (UNLIMITED BATCH) ===");
@@ -864,7 +901,9 @@ namespace SPJ_APP.Service
             // 1. Pull SalesPersons
             try
             {
+                ReportProgress("👥 (1/8) Menarik Master Sales Person dari Cloud Server...");
                 var remoteUsers = await FetchAllFromSupabaseAsync<SalesPerson>();
+
                 int userCount = 0;
                 foreach (var remote in remoteUsers)
                 {
@@ -916,6 +955,7 @@ namespace SPJ_APP.Service
             // 2. Pull Customers
             try
             {
+                ReportProgress("🏪 (2/8) Menarik Master Customer / Pelanggan dari Cloud Server...");
                 var remoteCustomers = await FetchAllFromSupabaseAsync<Customer>();
                 int customerCount = 0;
                 foreach (var remote in remoteCustomers)
@@ -970,6 +1010,7 @@ namespace SPJ_APP.Service
             // 3. Pull Products
             try
             {
+                ReportProgress("📦 (3/8) Menarik Katalog Produk & Stok dari Cloud Server...");
                 var remoteProducts = await FetchAllFromSupabaseAsync<Product>();
                 int prodCount = 0;
                 foreach (var remote in remoteProducts)
@@ -996,8 +1037,10 @@ namespace SPJ_APP.Service
             // 4. Pull Sales & SaleDetails
             try
             {
+                ReportProgress("📑 (4/8) Menarik Transaksi Penjualan & Detail Nota dari Cloud Server...");
                 var remoteSales = await FetchAllFromSupabaseAsync<Sale>();
                 var remoteDetails = await FetchAllFromSupabaseAsync<SaleDetail>();
+
                 var detailsGrouped = remoteDetails.Where(d => !string.IsNullOrWhiteSpace(d.Nota))
                                                   .GroupBy(d => d.Nota)
                                                   .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
