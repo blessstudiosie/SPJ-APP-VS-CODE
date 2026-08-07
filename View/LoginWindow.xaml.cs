@@ -97,18 +97,23 @@ namespace SPJ_APP.View
                 return;
             }
 
-            var user = _users.FirstOrDefault(u => u.Name.Equals(inputName, System.StringComparison.OrdinalIgnoreCase));
+            LocalSalesPerson? user = InputNama.SelectedItem as LocalSalesPerson;
+            if (user == null)
+            {
+                string searchName = inputName.Trim();
+                user = _users.FirstOrDefault(u => string.Equals(u.Name?.Trim(), searchName, System.StringComparison.OrdinalIgnoreCase));
+            }
 
             if (user == null)
             {
-                TeksStatus.Text = "Nama user tidak ditemukan.";
+                TeksStatus.Text = $"Nama user '{inputName}' tidak ditemukan.";
                 return;
             }
 
-            // Gunakan PasswordHasherService.VerifyPassword yang mendukung HASH & fallback PlainText
+            // Gunakan PasswordHasherService.VerifyPassword yang aman & fleksibel
             if (!PasswordHasherService.VerifyPassword(inputPassword, user.Password))
             {
-                TeksStatus.Text = "Password salah.";
+                TeksStatus.Text = "Password salah. Silakan periksa kembali (coba default: admin123 / ganti123 / 123456).";
                 return;
             }
 
@@ -118,6 +123,7 @@ namespace SPJ_APP.View
             DialogResult = true;
             Close();
         }
+
 
 
         private void InputPassword_KeyDown(object sender, KeyEventArgs e)
