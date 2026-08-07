@@ -37,6 +37,9 @@ namespace SPJ_APP
                 args.SetObserved();
             };
 
+            // 4. Set ShutdownMode ke OnExplicitShutdown agar penutupan LoginWindow tidak mematikan aplikasi WPF secara otomatis
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
             try
             {
                 var loginWindow = new LoginWindow();
@@ -57,6 +60,7 @@ namespace SPJ_APP
 
                     var mainWindow = new MainWindow();
                     MainWindow = mainWindow;
+                    ShutdownMode = ShutdownMode.OnMainWindowClose;
                     mainWindow.Show();
                 }
                 else
@@ -69,6 +73,7 @@ namespace SPJ_APP
                 LogAndShowError("Fatal Startup Error", ex);
                 Shutdown();
             }
+
         }
 
         public static void LogAndShowError(string contextTitle, System.Exception ex)
