@@ -1308,11 +1308,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ADVAN\\SPJ APP\\SPJ APP.csproj",
+      "projectUniqueName": "C:\\Users\\ADVAN\\Antigravity SPJ\\SPJ APP\\SPJ APP.csproj",
       "projectName": "SPJ APP",
-      "projectPath": "C:\\Users\\ADVAN\\SPJ APP\\SPJ APP.csproj",
+      "projectPath": "C:\\Users\\ADVAN\\Antigravity SPJ\\SPJ APP\\SPJ APP.csproj",
       "packagesPath": "C:\\Users\\ADVAN\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ADVAN\\SPJ APP\\obj\\",
+      "outputPath": "C:\\Users\\ADVAN\\Antigravity SPJ\\SPJ APP\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ADVAN\\AppData\\Roaming\\NuGet\\NuGet.Config"

@@ -1,0 +1,13 @@
+## Visual Studio / .NET ignores
+bin/
+obj/
+.vs/
+.continue/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+diag.log
+build.log
+buildlog.txt
+*.db3

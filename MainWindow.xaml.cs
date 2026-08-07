@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using SPJ_APP.Service;
 using SPJ_APP.View.Pages;
 using SPJ_APP.View;
@@ -159,6 +159,16 @@ namespace SPJ_APP
         private void MenuTransaksi_Click(object sender, RoutedEventArgs e)
         {
             AreaKonten.Content = new NotaListPage();
+        }
+
+        private void MenuInboxSO_Click(object sender, RoutedEventArgs e)
+        {
+            AreaKonten.Content = new InboxSalesOrderPage();
+        }
+
+        private void MenuInboxKunjungan_Click(object sender, RoutedEventArgs e)
+        {
+            AreaKonten.Content = new InboxVisitPage();
         }
 
         private void MenuKonfirmasiPembayaran_Click(object sender, RoutedEventArgs e)

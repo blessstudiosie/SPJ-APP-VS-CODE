@@ -24,9 +24,7 @@ namespace SPJ_APP.Service
                 return false;
             }
 
-            // IMPORTANT: This is plain text password comparison as per current design.
-            // This should be replaced with a hashed password check in the future.
-            return managers.Any(m => m.Password == password);
+            return managers.Any(m => PasswordHasherService.VerifyPassword(password, m.Password));
         }
     }
 }

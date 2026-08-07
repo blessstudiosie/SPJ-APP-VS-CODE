@@ -356,3 +356,187 @@ C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\InitialSetupWindow.g.cs
 C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\Pages\DatabaseInspectorPage.g.cs
 C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\PasswordPromptWindow.baml
 C:\Users\ADVAN\SPJ APP\obj\Debug\net10.0-windows\View\PasswordPromptWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\SPJ APP.csproj.AssemblyReference.cache
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\MainWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\AutoPurchaseOrderWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\ConflictResolutionWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\CreateAdminWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\CustomerFormWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\DeliveryAssigmentWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\DeliveryVerificationWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\ErrorDialogWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\GoodsReceiptFormWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\ImportDataWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\InitialSetupWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\LoginWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\NotaFormWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\CustomerListPage.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\DashboardPage.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\DatabaseInspectorPage.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\DeliverPage.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\HomePage.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\NotaListPage.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\PaymentConfirmationPage.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\ProductListPage.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\ReportPage.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\SalesPersonListPage.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\PasswordPromptWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\PaymentFormWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\ProductFormWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\SalesPersonFormWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\SettingsWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\StockOpnameWindow.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\MainWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\AutoPurchaseOrderWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\ConflictResolutionWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\CreateAdminWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\CustomerFormWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\DeliveryAssigmentWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\DeliveryVerificationWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\ErrorDialogWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\GoodsReceiptFormWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\ImportDataWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\InitialSetupWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\LoginWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\NotaFormWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\CustomerListPage.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\DashboardPage.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\DatabaseInspectorPage.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\DeliverPage.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\HomePage.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\NotaListPage.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\PaymentConfirmationPage.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\ProductListPage.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\ReportPage.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\SalesPersonListPage.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\PasswordPromptWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\PaymentFormWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\ProductFormWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\SalesPersonFormWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\SettingsWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\StockOpnameWindow.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\App.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\SPJ APP_MarkupCompile.cache
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\SPJ APP.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\refint\SPJ APP.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\SPJ APP.pdb
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\InboxSalesOrderPage.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\InboxSalesOrderPage.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\InboxVisitPage.baml
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\View\Pages\InboxVisitPage.g.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\SPJ APP.g.resources
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\SPJ APP.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\SPJ APP.AssemblyInfoInputs.cache
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\SPJ APP.AssemblyInfo.cs
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\SPJ APP.csproj.CoreCompileInputs.cache
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\SPJ APP.sourcelink.json
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-Black.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-BlackItalic.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-Bold.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-BoldItalic.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-ExtraBold.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-ExtraBoldItalic.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-ExtraLight.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-ExtraLightItalic.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-Italic.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-Light.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-LightItalic.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-Medium.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-MediumItalic.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-Regular.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-SemiBold.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-SemiBoldItalic.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-Thin.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\Lato-ThinItalic.ttf
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\LatoFont\OFL.txt
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\SPJ APP.exe
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\SPJ APP.deps.json
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\SPJ APP.runtimeconfig.json
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\SPJ APP.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\SPJ APP.pdb
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Supabase.Functions.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Supabase.Gotrue.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Microsoft.Bcl.Cryptography.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Microsoft.IdentityModel.Logging.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Microsoft.IdentityModel.Tokens.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\MimeMapping.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Newtonsoft.Json.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Supabase.Postgrest.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\QuestPDF.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Supabase.Realtime.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\SQLite-net.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\SQLitePCLRaw.core.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\SQLitePCLRaw.provider.e_sqlite3.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Supabase.Core.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Supabase.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Supabase.Storage.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\System.Reactive.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\Websocket.Client.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-arm64\native\libQuestPdfSkia.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-arm64\native\libqpdf.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-musl-x64\native\libQuestPdfSkia.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-musl-x64\native\libqpdf.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-x64\native\libQuestPdfSkia.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-x64\native\libqpdf.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\osx-arm64\native\libQuestPdfSkia.dylib
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\osx-arm64\native\libqpdf.dylib
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\osx-x64\native\libQuestPdfSkia.dylib
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\osx-x64\native\libqpdf.dylib
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\win-arm64\native\QuestPdfSkia.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\win-arm64\native\qpdf.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\win-x64\native\QuestPdfSkia.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\win-x64\native\qpdf.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\win-x86\native\QuestPdfSkia.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\win-x86\native\qpdf.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\android-arm\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\android-arm64\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\android-x64\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\android-x86\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\browser-wasm\nativeassets\net9.0\e_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\ios-arm\native\e_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\ios-arm64\native\e_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\iossimulator-arm64\native\e_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\iossimulator-x64\native\e_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-arm\native\libe_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-arm\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-arm64\native\libe_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-arm64\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-armel\native\libe_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-armel\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-mips64\native\libe_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-mips64\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-musl-arm\native\libe_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-musl-arm\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-musl-arm64\native\libe_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-musl-arm64\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-musl-riscv64\native\libe_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-musl-riscv64\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-musl-s390x\native\libe_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-musl-s390x\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-musl-x64\native\libe_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-musl-x64\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-ppc64le\native\libe_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-ppc64le\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-riscv64\native\libe_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-riscv64\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-s390x\native\libe_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-s390x\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-x64\native\libe_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-x64\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-x86\native\libe_sqlite3.a
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\linux-x86\native\libe_sqlite3.so
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\maccatalyst-arm64\native\libe_sqlite3.dylib
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\maccatalyst-x64\native\libe_sqlite3.dylib
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\osx-arm64\native\libe_sqlite3.dylib
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\osx-x64\native\libe_sqlite3.dylib
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\win-arm64\native\e_sqlite3.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\win-x64\native\e_sqlite3.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\bin\Debug\net10.0-windows\runtimes\win-x86\native\e_sqlite3.dll
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\SPJ APP.csproj.Up2Date
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\SPJ APP.genruntimeconfig.cache
+C:\Users\ADVAN\Antigravity SPJ\SPJ APP\obj\Debug\net10.0-windows\ref\SPJ APP.dll

@@ -56,6 +56,8 @@ namespace SPJ_APP.Service
             var deliveriesPushed = await SyncDeliveriesAsync();
             var purchaseOrdersPushed = await SyncPurchaseOrdersAsync();
             var activityLogsPushed = await SyncActivityLogsAsync();
+            await SyncSalesOrdersQueueAsync();
+            await SyncVisitLogsQueueAsync();
 
             var summary = new SyncSummary
             {
@@ -656,5 +658,149 @@ namespace SPJ_APP.Service
             }
             return localItems.Count;
         }
+
+        public static async Task<int> SyncSalesOrdersQueueAsync()
+        {
+            try
+            {
+                var localDb = await LocalDatabaseService.GetConnection();
+                var supabase = await SupabaseService.GetClient();
+
+                var remoteQueues = await supabase.From<SalesOrderQueue>().Get();
+
+                if (remoteQueues?.Models == null || !remoteQueues.Models.Any())
+                    return 0;
+
+                int pulled = 0;
+                foreach (var remote in remoteQueues.Models)
+                {
+                    var existing = await localDb.Table<LocalSalesOrderQueue>()
+                                                .Where(q => q.Id == remote.Id.ToString())
+                                                .FirstOrDefaultAsync();
+
+                    if (existing == null)
+                    {
+                        var localQueue = new LocalSalesOrderQueue
+                        {
+                            Id = remote.Id.ToString(),
+                            SalesPersonId = remote.SalesPersonId?.ToString(),
+                            CustomerId = remote.CustomerId?.ToString(),
+                            CustomerName = remote.CustomerName,
+                            ItemsJson = remote.ItemsJson,
+                            TotalAmount = remote.TotalAmount,
+                            Status = remote.Status,
+                            Notes = remote.Notes,
+                            CreatedAt = remote.CreatedAt,
+                            UpdatedAt = remote.UpdatedAt,
+                            IsSynced = true
+                        };
+                        await localDb.InsertAsync(localQueue);
+                        pulled++;
+                    }
+                    else
+                    {
+                        existing.Status = remote.Status;
+                        existing.ItemsJson = remote.ItemsJson;
+                        existing.TotalAmount = remote.TotalAmount;
+                        existing.Notes = remote.Notes;
+                        existing.UpdatedAt = remote.UpdatedAt;
+                        existing.IsSynced = true;
+                        await localDb.UpdateAsync(existing);
+                    }
+                }
+                return pulled;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+        public static async Task<int> SyncVisitLogsQueueAsync()
+        {
+            try
+            {
+                var localDb = await LocalDatabaseService.GetConnection();
+                var supabase = await SupabaseService.GetClient();
+
+                var remoteVisits = await supabase.From<VisitLogQueue>().Get();
+
+                if (remoteVisits?.Models == null || !remoteVisits.Models.Any())
+                    return 0;
+
+                int pulled = 0;
+                foreach (var remote in remoteVisits.Models)
+                {
+                    var existing = await localDb.Table<LocalVisitLogQueue>()
+                                                .Where(v => v.Id == remote.Id.ToString())
+                                                .FirstOrDefaultAsync();
+
+                    if (existing == null)
+                    {
+                        var localVisit = new LocalVisitLogQueue
+                        {
+                            Id = remote.Id.ToString(),
+                            SalesPersonId = remote.SalesPersonId?.ToString(),
+                            SalesPersonName = remote.SalesPersonName,
+                            CustomerId = remote.CustomerId?.ToString(),
+                            CustomerName = remote.CustomerName,
+                            IsNewCustomer = remote.IsNewCustomer,
+                            Latitude = remote.Latitude,
+                            Longitude = remote.Longitude,
+                            PhotoUrl = remote.PhotoUrl,
+                            Notes = remote.Notes,
+                            Status = remote.Status,
+                            CreatedAt = remote.CreatedAt,
+                            UpdatedAt = remote.UpdatedAt,
+                            IsSynced = true
+                        };
+                        await localDb.InsertAsync(localVisit);
+                        pulled++;
+                    }
+                    else
+                    {
+                        existing.Status = remote.Status;
+                        existing.Notes = remote.Notes;
+                        existing.UpdatedAt = remote.UpdatedAt;
+                        existing.IsSynced = true;
+                        await localDb.UpdateAsync(existing);
+                    }
+                }
+                return pulled;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+        public static async Task PushQueueStatusToSupabaseAsync(string queueId, string newStatus, string queueType = "SO")
+        {
+            try
+            {
+                var supabase = await SupabaseService.GetClient();
+                if (!Guid.TryParse(queueId, out var id)) return;
+
+                if (queueType == "SO")
+                {
+                    await supabase.From<SalesOrderQueue>()
+                                  .Where(x => x.Id == id)
+                                  .Set(x => x.Status, newStatus)
+                                  .Update();
+                }
+                else if (queueType == "VISIT")
+                {
+                    await supabase.From<VisitLogQueue>()
+                                  .Where(x => x.Id == id)
+                                  .Set(x => x.Status, newStatus)
+                                  .Update();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error pushing queue status: {ex.Message}");
+            }
+        }
     }
 }
+
