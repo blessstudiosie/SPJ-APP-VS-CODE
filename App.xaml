@@ -3,9 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:SPJ_APP">
     <Application.Resources>
-        <!-- Color Palette Tokens -->
+        <!-- Color Palette Tokens (1 Unified Indigo Slate Theme) -->
         <Color x:Key="PrimaryColor">#4F46E5</Color>
         <Color x:Key="PrimaryHoverColor">#4338CA</Color>
+        <Color x:Key="PrimaryPressedColor">#3730A3</Color>
         <Color x:Key="WindowBgColor">#F8FAFC</Color>
         <Color x:Key="CardBgColor">#FFFFFF</Color>
         <Color x:Key="TextDarkColor">#0F172A</Color>
@@ -14,6 +15,7 @@
 
         <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
         <SolidColorBrush x:Key="PrimaryHoverBrush" Color="{StaticResource PrimaryHoverColor}"/>
+        <SolidColorBrush x:Key="PrimaryPressedBrush" Color="{StaticResource PrimaryPressedColor}"/>
         <SolidColorBrush x:Key="WindowBgBrush" Color="{StaticResource WindowBgColor}"/>
         <SolidColorBrush x:Key="CardBgBrush" Color="{StaticResource CardBgColor}"/>
         <SolidColorBrush x:Key="TextDarkBrush" Color="{StaticResource TextDarkColor}"/>
@@ -46,6 +48,9 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="{StaticResource PrimaryHoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource PrimaryPressedBrush}"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="border" Property="Opacity" Value="0.5"/>
@@ -111,6 +116,33 @@
             </Setter>
         </Style>
 
+        <!-- Modern GroupBox Style -->
+        <Style TargetType="GroupBox">
+            <Setter Property="FontFamily" Value="Segoe UI, Inter"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GroupBox">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Border Grid.Row="0" Background="#F1F5F9" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1,1,1,0" CornerRadius="8,8,0,0" Padding="12,8">
+                                <ContentPresenter ContentSource="Header" RecognizesAccessKey="True"/>
+                            </Border>
+                            <Border Grid.Row="1" Background="White" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="0,0,8,8" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <!-- Modern DataGrid Style -->
         <Style TargetType="DataGrid">
@@ -146,6 +178,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
     </Application.Resources>
 </Application>
 

@@ -2,44 +2,121 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="32">
-            <TextBlock Text="Alur Kerja Penjualan" FontSize="26" FontWeight="Bold" Foreground="#1F2937"/>
-            <TextBlock Text="Ikuti urutan ini agar status nota, stok, pengiriman, dan pembayaran selalu konsisten." Margin="0,6,0,28" Foreground="#4B5563" FontSize="14"/>
+        <StackPanel Margin="24">
+            <!-- Executive Banner Header -->
+            <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="24" Margin="0,0,0,24">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="16" ShadowDepth="3" Direction="270" Color="#000000" Opacity="0.04"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <Border Background="#EEF2FF" CornerRadius="6" Padding="8,4" Margin="0,0,10,0">
+                                <TextBlock Text="✨ CV. SARANA PRIMA JAYA" FontSize="11" FontWeight="Bold" Foreground="#4F46E5"/>
+                            </Border>
+                            <TextBlock Text="Sistem Operasional SPJ APP" FontSize="12" Foreground="#64748B" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock Text="Dashboard Alur Kerja &amp; Manajemen Distribusi" FontSize="22" FontWeight="Bold" Foreground="#0F172A"/>
+                        <TextBlock Text="Ikuti alur kerja terstruktur di bawah ini untuk memastikan konsistensi stok, transaksi, pengiriman, dan pembayaran." Foreground="#475569" FontSize="13" Margin="0,4,0,0"/>
+                    </StackPanel>
+                    <Image Grid.Column="1" Source="/Assets/logo_spj.png" Height="56" Width="56" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Grid>
+            </Border>
 
-            <Border Background="#EFF6FF" BorderBrush="#93C5FD" BorderThickness="1" CornerRadius="8" Padding="18" Margin="0,0,0,10">
-                <StackPanel>
-                    <TextBlock Text="1. Tambah Penjualan" FontWeight="Bold" FontSize="17" Foreground="#1D4ED8"/>
-                    <TextBlock Text="Buat nota dan masukkan detail barang. Status awal: SO." Margin="0,5,0,0"/>
-                </StackPanel>
-            </Border>
-            <TextBlock Text="↓" HorizontalAlignment="Center" FontSize="24" Foreground="#6B7280"/>
-            <Border Background="#FFF7ED" BorderBrush="#FDBA74" BorderThickness="1" CornerRadius="8" Padding="18" Margin="0,10">
-                <StackPanel>
-                    <TextBlock Text="2. Cetak Nota" FontWeight="Bold" FontSize="17" Foreground="#C2410C"/>
-                    <TextBlock Text="Cetak nota untuk memproses pesanan. Status menjadi ON PROSES dan Stok Ready berkurang." Margin="0,5,0,0" TextWrapping="Wrap"/>
-                </StackPanel>
-            </Border>
-            <TextBlock Text="↓" HorizontalAlignment="Center" FontSize="24" Foreground="#6B7280"/>
-            <Border Background="#F5F3FF" BorderBrush="#C4B5FD" BorderThickness="1" CornerRadius="8" Padding="18" Margin="0,10">
-                <StackPanel>
-                    <TextBlock Text="3. Buat Pengiriman" FontWeight="Bold" FontSize="17" Foreground="#6D28D9"/>
-                    <TextBlock Text="Masukkan nota ON PROSES ke log pengiriman. Status menjadi DALAM PENGIRIMAN dan detail nota terkunci." Margin="0,5,0,0" TextWrapping="Wrap"/>
-                </StackPanel>
-            </Border>
-            <TextBlock Text="↓" HorizontalAlignment="Center" FontSize="24" Foreground="#6B7280"/>
-            <Border Background="#ECFDF5" BorderBrush="#6EE7B7" BorderThickness="1" CornerRadius="8" Padding="18" Margin="0,10">
-                <StackPanel>
-                    <TextBlock Text="4. Konfirmasi Pengiriman" FontWeight="Bold" FontSize="17" Foreground="#047857"/>
-                    <TextBlock Text="Konfirmasi barang diterima seluruhnya atau sesuaikan barang yang ditolak. Jika masih ada tagihan, status menjadi TEMPO." Margin="0,5,0,0" TextWrapping="Wrap"/>
-                </StackPanel>
-            </Border>
-            <TextBlock Text="↓" HorizontalAlignment="Center" FontSize="24" Foreground="#6B7280"/>
-            <Border Background="#F0FDF4" BorderBrush="#86EFAC" BorderThickness="1" CornerRadius="8" Padding="18" Margin="0,10,0,0">
-                <StackPanel>
-                    <TextBlock Text="5. Catat Pembayaran" FontWeight="Bold" FontSize="17" Foreground="#15803D"/>
-                    <TextBlock Text="Pembayaran dicatat untuk nota TEMPO. Saat sisa tagihan menjadi 0, status otomatis menjadi DONE." Margin="0,5,0,0" TextWrapping="Wrap"/>
+            <!-- 5-Step Operational Workflow Cards -->
+            <TextBlock Text="📍 Alur Kerja Operasional Penjualan" FontSize="16" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,14"/>
+
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Step 1 -->
+                <Border Grid.Column="0" Background="White" BorderBrush="#3B82F6" BorderThickness="1.5" CornerRadius="10" Padding="14">
+                    <StackPanel>
+                        <Border Background="#EFF6FF" CornerRadius="6" Padding="6,3" HorizontalAlignment="Left" Margin="0,0,0,8">
+                            <TextBlock Text="Langkah 1" FontSize="10" FontWeight="Bold" Foreground="#1D4ED8"/>
+                        </Border>
+                        <TextBlock Text="1. Input Sales Order" FontWeight="Bold" FontSize="14" Foreground="#1E3A8A"/>
+                        <TextBlock Text="Buat nota penjualan atau terima SO mobile. Status awal: SO." FontSize="11" Foreground="#475569" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Grid.Column="1" Text="➔" VerticalAlignment="Center" Margin="8,0" FontSize="18" Foreground="#94A3B8"/>
+
+                <!-- Step 2 -->
+                <Border Grid.Column="2" Background="White" BorderBrush="#F59E0B" BorderThickness="1.5" CornerRadius="10" Padding="14">
+                    <StackPanel>
+                        <Border Background="#FFFBEB" CornerRadius="6" Padding="6,3" HorizontalAlignment="Left" Margin="0,0,0,8">
+                            <TextBlock Text="Langkah 2" FontSize="10" FontWeight="Bold" Foreground="#B45309"/>
+                        </Border>
+                        <TextBlock Text="2. Cetak Nota" FontWeight="Bold" FontSize="14" Foreground="#78350F"/>
+                        <TextBlock Text="Cetak nota untuk memproses pesanan. Status menjadi ON PROSES dan Stok Ready berkurang." FontSize="11" Foreground="#475569" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Grid.Column="3" Text="➔" VerticalAlignment="Center" Margin="8,0" FontSize="18" Foreground="#94A3B8"/>
+
+                <!-- Step 3 -->
+                <Border Grid.Column="4" Background="White" BorderBrush="#8B5CF6" BorderThickness="1.5" CornerRadius="10" Padding="14">
+                    <StackPanel>
+                        <Border Background="#F5F3FF" CornerRadius="6" Padding="6,3" HorizontalAlignment="Left" Margin="0,0,0,8">
+                            <TextBlock Text="Langkah 3" FontSize="10" FontWeight="Bold" Foreground="#6D28D9"/>
+                        </Border>
+                        <TextBlock Text="3. Pengiriman Log" FontWeight="Bold" FontSize="14" Foreground="#4C1D95"/>
+                        <TextBlock Text="Masukkan nota ke daftar pengiriman armada. Status menjadi DALAM PENGIRIMAN." FontSize="11" Foreground="#475569" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Grid Margin="0,0,0,24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Step 4 -->
+                <Border Grid.Column="0" Background="White" BorderBrush="#10B981" BorderThickness="1.5" CornerRadius="10" Padding="14">
+                    <StackPanel>
+                        <Border Background="#ECFDF5" CornerRadius="6" Padding="6,3" HorizontalAlignment="Left" Margin="0,0,0,8">
+                            <TextBlock Text="Langkah 4" FontSize="10" FontWeight="Bold" Foreground="#047857"/>
+                        </Border>
+                        <TextBlock Text="4. Konfirmasi Terima / Retur" FontWeight="Bold" FontSize="14" Foreground="#064E3B"/>
+                        <TextBlock Text="Konfirmasi barang diterima pelanggan. Jika ada sisa tagihan, status menjadi TEMPO." FontSize="11" Foreground="#475569" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Grid.Column="1" Text="➔" VerticalAlignment="Center" Margin="12,0" FontSize="18" Foreground="#94A3B8"/>
+
+                <!-- Step 5 -->
+                <Border Grid.Column="2" Background="White" BorderBrush="#06B6D4" BorderThickness="1.5" CornerRadius="10" Padding="14">
+                    <StackPanel>
+                        <Border Background="#ECFEFF" CornerRadius="6" Padding="6,3" HorizontalAlignment="Left" Margin="0,0,0,8">
+                            <TextBlock Text="Langkah 5" FontSize="10" FontWeight="Bold" Foreground="#0E7490"/>
+                        </Border>
+                        <TextBlock Text="5. Pembayaran &amp; Lunas" FontWeight="Bold" FontSize="14" Foreground="#164E63"/>
+                        <TextBlock Text="Catat pelunasan pembayaran. Saat sisa tagihan = 0, status transaksi otomatis menjadi DONE." FontSize="11" Foreground="#475569" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Support Footer Note -->
+            <Border Background="#F1F5F9" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Padding="14,10">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="💡 PETUNJUK:" FontWeight="Bold" FontSize="12" Foreground="#334155" Margin="0,0,8,0"/>
+                    <TextBlock Text="Gunakan navigasi di bagian atas untuk mengakses Produk, Master Data, Transaksi, Pembayaran, Pengiriman, dan Laporan." FontSize="12" Foreground="#475569"/>
                 </StackPanel>
             </Border>
         </StackPanel>
     </ScrollViewer>
 </UserControl>
+
