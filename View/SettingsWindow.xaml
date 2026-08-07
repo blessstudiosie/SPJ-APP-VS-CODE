@@ -1,48 +1,58 @@
 <Window x:Class="SPJ_APP.View.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Pengaturan &amp; Backup" Height="350" Width="500" WindowStartupLocation="CenterOwner">
-    <StackPanel Margin="15">
-        <GroupBox Header="Backup Database Lokal" Padding="10">
-            <StackPanel>
-                <TextBlock Text="Simpan salinan file database lokal (SQLite) ke lokasi yang aman." TextWrapping="Wrap" Margin="0,0,0,10"/>
-                <Button x:Name="TombolBackupLokal" Content="Backup Sekarang..." Padding="10,5" HorizontalAlignment="Left" Click="TombolBackupLokal_Click"/>
-            </StackPanel>
-        </GroupBox>
-
-        <GroupBox Header="Impor/Ekspor Data" Padding="10" Margin="0,15,0,0">
-            <StackPanel>
-                <TextBlock Text="Impor data dari file CSV atau ekspor semua data lokal ke dalam satu file JSON." TextWrapping="Wrap" Margin="0,0,0,10"/>
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="TombolImporCsv" Content="Impor dari CSV..." Padding="10,5" HorizontalAlignment="Left" Click="TombolImporCsv_Click"/>
-                    <Button x:Name="TombolEksporJson" Content="Ekspor ke JSON..." Padding="10,5" HorizontalAlignment="Left" Margin="10,0,0,0" Click="TombolEksporJson_Click"/>
+        Title="Pengaturan, Sync &amp; Backup" Height="580" Width="550" WindowStartupLocation="CenterOwner">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="16">
+            <GroupBox Header="🔄 Pull Full Data dari Supabase Cloud" Padding="12">
+                <StackPanel>
+                    <TextBlock Text="Unduh seluruh data terbaru dari database cloud Supabase (Akun Sales, Customer, Produk, Transaksi Nota, Pembayaran, Antrean PO/Kunjungan) dan simpan ke SQLite lokal." TextWrapping="Wrap" Margin="0,0,0,10" Foreground="#334155"/>
+                    <Button x:Name="TombolTarikFullData" Content="⬇️ Tarik Penuh Semua Data dari Supabase..." Height="38" Padding="14,6" HorizontalAlignment="Left" Background="#4F46E5" Foreground="White" FontWeight="Bold" Click="TombolTarikFullData_Click"/>
                 </StackPanel>
-            </StackPanel>
-        </GroupBox>
+            </GroupBox>
 
-        <GroupBox Header="Restore Data dari Backup (JSON)" Padding="10" Margin="0,15,0,0">
-            <StackPanel>
-                <TextBlock Text="PENTING: Proses ini akan MENGHAPUS SEMUA DATA LOKAL saat ini dan menggantinya dengan data dari file backup. Gunakan dengan hati-hati." TextWrapping="Wrap" Margin="0,0,0,10" FontWeight="Bold" Foreground="Red"/>
-                <Button x:Name="TombolRestoreJson" Content="Restore Sekarang..." Padding="10,5" HorizontalAlignment="Left" Click="TombolRestoreJson_Click"/>
-            </StackPanel>
-        </GroupBox>
+            <GroupBox Header="Backup Database Lokal" Padding="10" Margin="0,15,0,0">
+                <StackPanel>
+                    <TextBlock Text="Simpan salinan file database lokal (SQLite) ke lokasi yang aman." TextWrapping="Wrap" Margin="0,0,0,10"/>
+                    <Button x:Name="TombolBackupLokal" Content="Backup Sekarang..." Padding="10,5" HorizontalAlignment="Left" Click="TombolBackupLokal_Click"/>
+                </StackPanel>
+            </GroupBox>
 
-        <GroupBox Header="Backup Database Cloud (Supabase)" Padding="10" Margin="0,15,0,0">
-            <StackPanel>
-                <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
-                    Backup database Supabase dikelola melalui dashboard web Supabase. Disarankan untuk melakukan backup secara rutin.
-                </TextBlock>
-                <TextBlock>
-                    <Run>Buka halaman</Run>
-                    <Hyperlink NavigateUri="https://app.supabase.com/" RequestNavigate="Hyperlink_RequestNavigate">
-                        Dashboard Supabase
-                    </Hyperlink>
-                    <Run>untuk mengelola backup Anda.</Run>
-                </TextBlock>
-            </StackPanel>
-        </GroupBox>
-        
-        <Button Content="Tutup" IsCancel="True" HorizontalAlignment="Right" Padding="15,5" Margin="0,20,0,0"/>
+            <GroupBox Header="Impor/Ekspor Data" Padding="10" Margin="0,15,0,0">
+                <StackPanel>
+                    <TextBlock Text="Impor data dari file CSV atau ekspor semua data lokal ke dalam satu file JSON." TextWrapping="Wrap" Margin="0,0,0,10"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="TombolImporCsv" Content="Impor dari CSV..." Padding="10,5" HorizontalAlignment="Left" Click="TombolImporCsv_Click"/>
+                        <Button x:Name="TombolEksporJson" Content="Ekspor ke JSON..." Padding="10,5" HorizontalAlignment="Left" Margin="10,0,0,0" Click="TombolEksporJson_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
 
-    </StackPanel>
+            <GroupBox Header="Restore Data dari Backup (JSON)" Padding="10" Margin="0,15,0,0">
+                <StackPanel>
+                    <TextBlock Text="PENTING: Proses ini akan MENGHAPUS SEMUA DATA LOKAL saat ini dan menggantinya dengan data dari file backup. Gunakan dengan hati-hati." TextWrapping="Wrap" Margin="0,0,0,10" FontWeight="Bold" Foreground="Red"/>
+                    <Button x:Name="TombolRestoreJson" Content="Restore Sekarang..." Padding="10,5" HorizontalAlignment="Left" Click="TombolRestoreJson_Click"/>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Backup Database Cloud (Supabase)" Padding="10" Margin="0,15,0,0">
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
+                        Backup database Supabase dikelola melalui dashboard web Supabase. Disarankan untuk melakukan backup secara rutin.
+                    </TextBlock>
+                    <TextBlock>
+                        <Run>Buka halaman</Run>
+                        <Hyperlink NavigateUri="https://app.supabase.com/" RequestNavigate="Hyperlink_RequestNavigate">
+                            Dashboard Supabase
+                        </Hyperlink>
+                        <Run>untuk mengelola backup Anda.</Run>
+                    </TextBlock>
+                </StackPanel>
+            </GroupBox>
+            
+            <Button Content="Tutup" IsCancel="True" HorizontalAlignment="Right" Padding="15,5" Margin="0,20,0,0"/>
+
+        </StackPanel>
+    </ScrollViewer>
 </Window>
+

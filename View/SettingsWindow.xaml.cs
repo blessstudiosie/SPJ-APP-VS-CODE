@@ -14,7 +14,38 @@ namespace SPJ_APP.View
             InitializeComponent();
         }
 
+        private async void TombolTarikFullData_Click(object sender, RoutedEventArgs e)
+        {
+            var confirm = MessageBox.Show(
+                "Apakah Anda yakin ingin menarik SELURUH data dari Supabase cloud? Data lokal akan diperbarui dengan data terbaru dari server Supabase.",
+                "Konfirmasi Tarik Full Data",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (confirm != MessageBoxResult.Yes) return;
+
+            TombolTarikFullData.IsEnabled = false;
+            var originalCursor = Cursor;
+            Cursor = System.Windows.Input.Cursors.Wait;
+
+            try
+            {
+                string result = await SyncService.PullAllFromSupabaseAsync();
+                MessageBox.Show(result, "Tarik Full Data Selesai", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError($"Gagal menarik data dari Supabase:\n{ex.Message}");
+            }
+            finally
+            {
+                TombolTarikFullData.IsEnabled = true;
+                Cursor = originalCursor;
+            }
+        }
+
         private async void TombolBackupLokal_Click(object sender, RoutedEventArgs e)
+
         {
             var dialog = new SaveFileDialog
             {

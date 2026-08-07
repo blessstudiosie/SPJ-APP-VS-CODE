@@ -136,26 +136,58 @@ namespace SPJ_APP.Service
             var supabase = await SupabaseService.GetClient();
             var localItems = await localDb.Table<LocalSalesPerson>().ToListAsync();
             var remoteList = (await supabase.From<SalesPerson>().Get()).Models;
-            var remoteNames = remoteList.Select(item => item.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var remoteNames = remoteList.Select(item => item.Name).Where(n => !string.IsNullOrWhiteSpace(n)).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
+            int pushedCount = 0;
             foreach (var local in localItems)
             {
+                // Keamanan 1: Lewati jika Nama kosong/null agar tidak memicu not-null constraint di Supabase (code 23502)
+                if (string.IsNullOrWhiteSpace(local.Name))
+                {
+                    continue;
+                }
+
+                // Keamanan 2: Akun Developer khusus lokal - jangan kirim ke Supabase
                 if (string.Equals(local.Role, "DEVELOPER", StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(local.Name, "blessstudiosie", StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(local.Name, "Developer", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Akun Developer khusus lokal - jangan kirim ke Supabase
                     continue;
                 }
 
+                try
+                {
+                    string cleanName = local.Name.Trim();
+                    var remote = new SalesPerson
+                    {
+                        Name = cleanName,
+                        Phone = string.IsNullOrWhiteSpace(local.Phone) ? "-" : local.Phone,
+                        Email = string.IsNullOrWhiteSpace(local.Email) ? "-" : local.Email,
+                        TargetOmset = local.TargetOmset,
+                        Role = string.IsNullOrWhiteSpace(local.Role) ? "SALES" : local.Role,
+                        Password = local.Password
+                    };
 
-                var remote = new SalesPerson { Name = local.Name, Phone = local.Phone, Email = local.Email, TargetOmset = local.TargetOmset, Role = local.Role, Password = local.Password };
-                if (remoteNames.Contains(local.Name)) await supabase.From<SalesPerson>().Update(remote);
-                else await supabase.From<SalesPerson>().Insert(remote);
-                local.IsSynced = true;
-                await localDb.UpdateAsync(local);
+                    if (remoteNames.Contains(cleanName))
+                    {
+                        await supabase.From<SalesPerson>().Where(x => x.Name == cleanName).Update(remote);
+                    }
+                    else
+                    {
+                        await supabase.From<SalesPerson>().Insert(remote);
+                        remoteNames.Add(cleanName);
+                    }
+
+                    local.IsSynced = true;
+                    await localDb.UpdateAsync(local);
+                    pushedCount++;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[SyncSalesPersons] Gagal sync baris '{local.Name}': {ex.Message}");
+                }
             }
-            return localItems.Count;
+            return pushedCount;
         }
 
 
@@ -165,28 +197,52 @@ namespace SPJ_APP.Service
             var supabase = await SupabaseService.GetClient();
             var localItems = await localDb.Table<LocalCustomer>().ToListAsync();
             var remoteList = (await supabase.From<Customer>().Get()).Models;
-            var remoteNames = remoteList.Select(item => item.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var remoteNames = remoteList.Select(item => item.Name).Where(n => !string.IsNullOrWhiteSpace(n)).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
+            int pushedCount = 0;
             foreach (var local in localItems)
             {
-                var remote = new Customer
+                if (string.IsNullOrWhiteSpace(local.Name))
                 {
-                    Name = local.Name,
-                    OwnerName = local.OwnerName,
-                    Phone = local.Phone,
-                    Address = local.Address,
-                    JalurPengiriman = local.JalurPengiriman,
-                    Latitude = local.Latitude,
-                    Longitude = local.Longitude,
-                    SalesPerson = local.SalesPersonId,
-                    LimitPiutang = local.LimitPiutang
-                };
-                if (remoteNames.Contains(local.Name)) await supabase.From<Customer>().Update(remote);
-                else await supabase.From<Customer>().Insert(remote);
-                local.IsSynced = true;
-                await localDb.UpdateAsync(local);
+                    continue;
+                }
+
+                try
+                {
+                    string cleanName = local.Name.Trim();
+                    var remote = new Customer
+                    {
+                        Name = cleanName,
+                        OwnerName = local.OwnerName ?? "",
+                        Phone = local.Phone ?? "",
+                        Address = local.Address ?? "",
+                        JalurPengiriman = local.JalurPengiriman ?? "",
+                        Latitude = local.Latitude,
+                        Longitude = local.Longitude,
+                        SalesPerson = local.SalesPersonId,
+                        LimitPiutang = local.LimitPiutang
+                    };
+
+                    if (remoteNames.Contains(cleanName))
+                    {
+                        await supabase.From<Customer>().Where(x => x.Name == cleanName).Update(remote);
+                    }
+                    else
+                    {
+                        await supabase.From<Customer>().Insert(remote);
+                        remoteNames.Add(cleanName);
+                    }
+
+                    local.IsSynced = true;
+                    await localDb.UpdateAsync(local);
+                    pushedCount++;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[SyncCustomers] Gagal sync customer '{local.Name}': {ex.Message}");
+                }
             }
-            return localItems.Count;
+            return pushedCount;
         }
 
 
@@ -204,32 +260,45 @@ namespace SPJ_APP.Service
             var localDetails = await localDb.Table<LocalSalesDetail>().ToListAsync();
             var remoteSales = (await supabase.From<Sale>().Get()).Models.ToDictionary(sale => sale.Nota, StringComparer.OrdinalIgnoreCase);
             var remoteDetails = (await supabase.From<SaleDetail>().Get()).Models
+                .Where(detail => !string.IsNullOrWhiteSpace(detail.Nota))
                 .GroupBy(detail => detail.Nota)
                 .ToDictionary(group => group.Key, group => group.ToList(), StringComparer.OrdinalIgnoreCase);
 
             foreach (var localSale in localSales)
             {
-                var remoteSale = ToRemoteSale(localSale);
-                if (remoteSales.ContainsKey(localSale.Nota))
-                    await supabase.From<Sale>().Update(remoteSale);
-                else
-                    await supabase.From<Sale>().Insert(remoteSale);
-
-                var detailsForSale = localDetails.Where(detail => detail.SaleId == localSale.Id || detail.SaleId == localSale.Nota).ToList();
-                if (remoteDetails.TryGetValue(localSale.Nota, out var existingDetails))
+                if (string.IsNullOrWhiteSpace(localSale.Nota))
                 {
-                    foreach (var existingDetail in existingDetails)
-                        await supabase.From<SaleDetail>().Delete(existingDetail);
+                    continue;
                 }
 
-                var remoteSaleDetails = detailsForSale.Select(ToRemoteSaleDetail).ToList();
-                if (remoteSaleDetails.Count > 0)
-                    await supabase.From<SaleDetail>().Insert(remoteSaleDetails);
+                try
+                {
+                    var remoteSale = ToRemoteSale(localSale);
+                    if (remoteSales.ContainsKey(localSale.Nota))
+                        await supabase.From<Sale>().Where(x => x.Nota == localSale.Nota).Update(remoteSale);
+                    else
+                        await supabase.From<Sale>().Insert(remoteSale);
 
-                localSale.IsSynced = true;
-                await localDb.UpdateAsync(localSale);
-                result.SalesPushed++;
-                result.DetailsPushed += remoteSaleDetails.Count;
+                    var detailsForSale = localDetails.Where(detail => detail.SaleId == localSale.Id || detail.SaleId == localSale.Nota).ToList();
+                    if (remoteDetails.TryGetValue(localSale.Nota, out var existingDetails))
+                    {
+                        foreach (var existingDetail in existingDetails)
+                            await supabase.From<SaleDetail>().Where(x => x.Id == existingDetail.Id).Delete();
+                    }
+
+                    var remoteSaleDetails = detailsForSale.Select(ToRemoteSaleDetail).ToList();
+                    if (remoteSaleDetails.Count > 0)
+                        await supabase.From<SaleDetail>().Insert(remoteSaleDetails);
+
+                    localSale.IsSynced = true;
+                    await localDb.UpdateAsync(localSale);
+                    result.SalesPushed++;
+                    result.DetailsPushed += remoteSaleDetails.Count;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[SyncSales] Gagal sync nota '{localSale.Nota}': {ex.Message}");
+                }
             }
 
             return result;
@@ -242,18 +311,29 @@ namespace SPJ_APP.Service
             var localItems = await localDb.Table<LocalPayment>().ToListAsync();
             var remoteIds = (await supabase.From<Payment>().Get()).Models.Select(item => item.Id).ToHashSet();
 
+            int pushedCount = 0;
             foreach (var local in localItems)
             {
-                if (!Guid.TryParse(local.Id, out var id) || !Guid.TryParse(local.SaleId, out var saleId))
-                    throw new InvalidOperationException($"Pembayaran '{local.Id}' memiliki ID yang tidak valid.");
-                var remote = new Payment { Id = id, SaleId = saleId, PaymentDate = local.PaymentDate, Amount = local.Amount, PaymentMethod = local.PaymentMethod, Status = local.Status, Notes = local.Notes };
-                if (remoteIds.Contains(id)) await supabase.From<Payment>().Update(remote);
-                else await supabase.From<Payment>().Insert(remote);
-                local.IsSynced = true;
-                await localDb.UpdateAsync(local);
+                if (string.IsNullOrWhiteSpace(local.Id) || !Guid.TryParse(local.Id, out var id) || !Guid.TryParse(local.SaleId, out var saleId))
+                    continue;
+
+                try
+                {
+                    var remote = new Payment { Id = id, SaleId = saleId, PaymentDate = local.PaymentDate, Amount = local.Amount, PaymentMethod = local.PaymentMethod, Status = local.Status, Notes = local.Notes };
+                    if (remoteIds.Contains(id)) await supabase.From<Payment>().Where(x => x.Id == id).Update(remote);
+                    else await supabase.From<Payment>().Insert(remote);
+                    local.IsSynced = true;
+                    await localDb.UpdateAsync(local);
+                    pushedCount++;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[SyncPayments] Gagal sync payment '{local.Id}': {ex.Message}");
+                }
             }
-            return localItems.Count;
+            return pushedCount;
         }
+
 
         public static async Task<List<LocalPayment>> PullPendingPaymentsAsync()
         {
@@ -729,6 +809,261 @@ namespace SPJ_APP.Service
                 System.Diagnostics.Debug.WriteLine($"Error pushing queue status: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Menarik SELURUH data dari Supabase cloud (SalesPerson, Customer, Produk, Sales, SalesDetail, Payment, Queue)
+        /// dan menyimpannya ke database SQLite lokal perangkat ini.
+        /// </summary>
+        public static async Task<string> PullAllFromSupabaseAsync()
+        {
+            var localDb = await LocalDatabaseService.GetConnection();
+            var supabase = await SupabaseService.GetClient();
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("=== HASIL TARIK FULL DATA SUPABASE ===");
+
+            // 1. Pull SalesPersons
+            try
+            {
+                var remoteUsers = (await supabase.From<SalesPerson>().Get()).Models;
+                int userCount = 0;
+                foreach (var remote in remoteUsers)
+                {
+                    if (string.IsNullOrWhiteSpace(remote.Name)) continue;
+
+                    string cleanName = remote.Name.Trim();
+                    var localUser = await localDb.Table<LocalSalesPerson>()
+                                                 .Where(u => u.Name == cleanName)
+                                                 .FirstOrDefaultAsync();
+
+                    if (localUser == null)
+                    {
+                        var newUser = new LocalSalesPerson
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Name = cleanName,
+                            Phone = string.IsNullOrWhiteSpace(remote.Phone) ? "-" : remote.Phone,
+                            Email = string.IsNullOrWhiteSpace(remote.Email) ? "-" : remote.Email,
+                            TargetOmset = remote.TargetOmset,
+                            Role = string.IsNullOrWhiteSpace(remote.Role) ? "SALES" : remote.Role,
+                            Password = remote.Password,
+                            IsSynced = true
+                        };
+                        await localDb.InsertAsync(newUser);
+                        userCount++;
+                    }
+                    else
+                    {
+                        if (localUser.Role != "DEVELOPER" && localUser.Name != "blessstudiosie")
+                        {
+                            localUser.Phone = string.IsNullOrWhiteSpace(remote.Phone) ? localUser.Phone : remote.Phone;
+                            localUser.Email = string.IsNullOrWhiteSpace(remote.Email) ? localUser.Email : remote.Email;
+                            localUser.TargetOmset = remote.TargetOmset;
+                            localUser.Role = string.IsNullOrWhiteSpace(remote.Role) ? localUser.Role : remote.Role;
+                            localUser.Password = remote.Password ?? localUser.Password;
+                            localUser.IsSynced = true;
+                            await localDb.UpdateAsync(localUser);
+                            userCount++;
+                        }
+                    }
+                }
+                sb.AppendLine($"✓ SalesPerson: {userCount} akun ditarik.");
+            }
+            catch (Exception ex)
+            {
+                sb.AppendLine($"× SalesPerson: {ex.Message}");
+            }
+
+            // 2. Pull Customers
+            try
+            {
+                var remoteCustomers = (await supabase.From<Customer>().Get()).Models;
+                int customerCount = 0;
+                foreach (var remote in remoteCustomers)
+                {
+                    if (string.IsNullOrWhiteSpace(remote.Name)) continue;
+
+                    string cleanName = remote.Name.Trim();
+                    var localCustomer = await localDb.Table<LocalCustomer>()
+                                                     .Where(c => c.Name == cleanName)
+                                                     .FirstOrDefaultAsync();
+
+                    if (localCustomer == null)
+                    {
+                        var newCust = new LocalCustomer
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Name = cleanName,
+                            OwnerName = remote.OwnerName ?? "",
+                            Phone = remote.Phone ?? "",
+                            Address = remote.Address ?? "",
+                            JalurPengiriman = remote.JalurPengiriman ?? "",
+                            Latitude = remote.Latitude,
+                            Longitude = remote.Longitude,
+                            SalesPersonId = remote.SalesPerson,
+                            LimitPiutang = remote.LimitPiutang,
+                            IsSynced = true
+                        };
+                        await localDb.InsertAsync(newCust);
+                    }
+                    else
+                    {
+                        localCustomer.OwnerName = remote.OwnerName ?? localCustomer.OwnerName;
+                        localCustomer.Phone = remote.Phone ?? localCustomer.Phone;
+                        localCustomer.Address = remote.Address ?? localCustomer.Address;
+                        localCustomer.JalurPengiriman = remote.JalurPengiriman ?? localCustomer.JalurPengiriman;
+                        localCustomer.Latitude = remote.Latitude;
+                        localCustomer.Longitude = remote.Longitude;
+                        localCustomer.SalesPersonId = remote.SalesPerson;
+                        localCustomer.LimitPiutang = remote.LimitPiutang;
+                        localCustomer.IsSynced = true;
+                        await localDb.UpdateAsync(localCustomer);
+                    }
+                    customerCount++;
+                }
+                sb.AppendLine($"✓ Customer: {customerCount} pelanggan ditarik.");
+            }
+            catch (Exception ex)
+            {
+                sb.AppendLine($"× Customer: {ex.Message}");
+            }
+
+            // 3. Pull Products
+            try
+            {
+                var remoteProducts = (await supabase.From<Product>().Get()).Models;
+                int prodCount = 0;
+                foreach (var remote in remoteProducts)
+                {
+                    if (string.IsNullOrWhiteSpace(remote.Name)) continue;
+
+                    string cleanName = remote.Name.Trim();
+                    var localProd = await localDb.Table<LocalProduct>()
+                                                 .Where(p => p.Name == cleanName)
+                                                 .FirstOrDefaultAsync();
+
+                    var mapped = ToLocalProduct(remote, localProd);
+                    if (localProd == null) await localDb.InsertAsync(mapped);
+                    else await localDb.UpdateAsync(mapped);
+                    prodCount++;
+                }
+                sb.AppendLine($"✓ Produk: {prodCount} item ditarik.");
+            }
+            catch (Exception ex)
+            {
+                sb.AppendLine($"× Produk: {ex.Message}");
+            }
+
+            // 4. Pull Sales & SaleDetails
+            try
+            {
+                var remoteSales = (await supabase.From<Sale>().Get()).Models;
+                var remoteDetails = (await supabase.From<SaleDetail>().Get()).Models;
+                var detailsGrouped = remoteDetails.Where(d => !string.IsNullOrWhiteSpace(d.Nota))
+                                                  .GroupBy(d => d.Nota)
+                                                  .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+
+                int saleCount = 0;
+                foreach (var remoteSale in remoteSales)
+                {
+                    if (string.IsNullOrWhiteSpace(remoteSale.Nota)) continue;
+
+                    string cleanNota = remoteSale.Nota.Trim();
+                    var localSale = await localDb.Table<LocalSale>()
+                                                 .Where(s => s.Nota == cleanNota)
+                                                 .FirstOrDefaultAsync();
+
+                    string saleId = localSale?.Id ?? Guid.NewGuid().ToString();
+                    var newSale = new LocalSale
+                    {
+                        Id = saleId,
+                        Nota = cleanNota,
+                        CustomerId = remoteSale.CustomerName,
+                        SalesPersonId = remoteSale.SalesPerson,
+                        OrderDate = remoteSale.OrderDate,
+                        DeliveryDate = remoteSale.DeliveryDate,
+                        Status = remoteSale.Status,
+                        Total = remoteSale.Total,
+                        Paid = remoteSale.Paid,
+                        Remaining = remoteSale.Remaining,
+                        Description = remoteSale.Description,
+                        UpdatedAt = DateTime.Now,
+                        IsSynced = true
+                    };
+
+                    if (localSale == null) await localDb.InsertAsync(newSale);
+                    else await localDb.UpdateAsync(newSale);
+
+                    if (detailsGrouped.TryGetValue(cleanNota, out var details))
+                    {
+                        foreach (var detail in details)
+                        {
+                            var existingDetail = await localDb.Table<LocalSalesDetail>()
+                                                              .Where(d => d.Id == detail.Id || (d.SaleId == saleId && d.ProductId == detail.ItemName))
+                                                              .FirstOrDefaultAsync();
+
+                            var mappedDetail = new LocalSalesDetail
+                            {
+                                Id = detail.Id ?? Guid.NewGuid().ToString(),
+                                SaleId = saleId,
+                                ProductId = detail.ItemName,
+                                Qty = detail.Qty,
+                                Price = detail.Price,
+                                PriceCategory = detail.PriceCategory,
+                                Subtotal = detail.Subtotal
+                            };
+
+                            if (existingDetail == null) await localDb.InsertAsync(mappedDetail);
+                            else await localDb.UpdateAsync(mappedDetail);
+                        }
+                    }
+                    saleCount++;
+                }
+                sb.AppendLine($"✓ Transaksi Nota (Sales): {saleCount} nota ditarik.");
+            }
+            catch (Exception ex)
+            {
+                sb.AppendLine($"× Transaksi Nota: {ex.Message}");
+            }
+
+            // 5. Pull Payments
+            try
+            {
+                var remotePayments = (await supabase.From<Payment>().Get()).Models;
+                int payCount = 0;
+                foreach (var remote in remotePayments)
+                {
+                    var local = await localDb.FindAsync<LocalPayment>(remote.Id.ToString());
+                    var mapped = new LocalPayment
+                    {
+                        Id = remote.Id.ToString(),
+                        SaleId = remote.SaleId.ToString(),
+                        PaymentDate = remote.PaymentDate,
+                        Amount = remote.Amount,
+                        PaymentMethod = remote.PaymentMethod,
+                        Status = remote.Status,
+                        Notes = remote.Notes,
+                        IsSynced = true
+                    };
+
+                    if (local == null) await localDb.InsertAsync(mapped);
+                    else await localDb.UpdateAsync(mapped);
+                    payCount++;
+                }
+                sb.AppendLine($"✓ Pembayaran (Payments): {payCount} record ditarik.");
+            }
+            catch (Exception ex)
+            {
+                sb.AppendLine($"× Pembayaran: {ex.Message}");
+            }
+
+            // 6. Pull Queues
+            await SyncSalesOrdersQueueAsync();
+            await SyncVisitLogsQueueAsync();
+            sb.AppendLine("✓ Antrean Pesanan & Kunjungan Sales ditarik.");
+
+            return sb.ToString();
+        }
     }
 }
+
 
