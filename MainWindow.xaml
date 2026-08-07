@@ -35,8 +35,13 @@
     			<MenuItem Header="_Pengiriman" Click="MenuPengiriman_Click"/>
                 <MenuItem Header="_Laporan" Click="MenuLaporan_Click"/>
                 <MenuItem Header="_Pengaturan" Click="MenuPengaturan_Click"/>
+                <MenuItem x:Name="MenuDeveloperTools" Header="_Developer Tools" Visibility="Collapsed">
+                    <MenuItem Header="Database Inspector (UI Local DB)" Click="MenuDatabaseInspector_Click"/>
+                    <MenuItem Header="Import / Export Data Maintenance" Click="MenuPengaturan_Click"/>
+                </MenuItem>
                 <MenuItem Header="_Sync Sekarang" Click="MenuSync_Click" FontWeight="Bold"/>
             </Menu>
+
 
             <ContentControl x:Name="AreaKonten"/>
         </DockPanel>

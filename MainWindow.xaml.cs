@@ -94,6 +94,14 @@ namespace SPJ_APP
             // This code runs for AdminCreated, and after successful login for the other cases.
             Title = $"SPJ App - Selamat Datang, {CurrentUserService.LoggedInUser?.Name ?? "User"}!";
             
+            // Tampilkan Developer Tools untuk Akun Developer / Admin
+            var currentUserRole = CurrentUserService.LoggedInUser?.Role?.ToUpperInvariant();
+            var currentUserName = CurrentUserService.LoggedInUser?.Name;
+            if (currentUserRole == "DEVELOPER" || currentUserRole == "ADMIN" || currentUserName == "Developer")
+            {
+                MenuDeveloperTools.Visibility = Visibility.Visible;
+            }
+
             // For AdminCreated, the initialization service hasn't run yet. We run it now.
             // For the other cases, it has already run.
             if (setupAction == InitialSetupAction.AdminCreated)
@@ -104,6 +112,12 @@ namespace SPJ_APP
                 await AppInitializationService.InitializeAppAsync();
             }
         }
+
+        private void MenuDatabaseInspector_Click(object sender, RoutedEventArgs e)
+        {
+            AreaKonten.Content = new DatabaseInspectorPage();
+        }
+
 
         private void AppInitializationService_InitializationProgressChanged(object? sender, string message)
         {
