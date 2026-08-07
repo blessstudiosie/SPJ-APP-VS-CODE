@@ -31,7 +31,12 @@ namespace SPJ_APP.View
 
             if (confirm != MessageBoxResult.Yes) return;
 
+            // Otorisasi Pengaman Password Manager / Owner
+            bool authorized = await PasswordPromptWindow.VerifyManagerOrOwnerPasswordAsync(this, "menimpa seluruh data lokal dari Cloud Supabase");
+            if (!authorized) return;
+
             TombolTarikFullData.IsEnabled = false;
+
             TeksProgressTarikData.Visibility = Visibility.Visible;
             TeksProgressTarikData.Text = "⚡ Memulai proses penarikan data penuh...";
             var originalCursor = Cursor;
@@ -142,7 +147,12 @@ namespace SPJ_APP.View
                 return;
             }
 
+            // Otorisasi Pengaman Password Manager / Owner
+            bool authorized = await PasswordPromptWindow.VerifyManagerOrOwnerPasswordAsync(this, "merestore & menimpa data lokal dari file JSON backup");
+            if (!authorized) return;
+
             var dialog = new OpenFileDialog
+
             {
                 Title = "Pilih File Backup JSON untuk di-restore",
                 Filter = "JSON Files (*.json)|*.json",
