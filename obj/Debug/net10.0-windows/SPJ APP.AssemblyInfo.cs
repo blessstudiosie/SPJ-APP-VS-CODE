@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SPJ APP")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+60f48c24a352c71debe87b6057f8f4cfe35a2a08")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dac1ac7c2d429dda0138cfec015983da4f07211b")]
 [assembly: System.Reflection.AssemblyProductAttribute("SPJ APP")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SPJ APP")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

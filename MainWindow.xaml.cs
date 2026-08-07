@@ -225,12 +225,12 @@ namespace SPJ_APP
             // Reset style visual semua menu ke kondisi normal
             ResetAllMenuStyles();
 
-            // Highlight menu yang sedang aktif agar terlihat menonjol
+            // Highlight menu yang sedang aktif agar terlihat menonjol ala Google Sheets
             if (activeItem != null)
             {
-                activeItem.Background = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#4F46E5"));
-                activeItem.Foreground = System.Windows.Media.Brushes.White;
-                activeItem.FontWeight = FontWeights.Bold;
+                activeItem.Background = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#E8F0FE"));
+                activeItem.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#1A73E8"));
+                activeItem.FontWeight = FontWeights.SemiBold;
             }
 
             var currentUser = CurrentUserService.LoggedInUser;
@@ -252,11 +252,12 @@ namespace SPJ_APP
                 if (menu != null)
                 {
                     menu.Background = System.Windows.Media.Brushes.Transparent;
-                    menu.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#1E293B"));
-                    menu.FontWeight = FontWeights.SemiBold;
+                    menu.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3C4043"));
+                    menu.FontWeight = FontWeights.Normal;
                 }
             }
         }
+
 
 
         private void MenuBeranda_Click(object sender, RoutedEventArgs e)
