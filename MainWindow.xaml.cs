@@ -25,9 +25,18 @@ namespace SPJ_APP
                 LoadingStatusText.Text = statusMessage;
                 SyncStatusTextRight.Text = statusMessage;
                 SyncStatusTextRight.Visibility = Visibility.Visible;
-                SyncProgressBar.Visibility = Visibility.Visible;
+
+                if (statusMessage.StartsWith("✅") || statusMessage.Contains("selesai", StringComparison.OrdinalIgnoreCase))
+                {
+                    SyncProgressBar.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    SyncProgressBar.Visibility = Visibility.Visible;
+                }
             });
         }
+
 
 
 

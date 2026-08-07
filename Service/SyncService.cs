@@ -106,8 +106,11 @@ namespace SPJ_APP.Service
                 ActivityLogsPushed = activityLogsPushed,
                 Conflicts = productResult.Conflicts.Count,
             };
+
+            ReportProgress($"✅ Sync selesai ({DateTime.Now:HH:mm:ss})");
             return (summary, productResult.Conflicts);
         }
+
 
         /// <summary>
         /// Mengambil SELURUH baris data dari Supabase tanpa batas 1.000 data (PostgREST Limit).
