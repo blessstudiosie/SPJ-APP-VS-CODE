@@ -31,11 +31,25 @@ namespace SPJ_APP.View.Pages
             try
             {
                 var db = await LocalDatabaseService.GetConnection();
+
                 _allVisits = await db.Table<LocalVisitLogQueue>()
                                      .OrderByDescending(v => v.CreatedAt)
                                      .ToListAsync();
 
+                var customers = await db.Table<LocalCustomer>().ToListAsync();
+                var salesPersons = await db.Table<LocalSalesPerson>().ToListAsync();
+
+                foreach (var v in _allVisits)
+                {
+                    var sp = salesPersons.FirstOrDefault(s => s.Id == v.SalesPersonId || string.Equals(s.Name, v.SalesPersonId, StringComparison.OrdinalIgnoreCase));
+                    v.SalesPersonName = sp?.Name ?? (string.IsNullOrWhiteSpace(v.SalesPersonName) ? (v.SalesPersonId ?? "-") : v.SalesPersonName);
+
+                    var cust = customers.FirstOrDefault(c => c.Id == v.CustomerId || string.Equals(c.Name, v.CustomerId, StringComparison.OrdinalIgnoreCase) || string.Equals(c.Name, v.CustomerName, StringComparison.OrdinalIgnoreCase));
+                    v.CustomerName = cust?.Name ?? (string.IsNullOrWhiteSpace(v.CustomerName) ? (v.CustomerId ?? "-") : v.CustomerName);
+                }
+
                 ApplyFilter();
+
             }
             catch (Exception ex)
             {

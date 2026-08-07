@@ -33,11 +33,33 @@ namespace SPJ_APP.View.Pages
             try
             {
                 var db = await LocalDatabaseService.GetConnection();
+
                 _allQueues = await db.Table<LocalSalesOrderQueue>()
                                      .OrderByDescending(q => q.CreatedAt)
                                      .ToListAsync();
 
+                var customers = await db.Table<LocalCustomer>().ToListAsync();
+                var salesPersons = await db.Table<LocalSalesPerson>().ToListAsync();
+
+
+                foreach (var q in _allQueues)
+                {
+                    var cust = customers.FirstOrDefault(c => c.Id == q.CustomerId || c.Id == q.CustomerName || string.Equals(c.Name, q.CustomerName, StringComparison.OrdinalIgnoreCase) || string.Equals(c.Name, q.CustomerId, StringComparison.OrdinalIgnoreCase));
+                    if (cust != null)
+                    {
+                        q.CustomerName = cust.Name;
+                    }
+                    else if (string.IsNullOrWhiteSpace(q.CustomerName))
+                    {
+                        q.CustomerName = q.CustomerId ?? "-";
+                    }
+
+                    var sp = salesPersons.FirstOrDefault(s => s.Id == q.SalesPersonId || string.Equals(s.Name, q.SalesPersonId, StringComparison.OrdinalIgnoreCase));
+                    q.SalesPersonName = sp?.Name ?? (string.IsNullOrWhiteSpace(q.SalesPersonId) ? "-" : q.SalesPersonId);
+                }
+
                 ApplyFilter();
+
             }
             catch (Exception ex)
             {

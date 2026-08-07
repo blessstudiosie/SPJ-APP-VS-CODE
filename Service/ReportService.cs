@@ -47,11 +47,11 @@ namespace SPJ_APP.Service
                 .GroupBy(s => s.SalesPersonId)
                 .Select(group =>
                 {
-                    var salesPerson = salesPersons.FirstOrDefault(sp => sp.Id == group.Key);
+                    var salesPerson = salesPersons.FirstOrDefault(sp => sp.Id == group.Key || string.Equals(sp.Name, group.Key, StringComparison.OrdinalIgnoreCase));
                     return new SalesPerformanceRow
                     {
                         SalesPersonId = group.Key ?? string.Empty,
-                        SalesPersonName = salesPerson?.Name ?? "-",
+                        SalesPersonName = salesPerson?.Name ?? (string.IsNullOrWhiteSpace(group.Key) ? "-" : group.Key),
                         Omset = group.Sum(s => s.Total),
                         NotaCount = group.Count(),
                         NotaMoreThan14Days = group.Count(s => s.OrderDate < threshold)
@@ -80,7 +80,7 @@ namespace SPJ_APP.Service
                 .GroupBy(s => s.SalesPersonId)
                 .Select(group =>
                 {
-                    var salesPerson = salesPersons.FirstOrDefault(sp => sp.Id == group.Key);
+                    var salesPerson = salesPersons.FirstOrDefault(sp => sp.Id == group.Key || string.Equals(sp.Name, group.Key, StringComparison.OrdinalIgnoreCase));
                     var omset = group.Sum(s => s.Total);
                     var notaCount = group.Count();
                     var komisiOmset = omset * omsetRate;
@@ -89,13 +89,14 @@ namespace SPJ_APP.Service
                     return new SalesSalaryRow
                     {
                         SalesPersonId = group.Key ?? string.Empty,
-                        SalesPersonName = salesPerson?.Name ?? "-",
+                        SalesPersonName = salesPerson?.Name ?? (string.IsNullOrWhiteSpace(group.Key) ? "-" : group.Key),
                         Omset = omset,
                         KunjunganCount = notaCount,
                         KomisiOmset = komisiOmset,
                         KomisiKunjungan = komisiKunjungan,
                         TotalGaji = komisiOmset + komisiKunjungan
                     };
+
                 })
                 .OrderByDescending(x => x.TotalGaji)
                 .ToList();

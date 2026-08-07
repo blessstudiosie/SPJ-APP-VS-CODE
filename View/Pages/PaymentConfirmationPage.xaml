@@ -14,22 +14,25 @@
         </StackPanel>
         <DataGrid x:Name="TabelPembayaran" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" AlternatingRowBackground="#F5F5F5">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID Nota" Binding="{Binding SaleId}" Width="*"/>
+                <DataGridTextColumn Header="No Nota" Binding="{Binding NotaNumber}" Width="130"/>
+                <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="160"/>
+                <DataGridTextColumn Header="Sales" Binding="{Binding SalesPersonName}" Width="120"/>
                 <DataGridTextColumn Header="Tanggal" Binding="{Binding PaymentDate, StringFormat=dd/MM/yyyy HH:mm}" Width="145"/>
                 <DataGridTextColumn Header="Nominal" Binding="{Binding Amount, StringFormat={}{0:N0}}" Width="120"/>
                 <DataGridTextColumn Header="Metode" Binding="{Binding PaymentMethod}" Width="110"/>
-                <DataGridTextColumn Header="Catatan" Binding="{Binding Notes}" Width="160"/>
-                <DataGridTemplateColumn Header="Aksi" Width="180">
+                <DataGridTextColumn Header="Catatan" Binding="{Binding Notes}" Width="*"/>
+                <DataGridTemplateColumn Header="Aksi" Width="170">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Button Content="Setujui" Padding="8,2" Margin="0,0,5,0" Tag="{Binding}" Click="TombolSetujui_Click"/>
-                                <Button Content="Tolak" Padding="8,2" Tag="{Binding}" Click="TombolTolak_Click"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Content="Setujui" Padding="10,3" Margin="0,0,6,0" Tag="{Binding Original}" Click="TombolSetujui_Click"/>
+                                <Button Content="Tolak" Padding="10,3" Tag="{Binding Original}" Click="TombolTolak_Click"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
+
         </DataGrid>
     </Grid>
 </UserControl>

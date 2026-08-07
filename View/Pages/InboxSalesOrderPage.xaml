@@ -37,10 +37,12 @@
                               SelectionChanged="TabelQueue_SelectionChanged">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="*"/>
-                            <DataGridTextColumn Header="Total Rp" Binding="{Binding TotalAmount, StringFormat={}{0:N0}}" Width="100"/>
+                            <DataGridTextColumn Header="Sales" Binding="{Binding SalesPersonName}" Width="100"/>
+                            <DataGridTextColumn Header="Total Rp" Binding="{Binding TotalAmount, StringFormat={}{0:N0}}" Width="95"/>
                             <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="80"/>
                             <DataGridTextColumn Header="Waktu" Binding="{Binding CreatedAt, StringFormat=dd/MM HH:mm}" Width="90"/>
                         </DataGrid.Columns>
+
                     </DataGrid>
                 </Grid>
             </Border>

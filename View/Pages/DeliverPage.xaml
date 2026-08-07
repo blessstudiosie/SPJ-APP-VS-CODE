@@ -32,6 +32,7 @@
                         <DataGridCheckBoxColumn Header="Pilih" Binding="{Binding IsSelected, Mode=TwoWay}" Width="50"/>
                         <DataGridTextColumn Header="No Nota" Binding="{Binding Nota}" Width="130" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="160" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Sales" Binding="{Binding SalesPersonName}" Width="120" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Jalur" Binding="{Binding JalurPengiriman}" Width="120" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Total" Binding="{Binding Total, StringFormat={}{0:N0}}" Width="110" IsReadOnly="True"/>
                     </DataGrid.Columns>

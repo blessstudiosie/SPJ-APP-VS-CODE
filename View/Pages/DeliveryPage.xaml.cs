@@ -13,12 +13,14 @@ namespace SPJ_APP.View.Pages
         public bool IsSelected { get; set; }
         public string Nota { get; set; } = "";
         public string CustomerName { get; set; } = "";
+        public string SalesPersonName { get; set; } = "";
         public string JalurPengiriman { get; set; } = "-";
         public decimal Total { get; set; }
         public decimal Remaining { get; set; }
         public string StatusTujuan => Remaining <= 0 ? "DONE" : "TEMPO";
         public SaleDisplayItem Original { get; set; } = null!;
     }
+
 
     public class OpenDeliveryDisplay
     {
@@ -62,11 +64,13 @@ namespace SPJ_APP.View.Pages
             {
                 Nota = s.Nota,
                 CustomerName = s.CustomerName,
-                JalurPengiriman = customers.FirstOrDefault(c => c.Id == s.Original.CustomerId)?.JalurPengiriman ?? "-",
+                SalesPersonName = s.SalesPersonName,
+                JalurPengiriman = customers.FirstOrDefault(c => c.Id == s.Original.CustomerId || string.Equals(c.Name, s.Original.CustomerId, StringComparison.OrdinalIgnoreCase))?.JalurPengiriman ?? "-",
                 Total = s.Total,
                 Remaining = s.Remaining,
                 Original = s
             }).ToList();
+
 
             var view = CollectionViewSource.GetDefaultView(_siapKirimItems);
             view.GroupDescriptions.Add(new PropertyGroupDescription(nameof(DeliverySelectableItem.JalurPengiriman)));
@@ -90,11 +94,13 @@ namespace SPJ_APP.View.Pages
                     {
                         Nota = s.Nota,
                         CustomerName = s.CustomerName,
-                        JalurPengiriman = customers.FirstOrDefault(c => c.Id == s.Original.CustomerId)?.JalurPengiriman ?? "-",
+                        SalesPersonName = s.SalesPersonName,
+                        JalurPengiriman = customers.FirstOrDefault(c => c.Id == s.Original.CustomerId || string.Equals(c.Name, s.Original.CustomerId, StringComparison.OrdinalIgnoreCase))?.JalurPengiriman ?? "-",
                         Total = s.Total,
                         Remaining = s.Remaining,
                         Original = s
                     }).ToList();
+
 
                 return new OpenDeliveryDisplay
                 {

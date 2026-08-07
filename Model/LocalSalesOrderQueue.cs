@@ -10,7 +10,9 @@ namespace SPJ_APP.Model
         public string Id { get; set; } = string.Empty;
 
         public string? SalesPersonId { get; set; }
+        public string SalesPersonName { get; set; } = string.Empty;
         public string? CustomerId { get; set; }
+
         public string CustomerName { get; set; } = string.Empty;
         public string ItemsJson { get; set; } = "[]";
         public decimal TotalAmount { get; set; }
