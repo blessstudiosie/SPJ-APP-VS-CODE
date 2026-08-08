@@ -21,7 +21,7 @@
 
                     <!-- Input User -->
                     <TextBlock Text="Nama User / Akun" FontSize="12" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
-                    <ComboBox x:Name="InputNama" Margin="0,0,0,14" DisplayMemberPath="Name" IsEditable="True" MinHeight="38" Padding="8,6" VerticalContentAlignment="Center"/>
+                    <TextBox x:Name="InputNama" Margin="0,0,0,14" MinHeight="38" Padding="8,6" VerticalContentAlignment="Center"/>
 
                     <!-- Input Password -->
                     <TextBlock Text="Password" FontSize="12" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>

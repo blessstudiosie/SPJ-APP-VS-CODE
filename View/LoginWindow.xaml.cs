@@ -87,14 +87,7 @@ namespace SPJ_APP.View
                             IsSynced = false
                         };
                         await localDb.InsertAsync(defaultAdmin);
-                        _users.Add(defaultAdmin);
                     }
-                }
-
-                InputNama.ItemsSource = _users;
-                if (_users.Count > 0)
-                {
-                    InputNama.SelectedIndex = 0;
                 }
             }
             catch (System.Exception ex)
@@ -125,13 +118,8 @@ namespace SPJ_APP.View
                     return;
                 }
 
-
-                LocalSalesPerson? user = InputNama.SelectedItem as LocalSalesPerson;
-                if (user == null)
-                {
-                    string searchName = inputName.Trim();
-                    user = _users.FirstOrDefault(u => string.Equals(u.Name?.Trim(), searchName, System.StringComparison.OrdinalIgnoreCase));
-                }
+                string searchName = inputName.Trim();
+                LocalSalesPerson? user = _users.FirstOrDefault(u => string.Equals(u.Name?.Trim(), searchName, System.StringComparison.OrdinalIgnoreCase));
 
                 if (user == null)
                 {
@@ -139,10 +127,9 @@ namespace SPJ_APP.View
                     return;
                 }
 
-                // Gunakan PasswordHasherService.VerifyPassword yang aman & fleksibel
                 if (!PasswordHasherService.VerifyPassword(inputPassword, user.Password))
                 {
-                    TeksStatus.Text = "Password salah. Silakan periksa kembali (coba default: admin123 / ganti123 / 123456 / dev123).";
+                    TeksStatus.Text = "Password salah.";
                     return;
                 }
 
