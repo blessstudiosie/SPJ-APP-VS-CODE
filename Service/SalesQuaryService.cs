@@ -19,7 +19,8 @@ namespace SPJ_APP.Service
             int pageNumber,
             DateTime? startDate = null,
             DateTime? endDate = null,
-            string? searchQuery = null)
+            string? searchQuery = null,
+            List<string>? selectedStatuses = null)
         {
             var localDb = await LocalDatabaseService.GetConnection();
             var allSales = await localDb.Table<LocalSale>().ToListAsync();
@@ -31,6 +32,12 @@ namespace SPJ_APP.Service
             if (endDate.HasValue)
             {
                 allSales = allSales.Where(s => s.OrderDate.Date <= endDate.Value.Date).ToList();
+            }
+
+            if (selectedStatuses != null && selectedStatuses.Any())
+            {
+                var statusSet = new HashSet<string>(selectedStatuses, StringComparer.OrdinalIgnoreCase);
+                allSales = allSales.Where(s => statusSet.Contains(s.Status)).ToList();
             }
 
             var resolvedAll = await SalesResolutionService.ResolveSaleDisplayItemsAsync(allSales);
@@ -59,6 +66,7 @@ namespace SPJ_APP.Service
 
             return (pageItems, totalCount);
         }
+
 
 		
 		public static async Task<List<SaleDisplayItem>> GetSalesByStatusAsync(string status)

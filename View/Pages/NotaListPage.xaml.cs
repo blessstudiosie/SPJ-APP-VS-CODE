@@ -26,13 +26,39 @@ namespace SPJ_APP.View.Pages
 
         public void RefreshData() => LoadPage();
 
+        private List<string> GetSelectedStatuses()
+        {
+            var list = new List<string>();
+            if (ChkStatusSo?.IsChecked == true) list.Add("SO");
+            if (ChkStatusOnProses?.IsChecked == true) list.Add("ON PROSES");
+            if (ChkStatusDalamPengiriman?.IsChecked == true) list.Add("DALAM PENGIRIMAN");
+            if (ChkStatusTempo?.IsChecked == true) list.Add("TEMPO");
+            if (ChkStatusDone?.IsChecked == true) list.Add("DONE");
+            return list;
+        }
+
+        private void UpdateStatusButtonHeader()
+        {
+            if (TombolFilterStatus == null) return;
+            var selected = GetSelectedStatuses();
+            if (selected.Count == 5 || selected.Count == 0)
+            {
+                TombolFilterStatus.Content = "Semua Status (5) ▼";
+            }
+            else
+            {
+                TombolFilterStatus.Content = $"Status ({selected.Count} Terpilih) ▼";
+            }
+        }
+
         private async void LoadPage()
         {
             var startDate = InputMulai.SelectedDate;
             var endDate = InputSelesai.SelectedDate;
             var searchQuery = InputCariCustomer.Text;
+            var selectedStatuses = GetSelectedStatuses();
 
-            var (items, totalCount) = await SalesQueryService.GetPagedSalesAsync(_currentPage, startDate, endDate, searchQuery);
+            var (items, totalCount) = await SalesQueryService.GetPagedSalesAsync(_currentPage, startDate, endDate, searchQuery, selectedStatuses);
             _totalCount = totalCount;
 
             TabelNota.ItemsSource = items;
@@ -58,6 +84,39 @@ namespace SPJ_APP.View.Pages
                 LoadPage();
             }
         }
+
+        private void FilterStatus_Changed(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            UpdateStatusButtonHeader();
+            _currentPage = 1;
+            LoadPage();
+        }
+
+        private void TombolPilihSemuaStatus_Click(object sender, RoutedEventArgs e)
+        {
+            ChkStatusSo.IsChecked = true;
+            ChkStatusOnProses.IsChecked = true;
+            ChkStatusDalamPengiriman.IsChecked = true;
+            ChkStatusTempo.IsChecked = true;
+            ChkStatusDone.IsChecked = true;
+            UpdateStatusButtonHeader();
+            _currentPage = 1;
+            LoadPage();
+        }
+
+        private void TombolResetStatus_Click(object sender, RoutedEventArgs e)
+        {
+            ChkStatusSo.IsChecked = false;
+            ChkStatusOnProses.IsChecked = false;
+            ChkStatusDalamPengiriman.IsChecked = false;
+            ChkStatusTempo.IsChecked = false;
+            ChkStatusDone.IsChecked = false;
+            UpdateStatusButtonHeader();
+            _currentPage = 1;
+            LoadPage();
+        }
+
 
 
         private void TombolSebelumnya_Click(object sender, RoutedEventArgs e)
