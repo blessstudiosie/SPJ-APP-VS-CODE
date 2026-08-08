@@ -42,21 +42,21 @@ namespace SPJ_APP.View.Pages
                 var salesPersons = await db.Table<LocalSalesPerson>().ToListAsync();
 
 
+                var custById = customers.Where(c => !string.IsNullOrEmpty(c.Id)).ToDictionary(c => c.Id.Trim(), c => c.Name.Trim(), StringComparer.OrdinalIgnoreCase);
+                var custByName = customers.Where(c => !string.IsNullOrWhiteSpace(c.Name)).ToDictionary(c => c.Name.Trim(), c => c.Name.Trim(), StringComparer.OrdinalIgnoreCase);
+                var spById = salesPersons.Where(s => !string.IsNullOrEmpty(s.Id)).ToDictionary(s => s.Id.Trim(), s => s.Name.Trim(), StringComparer.OrdinalIgnoreCase);
+                var spByName = salesPersons.Where(s => !string.IsNullOrWhiteSpace(s.Name)).ToDictionary(s => s.Name.Trim(), s => s.Name.Trim(), StringComparer.OrdinalIgnoreCase);
+
+
                 foreach (var q in _allQueues)
                 {
-                    var cust = customers.FirstOrDefault(c => c.Id == q.CustomerId || c.Id == q.CustomerName || string.Equals(c.Name, q.CustomerName, StringComparison.OrdinalIgnoreCase) || string.Equals(c.Name, q.CustomerId, StringComparison.OrdinalIgnoreCase));
-                    if (cust != null)
-                    {
-                        q.CustomerName = cust.Name;
-                    }
-                    else if (string.IsNullOrWhiteSpace(q.CustomerName))
-                    {
-                        q.CustomerName = q.CustomerId ?? "-";
-                    }
+                    string custInput = !string.IsNullOrWhiteSpace(q.CustomerName) ? q.CustomerName : q.CustomerId ?? "";
+                    string spInput = !string.IsNullOrWhiteSpace(q.SalesPersonName) ? q.SalesPersonName : q.SalesPersonId ?? "";
 
-                    var sp = salesPersons.FirstOrDefault(s => s.Id == q.SalesPersonId || string.Equals(s.Name, q.SalesPersonId, StringComparison.OrdinalIgnoreCase));
-                    q.SalesPersonName = sp?.Name ?? (string.IsNullOrWhiteSpace(q.SalesPersonId) ? "-" : q.SalesPersonId);
+                    q.CustomerName = SalesResolutionService.ResolveCustomerName(custInput, custById, custByName);
+                    q.SalesPersonName = SalesResolutionService.ResolveSalesPersonName(spInput, spById, spByName);
                 }
+
 
                 ApplyFilter();
 

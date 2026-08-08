@@ -39,14 +39,20 @@ namespace SPJ_APP.View.Pages
                 var customers = await db.Table<LocalCustomer>().ToListAsync();
                 var salesPersons = await db.Table<LocalSalesPerson>().ToListAsync();
 
+                var custById = customers.Where(c => !string.IsNullOrEmpty(c.Id)).ToDictionary(c => c.Id.Trim(), c => c.Name.Trim(), StringComparer.OrdinalIgnoreCase);
+                var custByName = customers.Where(c => !string.IsNullOrWhiteSpace(c.Name)).ToDictionary(c => c.Name.Trim(), c => c.Name.Trim(), StringComparer.OrdinalIgnoreCase);
+                var spById = salesPersons.Where(s => !string.IsNullOrEmpty(s.Id)).ToDictionary(s => s.Id.Trim(), s => s.Name.Trim(), StringComparer.OrdinalIgnoreCase);
+                var spByName = salesPersons.Where(s => !string.IsNullOrWhiteSpace(s.Name)).ToDictionary(s => s.Name.Trim(), s => s.Name.Trim(), StringComparer.OrdinalIgnoreCase);
+
                 foreach (var v in _allVisits)
                 {
-                    var sp = salesPersons.FirstOrDefault(s => s.Id == v.SalesPersonId || string.Equals(s.Name, v.SalesPersonId, StringComparison.OrdinalIgnoreCase));
-                    v.SalesPersonName = sp?.Name ?? (string.IsNullOrWhiteSpace(v.SalesPersonName) ? (v.SalesPersonId ?? "-") : v.SalesPersonName);
+                    string custInput = !string.IsNullOrWhiteSpace(v.CustomerName) ? v.CustomerName : v.CustomerId ?? "";
+                    string spInput = !string.IsNullOrWhiteSpace(v.SalesPersonName) ? v.SalesPersonName : v.SalesPersonId ?? "";
 
-                    var cust = customers.FirstOrDefault(c => c.Id == v.CustomerId || string.Equals(c.Name, v.CustomerId, StringComparison.OrdinalIgnoreCase) || string.Equals(c.Name, v.CustomerName, StringComparison.OrdinalIgnoreCase));
-                    v.CustomerName = cust?.Name ?? (string.IsNullOrWhiteSpace(v.CustomerName) ? (v.CustomerId ?? "-") : v.CustomerName);
+                    v.CustomerName = SalesResolutionService.ResolveCustomerName(custInput, custById, custByName);
+                    v.SalesPersonName = SalesResolutionService.ResolveSalesPersonName(spInput, spById, spByName);
                 }
+
 
                 ApplyFilter();
 
