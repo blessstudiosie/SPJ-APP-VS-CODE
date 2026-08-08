@@ -15,7 +15,11 @@ namespace SPJ_APP.Service
 
         public const int PageSize = 20;
 
-        public static async Task<(List<SaleDisplayItem> Items, int TotalCount)> GetPagedSalesAsync(int pageNumber, DateTime? startDate = null, DateTime? endDate = null)
+        public static async Task<(List<SaleDisplayItem> Items, int TotalCount)> GetPagedSalesAsync(
+            int pageNumber,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            string? searchQuery = null)
         {
             var localDb = await LocalDatabaseService.GetConnection();
             var allSales = await localDb.Table<LocalSale>().ToListAsync();
@@ -29,22 +33,33 @@ namespace SPJ_APP.Service
                 allSales = allSales.Where(s => s.OrderDate.Date <= endDate.Value.Date).ToList();
             }
 
-            var sorted = allSales
+            var resolvedAll = await SalesResolutionService.ResolveSaleDisplayItemsAsync(allSales);
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                string query = searchQuery.Trim();
+                resolvedAll = resolvedAll.Where(s =>
+                    (s.CustomerName != null && s.CustomerName.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                    (s.SalesPersonName != null && s.SalesPersonName.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                    (s.Nota != null && s.Nota.Contains(query, StringComparison.OrdinalIgnoreCase))
+                ).ToList();
+            }
+
+            var sorted = resolvedAll
                 .OrderBy(s => StatusOrder.TryGetValue(s.Status, out int order) ? order : 99)
                 .ThenByDescending(s => s.OrderDate)
                 .ToList();
 
             int totalCount = sorted.Count;
 
-            var pageSales = sorted
+            var pageItems = sorted
                 .Skip((pageNumber - 1) * PageSize)
                 .Take(PageSize)
                 .ToList();
 
-            var pageItems = await SalesResolutionService.ResolveSaleDisplayItemsAsync(pageSales);
-
             return (pageItems, totalCount);
         }
+
 		
 		public static async Task<List<SaleDisplayItem>> GetSalesByStatusAsync(string status)
         {

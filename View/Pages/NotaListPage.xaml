@@ -12,15 +12,19 @@
         <TextBlock Grid.Row="0" Text="Transaksi Penjualan (Nota)" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="🔍 Cari Customer / Nota:" VerticalAlignment="Center" Margin="0,0,5,0" FontWeight="SemiBold"/>
+            <TextBox x:Name="InputCariCustomer" Width="180" Height="28" VerticalContentAlignment="Center" Padding="6,0" Margin="0,0,12,0" KeyDown="InputCariCustomer_KeyDown"/>
+
             <TextBlock Text="Dari:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <DatePicker x:Name="InputMulai" Width="120" Margin="0,0,10,0"/>
+            <DatePicker x:Name="InputMulai" Width="110" Margin="0,0,10,0"/>
             <TextBlock Text="Sampai:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <DatePicker x:Name="InputSelesai" Width="120" Margin="0,0,10,0"/>
-            <Button x:Name="TombolFilter" Content="Filter" Padding="10,3" Click="TombolFilter_Click"/>
-            <Button x:Name="TombolTambah" Content="Tambah Nota" Padding="10,5" Margin="10,0,0,0" Click="TombolTambah_Click"/>
+            <DatePicker x:Name="InputSelesai" Width="110" Margin="0,0,10,0"/>
+            <Button x:Name="TombolFilter" Content="🔍 Filter" Padding="12,4" Height="28" Click="TombolFilter_Click"/>
+            <Button x:Name="TombolTambah" Content="➕ Tambah Nota" Padding="12,4" Height="28" Margin="10,0,0,0" Background="#4F46E5" Foreground="White" FontWeight="Bold" Click="TombolTambah_Click"/>
             <TextBox x:Name="TeksStatus" VerticalAlignment="Center" Margin="15,0,0,0" FontStyle="Italic"
                      IsReadOnly="True" BorderThickness="0" Background="Transparent" IsReadOnlyCaretVisible="True"/>
         </StackPanel>
+
 
         <DataGrid x:Name="TabelNota" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True"
                   CanUserAddRows="False" AlternatingRowBackground="#F5F5F5"

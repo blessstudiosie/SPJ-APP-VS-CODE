@@ -30,8 +30,9 @@ namespace SPJ_APP.View.Pages
         {
             var startDate = InputMulai.SelectedDate;
             var endDate = InputSelesai.SelectedDate;
+            var searchQuery = InputCariCustomer.Text;
 
-            var (items, totalCount) = await SalesQueryService.GetPagedSalesAsync(_currentPage, startDate, endDate);
+            var (items, totalCount) = await SalesQueryService.GetPagedSalesAsync(_currentPage, startDate, endDate, searchQuery);
             _totalCount = totalCount;
 
             TabelNota.ItemsSource = items;
@@ -48,6 +49,16 @@ namespace SPJ_APP.View.Pages
             _currentPage = 1;
             LoadPage();
         }
+
+        private void InputCariCustomer_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                _currentPage = 1;
+                LoadPage();
+            }
+        }
+
 
         private void TombolSebelumnya_Click(object sender, RoutedEventArgs e)
         {
