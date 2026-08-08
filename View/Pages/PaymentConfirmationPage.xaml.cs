@@ -32,25 +32,6 @@ namespace SPJ_APP.View.Pages
                 var payments = await SyncService.PullPendingPaymentsAsync();
                 var db = await LocalDatabaseService.GetConnection();
                 var sales = await db.Table<LocalSale>().ToListAsync();
-                var customers = await db.Table<LocalCustomer>().ToListAsync();
-                var salesPersons = await db.Table<LocalSalesPerson>().ToListAsync();
-
-                var custById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                var custByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                foreach (var c in customers)
-                {
-                    if (!string.IsNullOrWhiteSpace(c.Id)) custById[c.Id.Trim()] = c.Name?.Trim() ?? "";
-                    if (!string.IsNullOrWhiteSpace(c.Name)) custByName[c.Name.Trim()] = c.Name.Trim();
-                }
-
-                var spById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                var spByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                foreach (var sp in salesPersons)
-                {
-                    if (!string.IsNullOrWhiteSpace(sp.Id)) spById[sp.Id.Trim()] = sp.Name?.Trim() ?? "";
-                    if (!string.IsNullOrWhiteSpace(sp.Name)) spByName[sp.Name.Trim()] = sp.Name.Trim();
-                }
-
                 var displayItems = payments.Select(p =>
                 {
                     var sale = sales.FirstOrDefault(s => s.Id == p.SaleId || string.Equals(s.Nota, p.SaleId, StringComparison.OrdinalIgnoreCase));
@@ -60,8 +41,8 @@ namespace SPJ_APP.View.Pages
                     return new PaymentDisplayItem
                     {
                         NotaNumber = sale?.Nota ?? p.SaleId,
-                        CustomerName = SalesResolutionService.ResolveCustomerName(custRaw, custById, custByName),
-                        SalesPersonName = SalesResolutionService.ResolveSalesPersonName(spRaw, spById, spByName),
+                        CustomerName = NameLookupService.GetCustomerName(custRaw),
+                        SalesPersonName = NameLookupService.GetSalesPersonName(spRaw),
                         PaymentDate = p.PaymentDate,
                         Amount = p.Amount,
                         PaymentMethod = p.PaymentMethod ?? "-",

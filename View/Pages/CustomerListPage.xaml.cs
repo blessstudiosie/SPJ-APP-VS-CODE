@@ -32,15 +32,6 @@ namespace SPJ_APP.View.Pages
         {
             var localDb = await LocalDatabaseService.GetConnection();
             var customers = await localDb.Table<LocalCustomer>().ToListAsync();
-            var salesPersons = await localDb.Table<LocalSalesPerson>().ToListAsync();
-
-            var spById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            var spByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var sp in salesPersons)
-            {
-                if (!string.IsNullOrWhiteSpace(sp.Id)) spById[sp.Id.Trim()] = sp.Name?.Trim() ?? "";
-                if (!string.IsNullOrWhiteSpace(sp.Name)) spByName[sp.Name.Trim()] = sp.Name.Trim();
-            }
 
             var displayItems = customers.Select(c => new CustomerDisplayItem
             {
@@ -49,7 +40,7 @@ namespace SPJ_APP.View.Pages
                 OwnerName = c.OwnerName,
                 Phone = c.Phone,
                 JalurPengiriman = c.JalurPengiriman,
-                SalesPersonName = SalesResolutionService.ResolveSalesPersonName(c.SalesPersonId, spById, spByName),
+                SalesPersonName = NameLookupService.GetSalesPersonName(c.SalesPersonId),
                 LimitPiutang = c.LimitPiutang,
                 Original = c
             }).ToList();

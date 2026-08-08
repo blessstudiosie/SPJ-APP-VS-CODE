@@ -75,9 +75,13 @@ namespace SPJ_APP.View
 
             InputSalesPerson.ItemsSource = salesPersons;
 
-            if (_existing != null && !string.IsNullOrEmpty(_existing.SalesPersonId))
+            if (_existing != null && !string.IsNullOrWhiteSpace(_existing.SalesPersonId))
             {
-                InputSalesPerson.SelectedItem = salesPersons.FirstOrDefault(s => s.Id == _existing.SalesPersonId);
+                string spName = NameLookupService.GetSalesPersonName(_existing.SalesPersonId);
+                InputSalesPerson.SelectedItem = salesPersons.FirstOrDefault(s =>
+                    (!string.IsNullOrEmpty(s.Id) && string.Equals(s.Id.Trim(), _existing.SalesPersonId.Trim(), StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(s.Name) && string.Equals(s.Name.Trim(), spName, StringComparison.OrdinalIgnoreCase))
+                );
             }
         }
 

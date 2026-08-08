@@ -38,39 +38,14 @@ namespace SPJ_APP.View.Pages
                                      .OrderByDescending(q => q.CreatedAt)
                                      .ToListAsync();
 
-                var customers = await db.Table<LocalCustomer>().ToListAsync();
-                var salesPersons = await db.Table<LocalSalesPerson>().ToListAsync();
-
-
-                var custById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                var custByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-                foreach (var c in customers)
-                {
-                    if (!string.IsNullOrEmpty(c.Id)) custById[c.Id.Trim()] = c.Name?.Trim() ?? "";
-                    if (!string.IsNullOrWhiteSpace(c.Name)) custByName[c.Name.Trim()] = c.Name.Trim();
-                }
-
-                var spById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                var spByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-                foreach (var sp in salesPersons)
-                {
-                    if (!string.IsNullOrEmpty(sp.Id)) spById[sp.Id.Trim()] = sp.Name?.Trim() ?? "";
-                    if (!string.IsNullOrWhiteSpace(sp.Name)) spByName[sp.Name.Trim()] = sp.Name.Trim();
-                }
-
-
-
                 foreach (var q in _allQueues)
                 {
                     string custInput = !string.IsNullOrWhiteSpace(q.CustomerName) ? q.CustomerName : q.CustomerId ?? "";
                     string spInput = !string.IsNullOrWhiteSpace(q.SalesPersonName) ? q.SalesPersonName : q.SalesPersonId ?? "";
 
-                    q.CustomerName = SalesResolutionService.ResolveCustomerName(custInput, custById, custByName);
-                    q.SalesPersonName = SalesResolutionService.ResolveSalesPersonName(spInput, spById, spByName);
+                    q.CustomerName = NameLookupService.GetCustomerName(custInput);
+                    q.SalesPersonName = NameLookupService.GetSalesPersonName(spInput);
                 }
-
 
                 ApplyFilter();
 

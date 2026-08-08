@@ -43,19 +43,11 @@ namespace SPJ_APP.Service
             var now = DateTime.Now;
             var threshold = now.AddDays(-14);
 
-            var spById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            var spByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var sp in salesPersons)
-            {
-                if (!string.IsNullOrWhiteSpace(sp.Id)) spById[sp.Id.Trim()] = sp.Name?.Trim() ?? "";
-                if (!string.IsNullOrWhiteSpace(sp.Name)) spByName[sp.Name.Trim()] = sp.Name.Trim();
-            }
-
             return sales
                 .GroupBy(s => s.SalesPersonId)
                 .Select(group =>
                 {
-                    string spName = SalesResolutionService.ResolveSalesPersonName(group.Key, spById, spByName);
+                    string spName = NameLookupService.GetSalesPersonName(group.Key);
                     return new SalesPerformanceRow
                     {
                         SalesPersonId = group.Key ?? string.Empty,
@@ -73,7 +65,6 @@ namespace SPJ_APP.Service
         {
             var localDb = await LocalDatabaseService.GetConnection();
             var sales = await localDb.Table<LocalSale>().ToListAsync();
-            var salesPersons = await localDb.Table<LocalSalesPerson>().ToListAsync();
 
             if (startDate.HasValue)
                 sales = sales.Where(s => s.OrderDate >= startDate.Value.Date).ToList();
@@ -84,19 +75,11 @@ namespace SPJ_APP.Service
             const decimal omsetRate = 0.015m;
             const decimal kunjunganRate = 25000m;
 
-            var spById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            var spByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var sp in salesPersons)
-            {
-                if (!string.IsNullOrWhiteSpace(sp.Id)) spById[sp.Id.Trim()] = sp.Name?.Trim() ?? "";
-                if (!string.IsNullOrWhiteSpace(sp.Name)) spByName[sp.Name.Trim()] = sp.Name.Trim();
-            }
-
             return sales
                 .GroupBy(s => s.SalesPersonId)
                 .Select(group =>
                 {
-                    string spName = SalesResolutionService.ResolveSalesPersonName(group.Key, spById, spByName);
+                    string spName = NameLookupService.GetSalesPersonName(group.Key);
                     var omset = group.Sum(s => s.Total);
                     var notaCount = group.Count();
                     var komisiOmset = omset * omsetRate;

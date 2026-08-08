@@ -36,34 +36,13 @@ namespace SPJ_APP.View.Pages
                                      .OrderByDescending(v => v.CreatedAt)
                                      .ToListAsync();
 
-                var customers = await db.Table<LocalCustomer>().ToListAsync();
-                var salesPersons = await db.Table<LocalSalesPerson>().ToListAsync();
-
-                var custById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                var custByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-                foreach (var c in customers)
-                {
-                    if (!string.IsNullOrEmpty(c.Id)) custById[c.Id.Trim()] = c.Name?.Trim() ?? "";
-                    if (!string.IsNullOrWhiteSpace(c.Name)) custByName[c.Name.Trim()] = c.Name.Trim();
-                }
-
-                var spById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                var spByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-                foreach (var sp in salesPersons)
-                {
-                    if (!string.IsNullOrEmpty(sp.Id)) spById[sp.Id.Trim()] = sp.Name?.Trim() ?? "";
-                    if (!string.IsNullOrWhiteSpace(sp.Name)) spByName[sp.Name.Trim()] = sp.Name.Trim();
-                }
-
                 foreach (var v in _allVisits)
                 {
                     string custInput = !string.IsNullOrWhiteSpace(v.CustomerName) ? v.CustomerName : v.CustomerId ?? "";
                     string spInput = !string.IsNullOrWhiteSpace(v.SalesPersonName) ? v.SalesPersonName : v.SalesPersonId ?? "";
 
-                    v.CustomerName = SalesResolutionService.ResolveCustomerName(custInput, custById, custByName);
-                    v.SalesPersonName = SalesResolutionService.ResolveSalesPersonName(spInput, spById, spByName);
+                    v.CustomerName = NameLookupService.GetCustomerName(custInput);
+                    v.SalesPersonName = NameLookupService.GetSalesPersonName(spInput);
                 }
 
                 ApplyFilter();

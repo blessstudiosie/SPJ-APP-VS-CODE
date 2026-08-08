@@ -119,6 +119,9 @@ namespace SPJ_APP.Service
                 Conflicts = productResult.Conflicts.Count,
             };
 
+            ReportProgress("🔄 Memperbarui kamus nama pelanggan, sales, dan produk...");
+            await NameLookupService.RefreshAsync();
+
             ReportProgress($"✅ Sync selesai ({DateTime.Now:HH:mm:ss})");
             return (summary, productResult.Conflicts);
         }

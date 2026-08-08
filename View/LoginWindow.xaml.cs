@@ -148,6 +148,7 @@ namespace SPJ_APP.View
 
                 // Login sukses
                 CurrentUserService.SetUser(user);
+                await NameLookupService.RefreshAsync();
 
                 try
                 {

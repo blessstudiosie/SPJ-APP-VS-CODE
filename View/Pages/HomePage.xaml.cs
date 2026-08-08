@@ -244,14 +244,14 @@ namespace SPJ_APP.View.Pages
 
                 // Group delivered sales directly by resolved Sales Person Name
                 var salesGroupedBySalesPerson = currentMonthDeliveredSales
-                    .GroupBy(s => SalesResolutionService.ResolveSalesPersonName(s.SalesPersonId, spById, spByName))
+                    .GroupBy(s => NameLookupService.GetSalesPersonName(s.SalesPersonId))
                     .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
 
                 // Group current month visits directly by resolved Sales Person Name
                 var visitsGroupedBySalesPerson = currentMonthVisits
                     .GroupBy(v => {
                         string spInput = !string.IsNullOrWhiteSpace(v.SalesPersonName) ? v.SalesPersonName : v.SalesPersonId ?? "";
-                        return SalesResolutionService.ResolveSalesPersonName(spInput, spById, spByName);
+                        return NameLookupService.GetSalesPersonName(spInput);
                     })
                     .ToDictionary(g => g.Key, g => g.Count(), StringComparer.OrdinalIgnoreCase);
 
