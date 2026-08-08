@@ -20,7 +20,8 @@ namespace SPJ_APP.Service
             DateTime? startDate = null,
             DateTime? endDate = null,
             string? searchQuery = null,
-            List<string>? selectedStatuses = null)
+            List<string>? selectedStatuses = null,
+            string? salesPersonFilter = null)
         {
             var localDb = await LocalDatabaseService.GetConnection();
             var allSales = await localDb.Table<LocalSale>().ToListAsync();
@@ -41,6 +42,14 @@ namespace SPJ_APP.Service
             }
 
             var resolvedAll = await SalesResolutionService.ResolveSaleDisplayItemsAsync(allSales);
+
+            if (!string.IsNullOrWhiteSpace(salesPersonFilter) && !salesPersonFilter.Contains("Semua Sales", StringComparison.OrdinalIgnoreCase))
+            {
+                string spFilter = salesPersonFilter.Trim();
+                resolvedAll = resolvedAll.Where(s =>
+                    s.SalesPersonName != null && string.Equals(s.SalesPersonName, spFilter, StringComparison.OrdinalIgnoreCase)
+                ).ToList();
+            }
 
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
@@ -66,6 +75,7 @@ namespace SPJ_APP.Service
 
             return (pageItems, totalCount);
         }
+
 
 
 		

@@ -17,11 +17,38 @@ namespace SPJ_APP.View.Pages
             Loaded += NotaListPage_Loaded;
         }
 
-        private void NotaListPage_Loaded(object sender, RoutedEventArgs e)
+        private async void NotaListPage_Loaded(object sender, RoutedEventArgs e)
         {
             InputMulai.SelectedDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             InputSelesai.SelectedDate = DateTime.Today;
+            await LoadSalesPersonComboAsync();
             LoadPage();
+        }
+
+        private async Task LoadSalesPersonComboAsync()
+        {
+            try
+            {
+                var db = await LocalDatabaseService.GetConnection();
+                var salesPersons = await db.Table<LocalSalesPerson>().ToListAsync();
+
+                ComboFilterSales.Items.Clear();
+                ComboFilterSales.Items.Add("👤 Semua Sales");
+
+                foreach (var sp in salesPersons.OrderBy(s => s.Name))
+                {
+                    if (!string.IsNullOrWhiteSpace(sp.Name))
+                    {
+                        ComboFilterSales.Items.Add(sp.Name.Trim());
+                    }
+                }
+
+                ComboFilterSales.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading Sales Person dropdown: {ex.Message}");
+            }
         }
 
         public void RefreshData() => LoadPage();
@@ -57,8 +84,10 @@ namespace SPJ_APP.View.Pages
             var endDate = InputSelesai.SelectedDate;
             var searchQuery = InputCariCustomer.Text;
             var selectedStatuses = GetSelectedStatuses();
+            string? salesFilter = ComboFilterSales?.SelectedItem?.ToString();
+            if (salesFilter == "👤 Semua Sales") salesFilter = null;
 
-            var (items, totalCount) = await SalesQueryService.GetPagedSalesAsync(_currentPage, startDate, endDate, searchQuery, selectedStatuses);
+            var (items, totalCount) = await SalesQueryService.GetPagedSalesAsync(_currentPage, startDate, endDate, searchQuery, selectedStatuses, salesFilter);
             _totalCount = totalCount;
 
             TabelNota.ItemsSource = items;
@@ -69,6 +98,14 @@ namespace SPJ_APP.View.Pages
             TombolSebelumnya.IsEnabled = _currentPage > 1;
             TombolBerikutnya.IsEnabled = _currentPage < totalPages;
         }
+
+        private void ComboFilterSales_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            _currentPage = 1;
+            LoadPage();
+        }
+
         
         private void TombolFilter_Click(object sender, RoutedEventArgs e)
         {
