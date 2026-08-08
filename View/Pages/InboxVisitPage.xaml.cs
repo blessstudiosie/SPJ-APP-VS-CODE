@@ -39,10 +39,24 @@ namespace SPJ_APP.View.Pages
                 var customers = await db.Table<LocalCustomer>().ToListAsync();
                 var salesPersons = await db.Table<LocalSalesPerson>().ToListAsync();
 
-                var custById = customers.Where(c => !string.IsNullOrEmpty(c.Id)).ToDictionary(c => c.Id.Trim(), c => c.Name.Trim(), StringComparer.OrdinalIgnoreCase);
-                var custByName = customers.Where(c => !string.IsNullOrWhiteSpace(c.Name)).ToDictionary(c => c.Name.Trim(), c => c.Name.Trim(), StringComparer.OrdinalIgnoreCase);
-                var spById = salesPersons.Where(s => !string.IsNullOrEmpty(s.Id)).ToDictionary(s => s.Id.Trim(), s => s.Name.Trim(), StringComparer.OrdinalIgnoreCase);
-                var spByName = salesPersons.Where(s => !string.IsNullOrWhiteSpace(s.Name)).ToDictionary(s => s.Name.Trim(), s => s.Name.Trim(), StringComparer.OrdinalIgnoreCase);
+                var custById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                var custByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+                foreach (var c in customers)
+                {
+                    if (!string.IsNullOrEmpty(c.Id)) custById[c.Id.Trim()] = c.Name?.Trim() ?? "";
+                    if (!string.IsNullOrWhiteSpace(c.Name)) custByName[c.Name.Trim()] = c.Name.Trim();
+                }
+
+                var spById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                var spByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+                foreach (var sp in salesPersons)
+                {
+                    if (!string.IsNullOrEmpty(sp.Id)) spById[sp.Id.Trim()] = sp.Name?.Trim() ?? "";
+                    if (!string.IsNullOrWhiteSpace(sp.Name)) spByName[sp.Name.Trim()] = sp.Name.Trim();
+                }
+
 
                 foreach (var v in _allVisits)
                 {

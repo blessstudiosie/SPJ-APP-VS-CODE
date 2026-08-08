@@ -23,21 +23,36 @@ namespace SPJ_APP.Service
             var customers = await db.Table<LocalCustomer>().ToListAsync();
             var salesPersons = await db.Table<LocalSalesPerson>().ToListAsync();
 
-            var custById = customers
-                .Where(c => !string.IsNullOrEmpty(c.Id))
-                .ToDictionary(c => c.Id.Trim(), c => c.Name.Trim(), StringComparer.OrdinalIgnoreCase);
+            var custById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var custByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            var custByName = customers
-                .Where(c => !string.IsNullOrWhiteSpace(c.Name))
-                .ToDictionary(c => c.Name.Trim(), c => c.Name.Trim(), StringComparer.OrdinalIgnoreCase);
+            foreach (var c in customers)
+            {
+                if (!string.IsNullOrEmpty(c.Id))
+                {
+                    custById[c.Id.Trim()] = c.Name?.Trim() ?? "";
+                }
+                if (!string.IsNullOrWhiteSpace(c.Name))
+                {
+                    custByName[c.Name.Trim()] = c.Name.Trim();
+                }
+            }
 
-            var spById = salesPersons
-                .Where(sp => !string.IsNullOrEmpty(sp.Id))
-                .ToDictionary(sp => sp.Id.Trim(), sp => sp.Name.Trim(), StringComparer.OrdinalIgnoreCase);
+            var spById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var spByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            var spByName = salesPersons
-                .Where(sp => !string.IsNullOrWhiteSpace(sp.Name))
-                .ToDictionary(sp => sp.Name.Trim(), sp => sp.Name.Trim(), StringComparer.OrdinalIgnoreCase);
+            foreach (var sp in salesPersons)
+            {
+                if (!string.IsNullOrEmpty(sp.Id))
+                {
+                    spById[sp.Id.Trim()] = sp.Name?.Trim() ?? "";
+                }
+                if (!string.IsNullOrWhiteSpace(sp.Name))
+                {
+                    spByName[sp.Name.Trim()] = sp.Name.Trim();
+                }
+            }
+
 
             return salesList.Select(s => MapToDisplayItem(s, custById, custByName, spById, spByName)).ToList();
         }
