@@ -706,7 +706,7 @@ namespace SPJ_APP.Service
 
         private static LocalProduct ToLocalProduct(Product remote, LocalProduct? existing) => new()
         {
-            Id = existing?.Id ?? Guid.NewGuid().ToString(),
+            Id = !string.IsNullOrWhiteSpace(remote.Name) ? remote.Name.Trim() : (existing?.Id ?? Guid.NewGuid().ToString()),
             Name = remote.Name,
             StokReady = remote.StokReady,
             StokFisik = remote.StokFisik,
@@ -971,15 +971,17 @@ namespace SPJ_APP.Service
                     if (string.IsNullOrWhiteSpace(remote.Name)) continue;
 
                     string cleanName = remote.Name.Trim();
+                    string remoteId = string.IsNullOrWhiteSpace(remote.Id) ? Guid.NewGuid().ToString() : remote.Id.Trim();
+
                     var localUser = await localDb.Table<LocalSalesPerson>()
-                                                 .Where(u => u.Name == cleanName)
+                                                 .Where(u => u.Name == cleanName || u.Id == remoteId)
                                                  .FirstOrDefaultAsync();
 
                     if (localUser == null)
                     {
                         var newUser = new LocalSalesPerson
                         {
-                            Id = Guid.NewGuid().ToString(),
+                            Id = remoteId,
                             Name = cleanName,
                             Phone = string.IsNullOrWhiteSpace(remote.Phone) ? "-" : remote.Phone,
                             Email = string.IsNullOrWhiteSpace(remote.Email) ? "-" : remote.Email,
@@ -995,13 +997,20 @@ namespace SPJ_APP.Service
                     {
                         if (localUser.Role != "DEVELOPER" && localUser.Name != "blessstudiosie")
                         {
+                            if (localUser.Id != remoteId)
+                            {
+                                await localDb.DeleteAsync(localUser);
+                                localUser.Id = remoteId;
+                            }
+
+                            localUser.Name = cleanName;
                             localUser.Phone = string.IsNullOrWhiteSpace(remote.Phone) ? localUser.Phone : remote.Phone;
                             localUser.Email = string.IsNullOrWhiteSpace(remote.Email) ? localUser.Email : remote.Email;
                             localUser.TargetOmset = remote.TargetOmset;
                             localUser.Role = string.IsNullOrWhiteSpace(remote.Role) ? localUser.Role : remote.Role;
                             localUser.Password = remote.Password ?? localUser.Password;
                             localUser.IsSynced = true;
-                            await localDb.UpdateAsync(localUser);
+                            await localDb.InsertOrReplaceAsync(localUser);
                             userCount++;
                         }
                     }
@@ -1024,15 +1033,17 @@ namespace SPJ_APP.Service
                     if (string.IsNullOrWhiteSpace(remote.Name)) continue;
 
                     string cleanName = remote.Name.Trim();
+                    string remoteId = string.IsNullOrWhiteSpace(remote.Id) ? Guid.NewGuid().ToString() : remote.Id.Trim();
+
                     var localCustomer = await localDb.Table<LocalCustomer>()
-                                                     .Where(c => c.Name == cleanName)
+                                                     .Where(c => c.Name == cleanName || c.Id == remoteId)
                                                      .FirstOrDefaultAsync();
 
                     if (localCustomer == null)
                     {
                         var newCust = new LocalCustomer
                         {
-                            Id = Guid.NewGuid().ToString(),
+                            Id = remoteId,
                             Name = cleanName,
                             OwnerName = remote.OwnerName ?? "",
                             Phone = remote.Phone ?? "",
@@ -1048,6 +1059,13 @@ namespace SPJ_APP.Service
                     }
                     else
                     {
+                        if (localCustomer.Id != remoteId)
+                        {
+                            await localDb.DeleteAsync(localCustomer);
+                            localCustomer.Id = remoteId;
+                        }
+
+                        localCustomer.Name = cleanName;
                         localCustomer.OwnerName = remote.OwnerName ?? localCustomer.OwnerName;
                         localCustomer.Phone = remote.Phone ?? localCustomer.Phone;
                         localCustomer.Address = remote.Address ?? localCustomer.Address;
@@ -1058,7 +1076,7 @@ namespace SPJ_APP.Service
 
                         localCustomer.LimitPiutang = remote.LimitPiutang;
                         localCustomer.IsSynced = true;
-                        await localDb.UpdateAsync(localCustomer);
+                        await localDb.InsertOrReplaceAsync(localCustomer);
                     }
                     customerCount++;
                 }
@@ -1081,12 +1099,17 @@ namespace SPJ_APP.Service
 
                     string cleanName = remote.Name.Trim();
                     var localProd = await localDb.Table<LocalProduct>()
-                                                 .Where(p => p.Name == cleanName)
+                                                 .Where(p => p.Name == cleanName || p.Id == cleanName)
                                                  .FirstOrDefaultAsync();
 
+                    if (localProd != null && localProd.Id != cleanName)
+                    {
+                        await localDb.DeleteAsync(localProd);
+                        localProd.Id = cleanName;
+                    }
+
                     var mapped = ToLocalProduct(remote, localProd);
-                    if (localProd == null) await localDb.InsertAsync(mapped);
-                    else await localDb.UpdateAsync(mapped);
+                    await localDb.InsertOrReplaceAsync(mapped);
                     prodCount++;
                 }
                 sb.AppendLine($"✓ Produk: {prodCount} item ditarik (dari {remoteProducts.Count} total remote).");
