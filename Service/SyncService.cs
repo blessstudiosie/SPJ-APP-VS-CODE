@@ -54,40 +54,52 @@ namespace SPJ_APP.Service
             OnSyncProgress?.Invoke(message);
         }
 
-        public static async Task<(SyncSummary, List<ConflictItem>)> SyncAllAsync()
+        public static async Task<(SyncSummary, List<ConflictItem>)> SyncAllAsync(CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             ReportProgress("⚡ Memulai Sinkronisasi Data dengan Cloud Server...");
 
             ReportProgress("📥 (1/10) Menarik konfirmasi pembayaran dari Android/Supabase...");
             await PullPendingPaymentsAsync();
+            cancellationToken.ThrowIfCancellationRequested();
 
             ReportProgress("👥 (2/10) Menyinkronkan Master Data Sales Person...");
-            var salesPersonsPushed = await SyncSalesPersonsAsync();
+            var salesPersonsPushed = await SyncSalesPersonsAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
 
             ReportProgress("🏪 (3/10) Menyinkronkan Master Data Pelanggan / Customer...");
-            var customersPushed = await SyncCustomersAsync();
+            var customersPushed = await SyncCustomersAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
 
             ReportProgress("📦 (4/10) Menyinkronkan Katalog Produk & Stok...");
-            var productResult = await SyncProductsAsync();
+            var productResult = await SyncProductsAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
 
             ReportProgress("📑 (5/10) Menyinkronkan Transaksi Penjualan / Nota...");
-            var salesResult = await SyncSalesAsync();
+            var salesResult = await SyncSalesAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
 
             ReportProgress("💳 (6/10) Menyinkronkan Log Pembayaran Transaksi...");
-            var paymentsPushed = await SyncPaymentsAsync();
+            var paymentsPushed = await SyncPaymentsAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
 
             ReportProgress("🚚 (7/10) Menyinkronkan Surat Jalan & Pengiriman...");
-            var deliveriesPushed = await SyncDeliveriesAsync();
+            var deliveriesPushed = await SyncDeliveriesAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
 
             ReportProgress("📝 (8/10) Menyinkronkan Purchase Order Otomatis (PO)...");
-            var purchaseOrdersPushed = await SyncPurchaseOrdersAsync();
+            var purchaseOrdersPushed = await SyncPurchaseOrdersAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
 
             ReportProgress("📋 (9/10) Menyinkronkan Audit Log Aktivitas...");
-            var activityLogsPushed = await SyncActivityLogsAsync();
+            var activityLogsPushed = await SyncActivityLogsAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
 
             ReportProgress("📲 Menyinkronkan Antrian Mobile Sales Order & Visit Log...");
             await SyncSalesOrdersQueueAsync();
+            cancellationToken.ThrowIfCancellationRequested();
             await SyncVisitLogsQueueAsync();
+            cancellationToken.ThrowIfCancellationRequested();
 
             ReportProgress("✅ (10/10) Sinkronisasi Data Selesai 100%!");
 
@@ -154,7 +166,7 @@ namespace SPJ_APP.Service
             return allItems;
         }
 
-        public static async Task<int> SyncPurchaseOrdersAsync()
+        public static async Task<int> SyncPurchaseOrdersAsync(CancellationToken cancellationToken = default)
 
         {
             var localDb = await LocalDatabaseService.GetConnection();
@@ -167,6 +179,7 @@ namespace SPJ_APP.Service
 
             foreach (var localPO in localPOs)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (!Guid.TryParse(localPO.Id, out var poId))
                     throw new InvalidOperationException($"ID PO tidak valid: '{localPO.Id}'.");
 
@@ -209,16 +222,19 @@ namespace SPJ_APP.Service
             return localPOs.Count;
         }
 
-        public static async Task<int> SyncSalesPersonsAsync()
+        public static async Task<int> SyncSalesPersonsAsync(CancellationToken cancellationToken = default)
         {
             var localDb = await LocalDatabaseService.GetConnection();
-            var localItems = await localDb.Table<LocalSalesPerson>().ToListAsync();
+            var unsyncedItems = await localDb.Table<LocalSalesPerson>().Where(x => x.IsSynced == false).ToListAsync();
+            if (!unsyncedItems.Any()) return 0;
+
             var remoteList = await FetchAllFromSupabaseAsync<SalesPerson>();
             var remoteNames = remoteList.Select(item => item.Name).Where(n => !string.IsNullOrWhiteSpace(n)).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             int pushedCount = 0;
-            foreach (var local in localItems)
+            foreach (var local in unsyncedItems)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 // Keamanan 1: Lewati jika Nama kosong/null agar tidak memicu not-null constraint di Supabase (code 23502)
                 if (string.IsNullOrWhiteSpace(local.Name))
                 {
@@ -270,16 +286,19 @@ namespace SPJ_APP.Service
         }
 
 
-        public static async Task<int> SyncCustomersAsync()
+        public static async Task<int> SyncCustomersAsync(CancellationToken cancellationToken = default)
         {
             var localDb = await LocalDatabaseService.GetConnection();
-            var localItems = await localDb.Table<LocalCustomer>().ToListAsync();
+            var unsyncedItems = await localDb.Table<LocalCustomer>().Where(x => x.IsSynced == false).ToListAsync();
+            if (!unsyncedItems.Any()) return 0;
+
             var remoteList = await FetchAllFromSupabaseAsync<Customer>();
             var remoteNames = remoteList.Select(item => item.Name).Where(n => !string.IsNullOrWhiteSpace(n)).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             int pushedCount = 0;
-            foreach (var local in localItems)
+            foreach (var local in unsyncedItems)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (string.IsNullOrWhiteSpace(local.Name))
                 {
                     continue;
@@ -329,12 +348,14 @@ namespace SPJ_APP.Service
         /// Menjadikan data penjualan lokal sebagai sumber data untuk transaksi yang ada di perangkat ini.
         /// Header sales dikirim lebih dahulu, kemudian seluruh detail nota tersebut diganti di server.
         /// </summary>
-        public static async Task<SalesSyncResult> SyncSalesAsync()
+        public static async Task<SalesSyncResult> SyncSalesAsync(CancellationToken cancellationToken = default)
         {
             var localDb = await LocalDatabaseService.GetConnection();
             var result = new SalesSyncResult();
 
-            var localSales = await localDb.Table<LocalSale>().ToListAsync();
+            var unsyncedSales = await localDb.Table<LocalSale>().Where(x => x.IsSynced == false).ToListAsync();
+            if (!unsyncedSales.Any()) return result;
+
             var localDetails = await localDb.Table<LocalSalesDetail>().ToListAsync();
             var remoteSalesList = await FetchAllFromSupabaseAsync<Sale>();
             var remoteSales = remoteSalesList.ToDictionary(sale => sale.Nota, StringComparer.OrdinalIgnoreCase);
@@ -345,8 +366,9 @@ namespace SPJ_APP.Service
                 .GroupBy(detail => detail.Nota)
                 .ToDictionary(group => group.Key, group => group.ToList(), StringComparer.OrdinalIgnoreCase);
 
-            foreach (var localSale in localSales)
+            foreach (var localSale in unsyncedSales)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (string.IsNullOrWhiteSpace(localSale.Nota))
                 {
                     continue;
@@ -386,16 +408,19 @@ namespace SPJ_APP.Service
             return result;
         }
 
-        public static async Task<int> SyncPaymentsAsync()
+        public static async Task<int> SyncPaymentsAsync(CancellationToken cancellationToken = default)
         {
             var localDb = await LocalDatabaseService.GetConnection();
-            var localItems = await localDb.Table<LocalPayment>().ToListAsync();
+            var unsyncedItems = await localDb.Table<LocalPayment>().Where(x => x.IsSynced == false).ToListAsync();
+            if (!unsyncedItems.Any()) return 0;
+
             var remoteList = await FetchAllFromSupabaseAsync<Payment>();
             var remoteIds = remoteList.Select(item => item.Id).ToHashSet();
 
             int pushedCount = 0;
-            foreach (var local in localItems)
+            foreach (var local in unsyncedItems)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (string.IsNullOrWhiteSpace(local.Id) || !Guid.TryParse(local.Id, out var id) || !Guid.TryParse(local.SaleId, out var saleId))
                     continue;
 
@@ -502,7 +527,7 @@ namespace SPJ_APP.Service
             });
         }
 
-        public static async Task<int> SyncDeliveriesAsync()
+        public static async Task<int> SyncDeliveriesAsync(CancellationToken cancellationToken = default)
         {
             var localDb = await LocalDatabaseService.GetConnection();
             var supabase = await SupabaseService.GetClient();
@@ -525,6 +550,7 @@ namespace SPJ_APP.Service
 
             foreach (var local in localDeliveries)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (!Guid.TryParse(local.Id, out var id))
                     throw new InvalidOperationException($"ID pengiriman tidak valid: '{local.Id}'.");
 
@@ -570,7 +596,7 @@ namespace SPJ_APP.Service
             return deliveryCount + detailCount;
         }
 
-        public static async Task<ProductSyncResult> SyncProductsAsync()
+        public static async Task<ProductSyncResult> SyncProductsAsync(CancellationToken cancellationToken = default)
         {
             var localDb = await LocalDatabaseService.GetConnection();
             var supabase = await SupabaseService.GetClient();
@@ -582,6 +608,7 @@ namespace SPJ_APP.Service
 
             foreach (var localProduct in localProducts.Where(product => !product.IsSynced))
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var remoteProduct = ToRemoteProduct(localProduct);
                 if (remoteByName.TryGetValue(localProduct.Name, out var currentRemote))
                 {
@@ -744,7 +771,7 @@ namespace SPJ_APP.Service
             return new DeliveryDetail { Id = id, DeliveryId = deliveryId, SaleId = saleId };
         }
 
-        public static async Task<int> SyncActivityLogsAsync()
+        public static async Task<int> SyncActivityLogsAsync(CancellationToken cancellationToken = default)
         {
             var localDb = await LocalDatabaseService.GetConnection();
             var supabase = await SupabaseService.GetClient();
@@ -752,6 +779,7 @@ namespace SPJ_APP.Service
 
             foreach (var local in localItems)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (!Guid.TryParse(local.Id.ToString(), out var id))
                     continue;
 

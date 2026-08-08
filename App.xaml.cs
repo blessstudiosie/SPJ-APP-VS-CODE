@@ -59,6 +59,7 @@ namespace SPJ_APP
                     }
 
                     var mainWindow = new MainWindow();
+                    mainWindow.WindowState = WindowState.Maximized;
                     MainWindow = mainWindow;
                     ShutdownMode = ShutdownMode.OnMainWindowClose;
                     mainWindow.Show();

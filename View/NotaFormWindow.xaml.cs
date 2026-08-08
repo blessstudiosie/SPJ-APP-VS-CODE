@@ -45,6 +45,53 @@ namespace SPJ_APP.View
             Loaded += NotaFormWindow_Loaded;
         }
 
+        private string ResolveProductName(string? productIdOrName)
+        {
+            if (string.IsNullOrWhiteSpace(productIdOrName)) return "(produk dihapus)";
+            string key = productIdOrName.Trim();
+
+            // 1. Match by Product Id
+            var p1 = _products.FirstOrDefault(p => !string.IsNullOrEmpty(p.Id) && string.Equals(p.Id.Trim(), key, StringComparison.OrdinalIgnoreCase));
+            if (p1 != null && !string.IsNullOrWhiteSpace(p1.Name)) return p1.Name;
+
+            // 2. Match by Product Name
+            var p2 = _products.FirstOrDefault(p => !string.IsNullOrEmpty(p.Name) && string.Equals(p.Name.Trim(), key, StringComparison.OrdinalIgnoreCase));
+            if (p2 != null && !string.IsNullOrWhiteSpace(p2.Name)) return p2.Name;
+
+            // 3. GUID formatting match (Hyphenated vs Compact vs 8-char Prefix)
+            if (Guid.TryParse(key, out var g))
+            {
+                string gD = g.ToString("D");
+                string gN = g.ToString("N");
+                var p4 = _products.FirstOrDefault(p =>
+                    !string.IsNullOrEmpty(p.Id) && (
+                        string.Equals(p.Id.Trim(), gD, StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(p.Id.Trim(), gN, StringComparison.OrdinalIgnoreCase) ||
+                        (p.Id.Trim().Length >= 8 && gD.StartsWith(p.Id.Trim().Substring(0, 8), StringComparison.OrdinalIgnoreCase))
+                    )
+                );
+                if (p4 != null && !string.IsNullOrWhiteSpace(p4.Name)) return p4.Name;
+            }
+            else if (key.Length >= 8)
+            {
+                var p5 = _products.FirstOrDefault(p =>
+                    !string.IsNullOrEmpty(p.Id) && (
+                        p.Id.Trim().StartsWith(key.Substring(0, 8), StringComparison.OrdinalIgnoreCase) ||
+                        key.StartsWith(p.Id.Trim(), StringComparison.OrdinalIgnoreCase)
+                    )
+                );
+                if (p5 != null && !string.IsNullOrWhiteSpace(p5.Name)) return p5.Name;
+            }
+
+            // 4. If key itself is a human text name (not a GUID string), return key directly
+            if (!Guid.TryParse(key, out _) && !(key.Length >= 32 && key.All(c => char.IsLetterOrDigit(c) || c == '-')))
+            {
+                return key;
+            }
+
+            return "(produk dihapus)";
+        }
+
         private async void NotaFormWindow_Loaded(object sender, RoutedEventArgs e)
         {
             await ReloadReferenceData();
@@ -52,25 +99,52 @@ namespace SPJ_APP.View
             if (_isEditMode)
             {
                 TeksNota.Text = $"Nota: {_existingSale!.Nota}";
-                InputCustomer.SelectedItem = _customers.FirstOrDefault(c => c.Id == _existingSale.CustomerId || string.Equals(c.Name, _existingSale.CustomerId, StringComparison.OrdinalIgnoreCase));
-                InputSales.SelectedItem = _salesPersons.FirstOrDefault(s => s.Id == _existingSale.SalesPersonId || string.Equals(s.Name, _existingSale.SalesPersonId, StringComparison.OrdinalIgnoreCase));
 
+                var fullSale = await SalesResolutionService.GetFullSaleByIdAsync(_existingSale.Id);
 
-                var localDb = await LocalDatabaseService.GetConnection();
-                var details = await localDb.Table<LocalSalesDetail>()
-                    .Where(d => d.SaleId == _existingSale.Id)
-                    .ToListAsync();
-
-                _items = details.Select(d => new NotaItemDisplay
+                if (fullSale != null)
                 {
-                    Id = d.Id,
-                    ProductId = d.ProductId,
-                    ProductName = _products.FirstOrDefault(p => p.Id == d.ProductId)?.Name ?? "(produk dihapus)",
-                    Qty = d.Qty,
-                    PriceCategory = d.PriceCategory,
-                    Price = d.Price,
-                    Subtotal = d.Subtotal
-                }).ToList();
+                    var matchedCust = _customers.FirstOrDefault(c =>
+                        (!string.IsNullOrEmpty(c.Name) && string.Equals(c.Name.Trim(), fullSale.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase)) ||
+                        (!string.IsNullOrEmpty(c.Id) && string.Equals(c.Id.Trim(), fullSale.CustomerId.Trim(), StringComparison.OrdinalIgnoreCase))
+                    );
+                    if (matchedCust != null) InputCustomer.SelectedItem = matchedCust;
+
+                    var matchedSales = _salesPersons.FirstOrDefault(s =>
+                        (!string.IsNullOrEmpty(s.Name) && string.Equals(s.Name.Trim(), fullSale.SalesPersonName.Trim(), StringComparison.OrdinalIgnoreCase)) ||
+                        (!string.IsNullOrEmpty(s.Id) && string.Equals(s.Id.Trim(), fullSale.SalesPersonId.Trim(), StringComparison.OrdinalIgnoreCase))
+                    );
+                    if (matchedSales != null) InputSales.SelectedItem = matchedSales;
+
+                    _items = fullSale.Details.Select(d => new NotaItemDisplay
+                    {
+                        Id = d.Id,
+                        ProductId = d.ProductId,
+                        ProductName = d.ProductName,
+                        Qty = d.Qty,
+                        PriceCategory = d.PriceCategory,
+                        Price = d.Price,
+                        Subtotal = d.Subtotal
+                    }).ToList();
+                }
+                else
+                {
+                    var localDb = await LocalDatabaseService.GetConnection();
+                    var details = await localDb.Table<LocalSalesDetail>()
+                        .Where(d => d.SaleId == _existingSale.Id)
+                        .ToListAsync();
+
+                    _items = details.Select(d => new NotaItemDisplay
+                    {
+                        Id = d.Id,
+                        ProductId = d.ProductId,
+                        ProductName = ResolveProductName(d.ProductId),
+                        Qty = d.Qty,
+                        PriceCategory = d.PriceCategory,
+                        Price = d.Price,
+                        Subtotal = d.Subtotal
+                    }).ToList();
+                }
 
                 RefreshItemTable();
                 UpdateStatusBadge(_existingSale.Status);
@@ -131,6 +205,36 @@ namespace SPJ_APP.View
             _salesPersons = await localDb.Table<LocalSalesPerson>().ToListAsync();
             _products = await localDb.Table<LocalProduct>().ToListAsync();
 
+            if (!_products.Any())
+            {
+                try
+                {
+                    await SyncService.SyncProductsAsync();
+                    _products = await localDb.Table<LocalProduct>().ToListAsync();
+                }
+                catch { }
+            }
+
+            if (!_customers.Any())
+            {
+                try
+                {
+                    await SyncService.SyncCustomersAsync();
+                    _customers = await localDb.Table<LocalCustomer>().ToListAsync();
+                }
+                catch { }
+            }
+
+            if (!_salesPersons.Any())
+            {
+                try
+                {
+                    await SyncService.SyncSalesPersonsAsync();
+                    _salesPersons = await localDb.Table<LocalSalesPerson>().ToListAsync();
+                }
+                catch { }
+            }
+
             InputCustomer.ItemsSource = null;
             InputCustomer.ItemsSource = _customers;
 
@@ -160,9 +264,18 @@ namespace SPJ_APP.View
 
         private void InputCustomer_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (InputCustomer.SelectedItem is LocalCustomer customer && !string.IsNullOrEmpty(customer.SalesPersonId))
+            if (InputCustomer.SelectedItem is LocalCustomer customer && !string.IsNullOrWhiteSpace(customer.SalesPersonId))
             {
-                InputSales.SelectedItem = _salesPersons.FirstOrDefault(s => s.Id == customer.SalesPersonId);
+                string targetSp = customer.SalesPersonId.Trim();
+                var matchedSp = _salesPersons.FirstOrDefault(s =>
+                    string.Equals(s.Id?.Trim(), targetSp, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(s.Name?.Trim(), targetSp, StringComparison.OrdinalIgnoreCase)
+                );
+
+                if (matchedSp != null)
+                {
+                    InputSales.SelectedItem = matchedSp;
+                }
             }
         }
 

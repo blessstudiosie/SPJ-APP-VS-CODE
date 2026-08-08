@@ -1,4 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using SPJ_APP.Model;
 using SPJ_APP.Service;
 
@@ -9,6 +14,7 @@ namespace SPJ_APP.View
         public bool IsSelected { get; set; } = true;
         public string ProductId { get; set; } = string.Empty;
         public string ProductName { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
         public decimal QtyRatio { get; set; }
         public decimal QtyCalculated { get; set; }
         public string Notes { get; set; } = string.Empty;
@@ -16,7 +22,10 @@ namespace SPJ_APP.View
 
     public partial class AutoPurchaseOrderWindow : Window
     {
-        private readonly List<AutoPoItemDisplay> _items = new();
+        private readonly List<AutoPoItemDisplay> _allItems = new();
+        private List<string> _distinctProductNames = new();
+        private List<string> _distinctCategories = new();
+        private bool _isSelectingSuggestion = false;
 
         public AutoPurchaseOrderWindow()
         {
@@ -26,27 +35,218 @@ namespace SPJ_APP.View
 
         private async void AutoPurchaseOrderWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var localDb = await LocalDatabaseService.GetConnection();
-            var products = await localDb.Table<LocalProduct>().ToListAsync();
-
-            _items.Clear();
-            foreach (var product in products)
+            try
             {
-                _items.Add(new AutoPoItemDisplay
-                {
-                    ProductId = product.Id,
-                    ProductName = product.Name,
-                    QtyRatio = product.QtyRatio > 0 ? product.QtyRatio : 1,
-                    QtyCalculated = 0
-                });
-            }
+                var localDb = await LocalDatabaseService.GetConnection();
+                var products = await localDb.Table<LocalProduct>().ToListAsync();
 
-            TabelItem.ItemsSource = _items;
+                _allItems.Clear();
+                foreach (var product in products)
+                {
+                    _allItems.Add(new AutoPoItemDisplay
+                    {
+                        ProductId = product.Id,
+                        ProductName = product.Name,
+                        Category = product.Kategori ?? "Umum",
+                        QtyRatio = product.QtyRatio > 0 ? product.QtyRatio : 1,
+                        QtyCalculated = 0
+                    });
+                }
+
+                _distinctProductNames = _allItems
+                    .Select(i => i.ProductName)
+                    .Where(n => !string.IsNullOrWhiteSpace(n))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(n => n)
+                    .ToList();
+
+                _distinctCategories = _allItems
+                    .Select(i => i.Category)
+                    .Where(c => !string.IsNullOrWhiteSpace(c))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(c => c)
+                    .ToList();
+
+                ApplyFilters();
+            }
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError($"Gagal memuat produk PO: {ex.Message}");
+            }
+        }
+
+        private void ApplyFilters()
+        {
+            string nameQuery = TxtCariNamaBarang.Text.Trim();
+            string catQuery = TxtCariKategori.Text.Trim();
+
+            var filtered = _allItems.Where(item =>
+                (string.IsNullOrWhiteSpace(nameQuery) || item.ProductName.Contains(nameQuery, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrWhiteSpace(catQuery) || item.Category.Contains(catQuery, StringComparison.OrdinalIgnoreCase))
+            ).ToList();
+
+            TabelItem.ItemsSource = filtered;
+        }
+
+        #region Autocomplete Nama Barang Event Handlers
+
+        private void TxtCariNamaBarang_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ShowNamaBarangSuggestions();
+        }
+
+        private void TxtCariNamaBarang_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!_isSelectingSuggestion)
+            {
+                ShowNamaBarangSuggestions();
+                ApplyFilters();
+            }
+        }
+
+        private void ShowNamaBarangSuggestions()
+        {
+            string query = TxtCariNamaBarang.Text.Trim();
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                var matches = _distinctProductNames
+                    .Where(n => n.Contains(query, StringComparison.OrdinalIgnoreCase))
+                    .Take(12)
+                    .ToList();
+
+                if (matches.Any())
+                {
+                    ListNamaBarangSuggestions.ItemsSource = matches;
+                    PopupNamaBarangSuggestions.IsOpen = true;
+                    return;
+                }
+            }
+            PopupNamaBarangSuggestions.IsOpen = false;
+        }
+
+        private void TxtCariNamaBarang_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Down && PopupNamaBarangSuggestions.IsOpen)
+            {
+                ListNamaBarangSuggestions.Focus();
+                if (ListNamaBarangSuggestions.Items.Count > 0)
+                {
+                    ListNamaBarangSuggestions.SelectedIndex = 0;
+                }
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Escape)
+            {
+                PopupNamaBarangSuggestions.IsOpen = false;
+            }
+        }
+
+        private void ListNamaBarangSuggestions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ListNamaBarangSuggestions.SelectedItem is string selectedName)
+            {
+                _isSelectingSuggestion = true;
+                TxtCariNamaBarang.Text = selectedName;
+                TxtCariNamaBarang.CaretIndex = selectedName.Length;
+                PopupNamaBarangSuggestions.IsOpen = false;
+                _isSelectingSuggestion = false;
+                ApplyFilters();
+            }
+        }
+
+        #endregion
+
+        #region Autocomplete Kategori Event Handlers
+
+        private void TxtCariKategori_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ShowKategoriSuggestions();
+        }
+
+        private void TxtCariKategori_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!_isSelectingSuggestion)
+            {
+                ShowKategoriSuggestions();
+                ApplyFilters();
+            }
+        }
+
+        private void ShowKategoriSuggestions()
+        {
+            string query = TxtCariKategori.Text.Trim();
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                var matches = _distinctCategories
+                    .Where(c => c.Contains(query, StringComparison.OrdinalIgnoreCase))
+                    .Take(12)
+                    .ToList();
+
+                if (matches.Any())
+                {
+                    ListKategoriSuggestions.ItemsSource = matches;
+                    PopupKategoriSuggestions.IsOpen = true;
+                    return;
+                }
+            }
+            else
+            {
+                if (_distinctCategories.Any())
+                {
+                    ListKategoriSuggestions.ItemsSource = _distinctCategories.Take(12).ToList();
+                    PopupKategoriSuggestions.IsOpen = true;
+                    return;
+                }
+            }
+            PopupKategoriSuggestions.IsOpen = false;
+        }
+
+        private void TxtCariKategori_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Down && PopupKategoriSuggestions.IsOpen)
+            {
+                ListKategoriSuggestions.Focus();
+                if (ListKategoriSuggestions.Items.Count > 0)
+                {
+                    ListKategoriSuggestions.SelectedIndex = 0;
+                }
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Escape)
+            {
+                PopupKategoriSuggestions.IsOpen = false;
+            }
+        }
+
+        private void ListKategoriSuggestions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ListKategoriSuggestions.SelectedItem is string selectedCat)
+            {
+                _isSelectingSuggestion = true;
+                TxtCariKategori.Text = selectedCat;
+                TxtCariKategori.CaretIndex = selectedCat.Length;
+                PopupKategoriSuggestions.IsOpen = false;
+                _isSelectingSuggestion = false;
+                ApplyFilters();
+            }
+        }
+
+        #endregion
+
+        private void TombolResetFilter_Click(object sender, RoutedEventArgs e)
+        {
+            _isSelectingSuggestion = true;
+            TxtCariNamaBarang.Text = string.Empty;
+            TxtCariKategori.Text = string.Empty;
+            PopupNamaBarangSuggestions.IsOpen = false;
+            PopupKategoriSuggestions.IsOpen = false;
+            _isSelectingSuggestion = false;
+            ApplyFilters();
         }
 
         private void TombolHitung_Click(object sender, RoutedEventArgs e) => CalculateRatios();
 
-        private void InputTotalTarget_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void InputTotalTarget_TextChanged(object sender, TextChangedEventArgs e)
         {
             CalculateRatios();
         }
@@ -55,16 +255,14 @@ namespace SPJ_APP.View
         {
             if (!decimal.TryParse(InputTotalTarget.Text.Replace(".", string.Empty), out decimal totalTarget) || totalTarget <= 0)
             {
-                // Clear previous results if input is invalid
-                foreach (var item in _items) item.QtyCalculated = 0;
+                foreach (var item in _allItems) item.QtyCalculated = 0;
                 TabelItem.Items.Refresh();
                 return;
             }
 
-            var selectedItems = _items.Where(i => i.IsSelected).ToList();
+            var selectedItems = _allItems.Where(i => i.IsSelected).ToList();
             
-            // Clear results for non-selected items
-            foreach (var item in _items.Where(i => !i.IsSelected)) item.QtyCalculated = 0;
+            foreach (var item in _allItems.Where(i => !i.IsSelected)) item.QtyCalculated = 0;
 
             if (selectedItems.Count == 0)
             {
@@ -75,24 +273,20 @@ namespace SPJ_APP.View
             decimal totalRatioWeight = selectedItems.Sum(i => i.QtyRatio > 0 ? i.QtyRatio : 1);
             if (totalRatioWeight <= 0) return;
 
-            // --- Largest Remainder Method Implementation ---
             var calculatedItems = selectedItems.Select(item => new
             {
                 DisplayItem = item,
-                ExactQty = ( (item.QtyRatio > 0 ? item.QtyRatio : 1) / totalRatioWeight) * totalTarget
+                ExactQty = ((item.QtyRatio > 0 ? item.QtyRatio : 1) / totalRatioWeight) * totalTarget
             }).ToList();
 
-            // 1. Assign the floor of the exact quantity
             foreach (var calc in calculatedItems)
             {
                 calc.DisplayItem.QtyCalculated = Math.Floor(calc.ExactQty);
             }
 
-            // 2. Calculate the remainder
             decimal currentSum = calculatedItems.Sum(c => c.DisplayItem.QtyCalculated);
             int remainder = (int)(totalTarget - currentSum);
 
-            // 3. Distribute the remainder to items with the largest fractional part
             var itemsToDistribute = calculatedItems
                 .OrderByDescending(c => c.ExactQty - c.DisplayItem.QtyCalculated)
                 .Take(remainder);
@@ -110,7 +304,7 @@ namespace SPJ_APP.View
             try
             {
                 decimal.TryParse(InputTotalTarget.Text.Replace(".", string.Empty), out decimal totalTarget);
-                var selectedItems = _items.Where(i => i.IsSelected && i.QtyCalculated > 0).ToList();
+                var selectedItems = _allItems.Where(i => i.IsSelected && i.QtyCalculated > 0).ToList();
 
                 if (selectedItems.Count == 0)
                 {

@@ -57,7 +57,6 @@ namespace SPJ_APP.View.Pages
                     if (!string.IsNullOrWhiteSpace(sp.Name)) spByName[sp.Name.Trim()] = sp.Name.Trim();
                 }
 
-
                 foreach (var v in _allVisits)
                 {
                     string custInput = !string.IsNullOrWhiteSpace(v.CustomerName) ? v.CustomerName : v.CustomerId ?? "";
@@ -67,25 +66,26 @@ namespace SPJ_APP.View.Pages
                     v.SalesPersonName = SalesResolutionService.ResolveSalesPersonName(spInput, spById, spByName);
                 }
 
-
                 ApplyFilter();
-
             }
             catch (Exception ex)
             {
-                DialogHelper.ShowError($"Gagal memuat antrian kunjungan: {ex.Message}");
+                DialogHelper.ShowError($"Gagal memuat log kunjungan sales: {ex.Message}");
             }
         }
 
         private void ApplyFilter()
         {
-            var selectedItem = ComboFilterStatus.SelectedItem as ComboBoxItem;
-            string filterStatus = selectedItem?.Content?.ToString() ?? "PENDING";
+            string queryText = TxtCari?.Text?.Trim() ?? string.Empty;
 
             IEnumerable<LocalVisitLogQueue> query = _allVisits;
-            if (filterStatus != "SEMUA")
+            if (!string.IsNullOrWhiteSpace(queryText))
             {
-                query = query.Where(v => v.Status.Equals(filterStatus, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(v =>
+                    (v.SalesPersonName != null && v.SalesPersonName.Contains(queryText, StringComparison.OrdinalIgnoreCase)) ||
+                    (v.CustomerName != null && v.CustomerName.Contains(queryText, StringComparison.OrdinalIgnoreCase)) ||
+                    (v.Notes != null && v.Notes.Contains(queryText, StringComparison.OrdinalIgnoreCase))
+                );
             }
 
             TabelQueue.ItemsSource = query.ToList();
@@ -107,7 +107,7 @@ namespace SPJ_APP.View.Pages
             TeksFotoStatus.Text = "Tidak ada foto kunjungan";
         }
 
-        private void ComboFilterStatus_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void TxtCari_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (IsLoaded)
                 ApplyFilter();
@@ -123,7 +123,7 @@ namespace SPJ_APP.View.Pages
             }
             catch (Exception ex)
             {
-                DialogHelper.ShowError($"Gagal refresh queue kunjungan: {ex.Message}");
+                DialogHelper.ShowError($"Gagal refresh data kunjungan: {ex.Message}");
             }
             finally
             {
@@ -178,10 +178,6 @@ namespace SPJ_APP.View.Pages
                 TeksFotoStatus.Visibility = Visibility.Visible;
                 TeksFotoStatus.Text = "Tidak ada foto dilaporkan";
             }
-
-            bool isPending = _selectedVisit.Status.Equals("PENDING", StringComparison.OrdinalIgnoreCase);
-            TombolApprove.IsEnabled = isPending;
-            TombolTolak.IsEnabled = isPending;
         }
 
         private void TombolBukaPeta_Click(object sender, RoutedEventArgs e)
@@ -195,92 +191,6 @@ namespace SPJ_APP.View.Pages
             catch (Exception ex)
             {
                 DialogHelper.ShowError($"Gagal membuka browser: {ex.Message}");
-            }
-        }
-
-        private async void TombolApprove_Click(object sender, RoutedEventArgs e)
-        {
-            if (_selectedVisit == null) return;
-
-            string confirmMsg = $"Setujui log kunjungan dari '{_selectedVisit.SalesPersonName}' ke '{_selectedVisit.CustomerName}'?";
-            if (_selectedVisit.IsNewCustomer)
-            {
-                confirmMsg += "\n\nCatatan: Pelanggan ini diinput baru dari lapangan dan akan otomatis ditambahkan ke Master Data Customer!";
-            }
-
-            var result = MessageBox.Show(confirmMsg, "Konfirmasi Approval Kunjungan", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result != MessageBoxResult.Yes) return;
-
-            try
-            {
-                var db = await LocalDatabaseService.GetConnection();
-
-                // If new customer, auto register to LocalCustomer table if not already exists
-                if (_selectedVisit.IsNewCustomer)
-                {
-                    var existingCustomer = await db.Table<LocalCustomer>()
-                                                    .Where(c => c.Name.ToLower() == _selectedVisit.CustomerName.ToLower())
-                                                    .FirstOrDefaultAsync();
-
-                    if (existingCustomer == null)
-                    {
-                        var newCust = new LocalCustomer
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            Name = _selectedVisit.CustomerName,
-                            Address = $"Dari Kunjungan Sales ({_selectedVisit.SalesPersonName})",
-                            SalesPersonId = _selectedVisit.SalesPersonId,
-                            Latitude = _selectedVisit.Latitude,
-                            Longitude = _selectedVisit.Longitude,
-                            UpdatedAt = DateTime.Now,
-                            IsSynced = false
-                        };
-                        await db.InsertAsync(newCust);
-                    }
-                }
-
-                _selectedVisit.Status = "APPROVED";
-                _selectedVisit.UpdatedAt = DateTime.Now;
-                await db.UpdateAsync(_selectedVisit);
-
-                _ = SyncService.PushQueueStatusToSupabaseAsync(_selectedVisit.Id, "APPROVED", "VISIT");
-
-                await ActivityLogService.LogAsync("APPROVE_VISIT_QUEUE", $"Menyetujui Kunjungan Mobile '{_selectedVisit.Id}' ({_selectedVisit.CustomerName}).");
-
-                DialogHelper.ShowInfo("Log kunjungan berhasil disetujui!");
-                LoadDataAsync();
-            }
-            catch (Exception ex)
-            {
-                DialogHelper.ShowError($"Gagal menyetujui kunjungan: {ex.Message}");
-            }
-        }
-
-        private async void TombolTolak_Click(object sender, RoutedEventArgs e)
-        {
-            if (_selectedVisit == null) return;
-
-            var result = MessageBox.Show($"Menolak log kunjungan dari '{_selectedVisit.SalesPersonName}'?", "Konfirmasi Tolak Kunjungan", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (result != MessageBoxResult.Yes) return;
-
-            try
-            {
-                var db = await LocalDatabaseService.GetConnection();
-
-                _selectedVisit.Status = "REJECTED";
-                _selectedVisit.UpdatedAt = DateTime.Now;
-                await db.UpdateAsync(_selectedVisit);
-
-                _ = SyncService.PushQueueStatusToSupabaseAsync(_selectedVisit.Id, "REJECTED", "VISIT");
-
-                await ActivityLogService.LogAsync("REJECT_VISIT_QUEUE", $"Menolak Kunjungan Mobile '{_selectedVisit.Id}'.");
-
-                DialogHelper.ShowInfo("Log kunjungan telah ditolak.");
-                LoadDataAsync();
-            }
-            catch (Exception ex)
-            {
-                DialogHelper.ShowError($"Gagal menolak kunjungan: {ex.Message}");
             }
         }
     }

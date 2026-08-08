@@ -43,15 +43,23 @@ namespace SPJ_APP.Service
             var now = DateTime.Now;
             var threshold = now.AddDays(-14);
 
+            var spById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var spByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var sp in salesPersons)
+            {
+                if (!string.IsNullOrWhiteSpace(sp.Id)) spById[sp.Id.Trim()] = sp.Name?.Trim() ?? "";
+                if (!string.IsNullOrWhiteSpace(sp.Name)) spByName[sp.Name.Trim()] = sp.Name.Trim();
+            }
+
             return sales
                 .GroupBy(s => s.SalesPersonId)
                 .Select(group =>
                 {
-                    var salesPerson = salesPersons.FirstOrDefault(sp => sp.Id == group.Key || string.Equals(sp.Name, group.Key, StringComparison.OrdinalIgnoreCase));
+                    string spName = SalesResolutionService.ResolveSalesPersonName(group.Key, spById, spByName);
                     return new SalesPerformanceRow
                     {
                         SalesPersonId = group.Key ?? string.Empty,
-                        SalesPersonName = salesPerson?.Name ?? (string.IsNullOrWhiteSpace(group.Key) ? "-" : group.Key),
+                        SalesPersonName = spName,
                         Omset = group.Sum(s => s.Total),
                         NotaCount = group.Count(),
                         NotaMoreThan14Days = group.Count(s => s.OrderDate < threshold)
@@ -76,11 +84,19 @@ namespace SPJ_APP.Service
             const decimal omsetRate = 0.015m;
             const decimal kunjunganRate = 25000m;
 
+            var spById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var spByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var sp in salesPersons)
+            {
+                if (!string.IsNullOrWhiteSpace(sp.Id)) spById[sp.Id.Trim()] = sp.Name?.Trim() ?? "";
+                if (!string.IsNullOrWhiteSpace(sp.Name)) spByName[sp.Name.Trim()] = sp.Name.Trim();
+            }
+
             return sales
                 .GroupBy(s => s.SalesPersonId)
                 .Select(group =>
                 {
-                    var salesPerson = salesPersons.FirstOrDefault(sp => sp.Id == group.Key || string.Equals(sp.Name, group.Key, StringComparison.OrdinalIgnoreCase));
+                    string spName = SalesResolutionService.ResolveSalesPersonName(group.Key, spById, spByName);
                     var omset = group.Sum(s => s.Total);
                     var notaCount = group.Count();
                     var komisiOmset = omset * omsetRate;
@@ -89,7 +105,7 @@ namespace SPJ_APP.Service
                     return new SalesSalaryRow
                     {
                         SalesPersonId = group.Key ?? string.Empty,
-                        SalesPersonName = salesPerson?.Name ?? (string.IsNullOrWhiteSpace(group.Key) ? "-" : group.Key),
+                        SalesPersonName = spName,
                         Omset = omset,
                         KunjunganCount = notaCount,
                         KomisiOmset = komisiOmset,

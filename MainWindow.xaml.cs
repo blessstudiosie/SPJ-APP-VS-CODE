@@ -12,6 +12,7 @@ namespace SPJ_APP
         public MainWindow()
         {
             InitializeComponent();
+            WindowState = WindowState.Maximized;
             AreaKonten.Content = new HomePage();
 
             BackgroundSyncService.Instance.SyncStatusChanged += BackgroundSyncService_SyncStatusChanged;
@@ -137,12 +138,20 @@ namespace SPJ_APP
         {
             try
             {
+                WindowState = WindowState.Maximized;
                 var currentUser = CurrentUserService.LoggedInUser;
                 Title = $"SPJ App - Selamat Datang, {currentUser?.Name ?? "User"}!";
 
-                if (TeksUserBadge != null && currentUser != null)
+                if (currentUser != null)
                 {
-                    TeksUserBadge.Text = $"{currentUser.Name} ({currentUser.Role})";
+                    if (TeksNamaUserFlyout != null)
+                    {
+                        TeksNamaUserFlyout.Text = currentUser.Name;
+                    }
+                    if (TeksRoleUserFlyout != null)
+                    {
+                        TeksRoleUserFlyout.Text = currentUser.Role;
+                    }
                 }
 
                 // Tampilkan Developer Tools untuk Akun Developer / Admin
@@ -214,6 +223,23 @@ namespace SPJ_APP
             {
                 DialogHelper.ShowError($"Gagal melakukan Log Out:\n{ex.Message}");
             }
+        }
+
+        private void PopupUserProfile_Closed(object? sender, System.EventArgs e)
+        {
+            if (TombolUserProfile != null)
+            {
+                TombolUserProfile.IsChecked = false;
+            }
+        }
+
+        private void TombolLogoutFlyout_Click(object sender, RoutedEventArgs e)
+        {
+            if (PopupUserProfile != null)
+            {
+                PopupUserProfile.IsOpen = false;
+            }
+            MenuLogout_Click(sender, e);
         }
 
 

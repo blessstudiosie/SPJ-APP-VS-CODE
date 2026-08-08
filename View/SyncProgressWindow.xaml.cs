@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -12,6 +12,7 @@ namespace SPJ_APP.View
     public partial class SyncProgressWindow : Window
     {
         private bool _isSyncFinished = false;
+        private readonly CancellationTokenSource _cts = new();
 
         public SyncSummary? SyncSummaryResult { get; private set; }
         public List<ConflictItem> Conflicts { get; private set; } = new();
@@ -43,7 +44,7 @@ namespace SPJ_APP.View
             {
                 TxtLogDetails.AppendText($"[{DateTime.Now:HH:mm:ss}] ⚡ Memulai Sinkronisasi Manual dengan Cloud Supabase...\n");
 
-                var (summary, conflicts) = await SyncService.SyncAllAsync();
+                var (summary, conflicts) = await SyncService.SyncAllAsync(_cts.Token);
                 SyncSummaryResult = summary;
                 Conflicts = conflicts;
 
@@ -55,8 +56,22 @@ namespace SPJ_APP.View
                 TxtLogDetails.AppendText($"\n[{DateTime.Now:HH:mm:ss}] 🎉 {summary.ToDisplayText()}\n");
                 TxtLogDetails.ScrollToEnd();
 
+                TombolForceStop.IsEnabled = false;
                 TombolSelesai.IsEnabled = true;
                 TombolSelesai.Focus();
+            }
+            catch (OperationCanceledException)
+            {
+                _isSyncFinished = true;
+                ProgressBarSync.Visibility = Visibility.Collapsed;
+                TeksStatusSaatIni.Text = "⏹️ Sinkronisasi Dihentikan Paksa (Force Stop).";
+                TeksStatusSaatIni.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D97706"));
+
+                TxtLogDetails.AppendText($"\n[{DateTime.Now:HH:mm:ss}] ⏹️ Sinkronisasi telah dihentikan paksa oleh pengguna.\n");
+                TxtLogDetails.ScrollToEnd();
+
+                TombolForceStop.IsEnabled = false;
+                TombolSelesai.IsEnabled = true;
             }
             catch (Exception ex)
             {
@@ -68,6 +83,7 @@ namespace SPJ_APP.View
                 TxtLogDetails.AppendText($"\n[{DateTime.Now:HH:mm:ss}] ❌ ERROR: {ex.Message}\n");
                 TxtLogDetails.ScrollToEnd();
 
+                TombolForceStop.IsEnabled = false;
                 TombolSelesai.IsEnabled = true;
             }
             finally
@@ -76,16 +92,32 @@ namespace SPJ_APP.View
             }
         }
 
+        private void TombolForceStop_Click(object sender, RoutedEventArgs e)
+        {
+            TombolForceStop.IsEnabled = false;
+            TeksStatusSaatIni.Text = "⚠️ Menghentikan sinkronisasi...";
+            TxtLogDetails.AppendText($"[{DateTime.Now:HH:mm:ss}] ⚠️ Permintaan Force Stop dikirim. Menghentikan proses...\n");
+            _cts.Cancel();
+        }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            // Cegah penutupan jendela jika proses sync masih berjalan
-            if (!_isSyncFinished)
+            if (!_isSyncFinished && !_cts.IsCancellationRequested)
             {
-                e.Cancel = true;
-                MessageBox.Show("Mohon tunggu hingga proses sinkronisasi selesai 100%.", 
-                                "Sinkronisasi Sedang Berlangsung", 
-                                MessageBoxButton.OK, 
-                                MessageBoxImage.Warning);
+                var confirm = MessageBox.Show(
+                    "Sinkronisasi sedang berjalan. Apakah Anda yakin ingin menghentikan paksa (Force Stop) dan menutup jendela?",
+                    "Konfirmasi Force Stop Sync",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (confirm == MessageBoxResult.Yes)
+                {
+                    _cts.Cancel();
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
             }
         }
 

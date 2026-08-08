@@ -1,5 +1,9 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -20,7 +24,6 @@ namespace SPJ_APP.View.Pages
         public string StatusTujuan => Remaining <= 0 ? "DONE" : "TEMPO";
         public SaleDisplayItem Original { get; set; } = null!;
     }
-
 
     public class OpenDeliveryDisplay
     {
@@ -60,21 +63,108 @@ namespace SPJ_APP.View.Pages
             var items = await SalesQueryService.GetSalesByStatusAsync("ON PROSES");
             var customers = await GetCustomers();
 
+            var routeByCustId = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var routeByCustName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var c in customers)
+            {
+                string r = !string.IsNullOrWhiteSpace(c.JalurPengiriman) ? c.JalurPengiriman.Trim() : "Lokal / Umum";
+                if (!string.IsNullOrWhiteSpace(c.Id)) routeByCustId[c.Id.Trim()] = r;
+                if (!string.IsNullOrWhiteSpace(c.Name)) routeByCustName[c.Name.Trim()] = r;
+            }
+
+            string ResolveJalur(string? custId, string? custName)
+            {
+                if (!string.IsNullOrWhiteSpace(custId) && routeByCustId.TryGetValue(custId.Trim(), out var r1) && !string.IsNullOrWhiteSpace(r1))
+                    return r1;
+                if (!string.IsNullOrWhiteSpace(custName) && routeByCustName.TryGetValue(custName.Trim(), out var r2) && !string.IsNullOrWhiteSpace(r2))
+                    return r2;
+                return "Lokal / Umum";
+            }
+
             _siapKirimItems = items.Select(s => new DeliverySelectableItem
             {
                 Nota = s.Nota,
-                CustomerName = s.CustomerName,
-                SalesPersonName = s.SalesPersonName,
-                JalurPengiriman = customers.FirstOrDefault(c => c.Id == s.Original.CustomerId || string.Equals(c.Name, s.Original.CustomerId, StringComparison.OrdinalIgnoreCase))?.JalurPengiriman ?? "-",
+                CustomerName = string.IsNullOrWhiteSpace(s.CustomerName) ? "Pelanggan Umum" : s.CustomerName,
+                SalesPersonName = string.IsNullOrWhiteSpace(s.SalesPersonName) ? "Sales Umum" : s.SalesPersonName,
+                JalurPengiriman = ResolveJalur(s.Original.CustomerId, s.CustomerName),
                 Total = s.Total,
                 Remaining = s.Remaining,
                 Original = s
             }).ToList();
 
+            PopulateJalurFilterCombo();
+            ApplySiapKirimFilter();
+        }
 
-            var view = CollectionViewSource.GetDefaultView(_siapKirimItems);
+        private void PopulateJalurFilterCombo()
+        {
+            string currentSelected = ComboFilterJalur.SelectedItem?.ToString() ?? "SEMUA JALUR PENGIRIMAN";
+
+            var jalurs = _siapKirimItems
+                .Select(i => i.JalurPengiriman)
+                .Where(j => !string.IsNullOrWhiteSpace(j))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(j => j)
+                .ToList();
+
+            var comboItems = new List<string> { "SEMUA JALUR PENGIRIMAN" };
+            comboItems.AddRange(jalurs);
+
+            ComboFilterJalur.ItemsSource = comboItems;
+
+            if (comboItems.Contains(currentSelected))
+            {
+                ComboFilterJalur.SelectedItem = currentSelected;
+            }
+            else
+            {
+                ComboFilterJalur.SelectedIndex = 0;
+            }
+        }
+
+        private void ApplySiapKirimFilter()
+        {
+            string selectedJalur = ComboFilterJalur.SelectedItem?.ToString() ?? "SEMUA JALUR PENGIRIMAN";
+            string searchText = TxtCariNota?.Text?.Trim() ?? string.Empty;
+
+            IEnumerable<DeliverySelectableItem> filtered = _siapKirimItems;
+
+            if (selectedJalur != "SEMUA JALUR PENGIRIMAN")
+            {
+                filtered = filtered.Where(i => string.Equals(i.JalurPengiriman, selectedJalur, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                filtered = filtered.Where(i =>
+                    (i.Nota != null && i.Nota.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
+                    (i.CustomerName != null && i.CustomerName.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
+                    (i.SalesPersonName != null && i.SalesPersonName.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                );
+            }
+
+            var viewList = filtered.ToList();
+            var view = CollectionViewSource.GetDefaultView(viewList);
+            view.GroupDescriptions.Clear();
             view.GroupDescriptions.Add(new PropertyGroupDescription(nameof(DeliverySelectableItem.JalurPengiriman)));
             TabelSiapKirim.ItemsSource = view;
+        }
+
+        private void ComboFilterJalur_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (IsLoaded)
+            {
+                ApplySiapKirimFilter();
+            }
+        }
+
+        private void TxtCariNota_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (IsLoaded)
+            {
+                ApplySiapKirimFilter();
+            }
         }
 
         private async Task LoadOpenDeliveries()
@@ -86,6 +176,39 @@ namespace SPJ_APP.View.Pages
             var allSales = await SalesQueryService.GetSalesByStatusAsync("DALAM PENGIRIMAN");
             var customers = await GetCustomers();
 
+            var spById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var spByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var sp in salesPersons)
+            {
+                if (!string.IsNullOrWhiteSpace(sp.Id)) spById[sp.Id.Trim()] = sp.Name?.Trim() ?? "";
+                if (!string.IsNullOrWhiteSpace(sp.Name)) spByName[sp.Name.Trim()] = sp.Name.Trim();
+            }
+
+            var routeByCustId = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var routeByCustName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var c in customers)
+            {
+                string r = !string.IsNullOrWhiteSpace(c.JalurPengiriman) ? c.JalurPengiriman.Trim() : "Lokal / Umum";
+                if (!string.IsNullOrWhiteSpace(c.Id)) routeByCustId[c.Id.Trim()] = r;
+                if (!string.IsNullOrWhiteSpace(c.Name)) routeByCustName[c.Name.Trim()] = r;
+            }
+
+            string ResolveSalesName(string? idOrName)
+            {
+                return SalesResolutionService.ResolveSalesPersonName(idOrName, spById, spByName);
+            }
+
+            string ResolveJalur(string? custId, string? custName)
+            {
+                if (!string.IsNullOrWhiteSpace(custId) && routeByCustId.TryGetValue(custId.Trim(), out var r1) && !string.IsNullOrWhiteSpace(r1))
+                    return r1;
+                if (!string.IsNullOrWhiteSpace(custName) && routeByCustName.TryGetValue(custName.Trim(), out var r2) && !string.IsNullOrWhiteSpace(r2))
+                    return r2;
+                return "Lokal / Umum";
+            }
+
             _openDeliveries = deliveries.Select(d =>
             {
                 var detailSaleIds = allDetails.Where(x => x.DeliveryId == d.Id).Select(x => x.SaleId).ToHashSet();
@@ -93,21 +216,20 @@ namespace SPJ_APP.View.Pages
                     .Select(s => new DeliverySelectableItem
                     {
                         Nota = s.Nota,
-                        CustomerName = s.CustomerName,
-                        SalesPersonName = s.SalesPersonName,
-                        JalurPengiriman = customers.FirstOrDefault(c => c.Id == s.Original.CustomerId || string.Equals(c.Name, s.Original.CustomerId, StringComparison.OrdinalIgnoreCase))?.JalurPengiriman ?? "-",
+                        CustomerName = string.IsNullOrWhiteSpace(s.CustomerName) ? "Pelanggan Umum" : s.CustomerName,
+                        SalesPersonName = string.IsNullOrWhiteSpace(s.SalesPersonName) ? "Sales Umum" : s.SalesPersonName,
+                        JalurPengiriman = ResolveJalur(s.Original.CustomerId, s.CustomerName),
                         Total = s.Total,
                         Remaining = s.Remaining,
                         Original = s
                     }).ToList();
 
-
                 return new OpenDeliveryDisplay
                 {
                     Delivery = d,
-                    DriverName = salesPersons.FirstOrDefault(sp => sp.Id == d.DriverId)?.Name ?? "-",
-                    HelperName = salesPersons.FirstOrDefault(sp => sp.Id == d.HelperId)?.Name ?? "-",
-                    CheckerName = salesPersons.FirstOrDefault(sp => sp.Id == d.CheckerId)?.Name ?? "-",
+                    DriverName = ResolveSalesName(d.DriverId),
+                    HelperName = ResolveSalesName(d.HelperId),
+                    CheckerName = ResolveSalesName(d.CheckerId),
                     JumlahNota = itemsInThisDelivery.Count,
                     Items = itemsInThisDelivery
                 };
@@ -136,26 +258,26 @@ namespace SPJ_APP.View.Pages
         }
 
         private void TombolSelesaikanDelivery_Click(object sender, RoutedEventArgs e)
-{
-    if (sender is not Button btn || btn.Tag is not OpenDeliveryDisplay deliveryDisplay) return;
-
-    bool semuaSesuai = DialogHelper.ShowConfirm(
-        $"Apakah semua barang di pengiriman '{deliveryDisplay.Delivery.DeliveryNumber}' terkirim SESUAI nota (tidak ada yang dibatalkan)?\n\nKlik 'Ya' kalau semua sesuai, atau 'Tidak' kalau ada barang yang dibatalkan/berkurang.",
-        "Verifikasi Pengiriman");
-
-    if (semuaSesuai)
-    {
-        ProsesSelesaikanTanpaPerubahan(deliveryDisplay);
-    }
-    else
-    {
-        var verifWindow = new DeliveryVerificationWindow(deliveryDisplay) { Owner = Window.GetWindow(this) };
-        if (verifWindow.ShowDialog() == true)
         {
-            RefreshData();
+            if (sender is not Button btn || btn.Tag is not OpenDeliveryDisplay deliveryDisplay) return;
+
+            bool semuaSesuai = DialogHelper.ShowConfirm(
+                $"Apakah semua barang di pengiriman '{deliveryDisplay.Delivery.DeliveryNumber}' terkirim SESUAI nota (tidak ada yang dibatalkan)?\n\nKlik 'Ya' kalau semua sesuai, atau 'Tidak' kalau ada barang yang dibatalkan/berkurang.",
+                "Verifikasi Pengiriman");
+
+            if (semuaSesuai)
+            {
+                ProsesSelesaikanTanpaPerubahan(deliveryDisplay);
+            }
+            else
+            {
+                var verifWindow = new DeliveryVerificationWindow(deliveryDisplay) { Owner = Window.GetWindow(this) };
+                if (verifWindow.ShowDialog() == true)
+                {
+                    RefreshData();
+                }
+            }
         }
-    }
-}
 
         private async void TombolBatalkanDelivery_Click(object sender, RoutedEventArgs e)
         {
@@ -235,11 +357,9 @@ namespace SPJ_APP.View.Pages
                 var localDb = await LocalDatabaseService.GetConnection();
                 bool requiresAuth = false;
 
-                // Pre-check if authorization is needed
                 foreach (var item in deliveryDisplay.Items)
                 {
                     var sale = item.Original.Original;
-                    // Do not re-prompt for auth if status is already TEMPO or DONE
                     if (sale.Status == "TEMPO" || sale.Status == "DONE") continue;
                     
                     string newStatus = sale.Remaining <= 0 ? "DONE" : "TEMPO";
@@ -265,7 +385,6 @@ namespace SPJ_APP.View.Pages
                     }
                     else
                     {
-                        // User cancelled the password dialog
                         return;
                     }
                 }

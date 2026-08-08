@@ -35,20 +35,36 @@ namespace SPJ_APP.View.Pages
                 var customers = await db.Table<LocalCustomer>().ToListAsync();
                 var salesPersons = await db.Table<LocalSalesPerson>().ToListAsync();
 
+                var custById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                var custByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var c in customers)
+                {
+                    if (!string.IsNullOrWhiteSpace(c.Id)) custById[c.Id.Trim()] = c.Name?.Trim() ?? "";
+                    if (!string.IsNullOrWhiteSpace(c.Name)) custByName[c.Name.Trim()] = c.Name.Trim();
+                }
+
+                var spById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                var spByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var sp in salesPersons)
+                {
+                    if (!string.IsNullOrWhiteSpace(sp.Id)) spById[sp.Id.Trim()] = sp.Name?.Trim() ?? "";
+                    if (!string.IsNullOrWhiteSpace(sp.Name)) spByName[sp.Name.Trim()] = sp.Name.Trim();
+                }
+
                 var displayItems = payments.Select(p =>
                 {
                     var sale = sales.FirstOrDefault(s => s.Id == p.SaleId || string.Equals(s.Nota, p.SaleId, StringComparison.OrdinalIgnoreCase));
-                    var cust = sale != null ? customers.FirstOrDefault(c => c.Id == sale.CustomerId || string.Equals(c.Name, sale.CustomerId, StringComparison.OrdinalIgnoreCase)) : null;
-                    var sp = sale != null ? salesPersons.FirstOrDefault(s => s.Id == sale.SalesPersonId || string.Equals(s.Name, sale.SalesPersonId, StringComparison.OrdinalIgnoreCase)) : null;
+                    string custRaw = sale?.CustomerId ?? "";
+                    string spRaw = sale?.SalesPersonId ?? "";
 
                     return new PaymentDisplayItem
                     {
                         NotaNumber = sale?.Nota ?? p.SaleId,
-                        CustomerName = cust?.Name ?? sale?.CustomerId ?? "-",
-                        SalesPersonName = sp?.Name ?? sale?.SalesPersonId ?? "-",
+                        CustomerName = SalesResolutionService.ResolveCustomerName(custRaw, custById, custByName),
+                        SalesPersonName = SalesResolutionService.ResolveSalesPersonName(spRaw, spById, spByName),
                         PaymentDate = p.PaymentDate,
                         Amount = p.Amount,
-                        PaymentMethod = p.PaymentMethod,
+                        PaymentMethod = p.PaymentMethod ?? "-",
                         Notes = p.Notes,
                         Original = p
                     };

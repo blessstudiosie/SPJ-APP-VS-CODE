@@ -200,34 +200,100 @@ namespace SPJ_APP.View.Pages
 
                 TabelStatusNota.ItemsSource = statusList;
 
-                // 5. Build Sales Person Performance List (ONLY Sales Persons in sales_persons table)
+                // 5. Build Sales Person Performance List (Grouped directly by resolved Sales Person Name)
                 var currentMonthVisits = allVisits
                     .Where(v => v.CreatedAt.Year == now.Year && v.CreatedAt.Month == now.Month)
                     .ToList();
 
-
-                var salesPerformanceList = new List<SalesPersonPerformanceDisplayItem>();
+                var spById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                var spByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
                 foreach (var sp in salesPersons)
                 {
-                    // Filter Visits for this Sales Person in current month
-                    int visitCount = currentMonthVisits.Count(v =>
-                        (!string.IsNullOrEmpty(v.SalesPersonId) && string.Equals(v.SalesPersonId, sp.Id, StringComparison.OrdinalIgnoreCase)) ||
-                        (string.IsNullOrEmpty(v.SalesPersonId) && string.Equals(v.SalesPersonName, sp.Name, StringComparison.OrdinalIgnoreCase)));
+                    if (!string.IsNullOrWhiteSpace(sp.Id))
+                    {
+                        string idKey = sp.Id.Trim();
+                        spById[idKey] = sp.Name?.Trim() ?? "";
+                        if (Guid.TryParse(idKey, out var g))
+                        {
+                            spById[g.ToString("D")] = sp.Name?.Trim() ?? "";
+                            spById[g.ToString("N")] = sp.Name?.Trim() ?? "";
+                            if (g.ToString("D").Length >= 8) spById[g.ToString("D").Substring(0, 8)] = sp.Name?.Trim() ?? "";
+                        }
+                        else if (idKey.Length >= 8)
+                        {
+                            spById[idKey.Substring(0, 8)] = sp.Name?.Trim() ?? "";
+                        }
+                    }
+                    if (!string.IsNullOrWhiteSpace(sp.Name))
+                    {
+                        spByName[sp.Name.Trim()] = sp.Name.Trim();
+                    }
+                }
 
-                    // Filter Delivered Sales (TEMPO & DONE) for this Sales Person in current month (by DeliveryDate)
-                    var spSales = currentMonthDeliveredSales.Where(s =>
-                        (!string.IsNullOrEmpty(s.SalesPersonId) && string.Equals(s.SalesPersonId, sp.Id, StringComparison.OrdinalIgnoreCase)) ||
-                        string.Equals(s.SalesPersonId, sp.Name, StringComparison.OrdinalIgnoreCase))
-                        .ToList();
+                var activeSalesPersons = salesPersons
+                    .Where(sp =>
+                        !string.IsNullOrWhiteSpace(sp.Name) &&
+                        !string.Equals(sp.Role, "DEVELOPER", StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(sp.Role, "ADMIN", StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(sp.Name, "blessstudiosie", StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(sp.Name, "Developer", StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(sp.Name, "Admin", StringComparison.OrdinalIgnoreCase)
+                    )
+                    .ToList();
+
+                // Group delivered sales directly by resolved Sales Person Name
+                var salesGroupedBySalesPerson = currentMonthDeliveredSales
+                    .GroupBy(s => SalesResolutionService.ResolveSalesPersonName(s.SalesPersonId, spById, spByName))
+                    .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+
+                // Group current month visits directly by resolved Sales Person Name
+                var visitsGroupedBySalesPerson = currentMonthVisits
+                    .GroupBy(v => {
+                        string spInput = !string.IsNullOrWhiteSpace(v.SalesPersonName) ? v.SalesPersonName : v.SalesPersonId ?? "";
+                        return SalesResolutionService.ResolveSalesPersonName(spInput, spById, spByName);
+                    })
+                    .ToDictionary(g => g.Key, g => g.Count(), StringComparer.OrdinalIgnoreCase);
+
+                // Collect all Sales Person names from master table + actual transactions
+                var allSalesNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                foreach (var sp in activeSalesPersons)
+                {
+                    if (!string.IsNullOrWhiteSpace(sp.Name)) allSalesNames.Add(sp.Name.Trim());
+                }
+
+                foreach (var key in salesGroupedBySalesPerson.Keys)
+                {
+                    if (!string.IsNullOrWhiteSpace(key) && key != "-")
+                    {
+                        if (!key.Equals("blessstudiosie", StringComparison.OrdinalIgnoreCase) &&
+                            !key.Equals("Developer", StringComparison.OrdinalIgnoreCase) &&
+                            !key.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+                        {
+                            allSalesNames.Add(key);
+                        }
+                    }
+                }
+
+                var salesPerformanceList = new List<SalesPersonPerformanceDisplayItem>();
+
+                foreach (var salesName in allSalesNames)
+                {
+                    var spSales = salesGroupedBySalesPerson.TryGetValue(salesName, out var sList) ? sList : new List<LocalSale>();
+                    int visitCount = visitsGroupedBySalesPerson.TryGetValue(salesName, out var vCount) ? vCount : 0;
+                    
+                    var masterSp = activeSalesPersons.FirstOrDefault(sp => string.Equals(sp.Name?.Trim(), salesName, StringComparison.OrdinalIgnoreCase));
+                    string roleDisplay = masterSp != null && !string.IsNullOrWhiteSpace(masterSp.Role) ? masterSp.Role.ToUpperInvariant() : "SALES";
+                    string spId = masterSp?.Id ?? salesName;
 
                     decimal spOmset = spSales.Sum(s => s.Total);
 
                     salesPerformanceList.Add(new SalesPersonPerformanceDisplayItem
                     {
-                        SalesPersonId = sp.Id,
-                        SalesPersonName = sp.Name,
-                        Role = string.IsNullOrWhiteSpace(sp.Role) ? "SALES" : sp.Role.ToUpperInvariant(),
+                        SalesPersonId = spId,
+                        SalesPersonName = salesName,
+                        Role = roleDisplay,
                         VisitCountDisplay = $"{visitCount} Visit",
                         OrderCountDisplay = $"{spSales.Count} Nota",
                         OmsetTotal = spOmset,

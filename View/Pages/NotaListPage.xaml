@@ -11,59 +11,69 @@
 
         <TextBlock Grid.Row="0" Text="Transaksi Penjualan (Nota)" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
-            <TextBlock Text="🔍 Cari:" VerticalAlignment="Center" Margin="0,0,5,0" FontWeight="SemiBold"/>
-            <TextBox x:Name="InputCariCustomer" Width="130" Height="28" VerticalContentAlignment="Center" Padding="6,0" Margin="0,0,10,0" KeyDown="InputCariCustomer_KeyDown" ToolTip="Cari berdasarkan Nama Customer atau No Nota"/>
+        <WrapPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
+                <TextBlock Text="🔍 Cari:" VerticalAlignment="Center" Margin="0,0,5,0" FontWeight="SemiBold"/>
+                <TextBox x:Name="InputCariCustomer" Width="140" Height="28" VerticalContentAlignment="Center" Padding="6,0" KeyDown="InputCariCustomer_KeyDown" ToolTip="Cari berdasarkan Nama Customer atau No Nota"/>
+            </StackPanel>
 
-            <TextBlock Text="👤 Sales:" VerticalAlignment="Center" Margin="0,0,5,0" FontWeight="SemiBold"/>
-            <ComboBox x:Name="ComboFilterSales" Width="130" Height="28" Margin="0,0,10,0" VerticalContentAlignment="Center" SelectionChanged="ComboFilterSales_SelectionChanged"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
+                <TextBlock Text="👤 Sales:" VerticalAlignment="Center" Margin="0,0,5,0" FontWeight="SemiBold"/>
+                <ComboBox x:Name="ComboFilterSales" Width="135" Height="28" VerticalContentAlignment="Center" SelectionChanged="ComboFilterSales_SelectionChanged"/>
+            </StackPanel>
 
+            <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
+                <TextBlock Text="Status:" VerticalAlignment="Center" Margin="0,0,5,0" FontWeight="SemiBold"/>
+                <Grid>
+                    <ToggleButton x:Name="TombolFilterStatus" 
+                                  Content="Semua Status (5) ▼" 
+                                  Height="28" Padding="10,2" 
+                                  Background="#F1F5F9" BorderBrush="#CBD5E1" 
+                                  FontWeight="SemiBold" Cursor="Hand"/>
+                    <Popup x:Name="PopupFilterStatus" 
+                           IsOpen="{Binding IsChecked, ElementName=TombolFilterStatus}" 
+                           StaysOpen="False" 
+                           AllowsTransparency="True" 
+                           Placement="Bottom">
+                        <Border Background="White" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,4,0,0">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="12" ShadowDepth="4" Direction="270" Color="#000000" Opacity="0.15"/>
+                            </Border.Effect>
+                            <StackPanel Width="190">
+                                <TextBlock Text="Pilih Status Nota (Multi):" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,8"/>
 
-            <TextBlock Text="Status:" VerticalAlignment="Center" Margin="0,0,5,0" FontWeight="SemiBold"/>
-            <Grid Margin="0,0,10,0">
-                <ToggleButton x:Name="TombolFilterStatus" 
-                              Content="Semua Status (5) ▼" 
-                              Height="28" Padding="10,2" 
-                              Background="#F1F5F9" BorderBrush="#CBD5E1" 
-                              FontWeight="SemiBold" Cursor="Hand"/>
-                <Popup x:Name="PopupFilterStatus" 
-                       IsOpen="{Binding IsChecked, ElementName=TombolFilterStatus}" 
-                       StaysOpen="False" 
-                       AllowsTransparency="True" 
-                       Placement="Bottom">
-                    <Border Background="White" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,4,0,0">
-                        <Border.Effect>
-                            <DropShadowEffect BlurRadius="12" ShadowDepth="4" Direction="270" Color="#000000" Opacity="0.15"/>
-                        </Border.Effect>
-                        <StackPanel Width="190">
-                            <TextBlock Text="Pilih Status Nota (Multi):" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,8"/>
+                                <CheckBox x:Name="ChkStatusSo" Content="📝 SO (Draft Order)" IsChecked="True" Margin="0,0,0,6" Checked="FilterStatus_Changed" Unchecked="FilterStatus_Changed"/>
+                                <CheckBox x:Name="ChkStatusOnProses" Content="📦 ON PROSES (Gudang/Nota)" IsChecked="True" Margin="0,0,0,6" Checked="FilterStatus_Changed" Unchecked="FilterStatus_Changed"/>
+                                <CheckBox x:Name="ChkStatusDalamPengiriman" Content="🚚 DALAM PENGIRIMAN" IsChecked="True" Margin="0,0,0,6" Checked="FilterStatus_Changed" Unchecked="FilterStatus_Changed"/>
+                                <CheckBox x:Name="ChkStatusTempo" Content="⏳ TEMPO (Piutang Sah)" IsChecked="True" Margin="0,0,0,6" Checked="FilterStatus_Changed" Unchecked="FilterStatus_Changed"/>
+                                <CheckBox x:Name="ChkStatusDone" Content="✅ DONE (Lunas Sah)" IsChecked="True" Margin="0,0,0,8" Checked="FilterStatus_Changed" Unchecked="FilterStatus_Changed"/>
 
-                            <CheckBox x:Name="ChkStatusSo" Content="📝 SO (Draft Order)" IsChecked="True" Margin="0,0,0,6" Checked="FilterStatus_Changed" Unchecked="FilterStatus_Changed"/>
-                            <CheckBox x:Name="ChkStatusOnProses" Content="📦 ON PROSES (Gudang/Nota)" IsChecked="True" Margin="0,0,0,6" Checked="FilterStatus_Changed" Unchecked="FilterStatus_Changed"/>
-                            <CheckBox x:Name="ChkStatusDalamPengiriman" Content="🚚 DALAM PENGIRIMAN" IsChecked="True" Margin="0,0,0,6" Checked="FilterStatus_Changed" Unchecked="FilterStatus_Changed"/>
-                            <CheckBox x:Name="ChkStatusTempo" Content="⏳ TEMPO (Piutang Sah)" IsChecked="True" Margin="0,0,0,6" Checked="FilterStatus_Changed" Unchecked="FilterStatus_Changed"/>
-                            <CheckBox x:Name="ChkStatusDone" Content="✅ DONE (Lunas Sah)" IsChecked="True" Margin="0,0,0,8" Checked="FilterStatus_Changed" Unchecked="FilterStatus_Changed"/>
+                                <Separator Margin="0,4,0,8" Background="#E2E8F0"/>
+                                <Grid>
+                                    <Button Content="Pilih Semua" Click="TombolPilihSemuaStatus_Click" Padding="6,2" FontSize="11" Background="#F1F5F9" BorderBrush="#CBD5E1"/>
+                                    <Button Content="Reset" Click="TombolResetStatus_Click" Padding="6,2" FontSize="11" HorizontalAlignment="Right" Background="#FEF2F2" Foreground="#EF4444" BorderBrush="#FCA5A5"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </Popup>
+                </Grid>
+            </StackPanel>
 
-                            <Separator Margin="0,4,0,8" Background="#E2E8F0"/>
-                            <Grid>
-                                <Button Content="Pilih Semua" Click="TombolPilihSemuaStatus_Click" Padding="6,2" FontSize="11" Background="#F1F5F9" BorderBrush="#CBD5E1"/>
-                                <Button Content="Reset" Click="TombolResetStatus_Click" Padding="6,2" FontSize="11" HorizontalAlignment="Right" Background="#FEF2F2" Foreground="#EF4444" BorderBrush="#FCA5A5"/>
-                            </Grid>
-                        </StackPanel>
-                    </Border>
-                </Popup>
-            </Grid>
+            <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
+                <TextBlock Text="Dari:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <DatePicker x:Name="InputMulai" Width="105" Margin="0,0,8,0"/>
+                <TextBlock Text="s/d" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <DatePicker x:Name="InputSelesai" Width="105"/>
+            </StackPanel>
 
-            <TextBlock Text="Dari:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <DatePicker x:Name="InputMulai" Width="105" Margin="0,0,10,0"/>
-            <TextBlock Text="Sampai:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <DatePicker x:Name="InputSelesai" Width="105" Margin="0,0,10,0"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                <Button x:Name="TombolFilter" Content="🔍 Filter" Padding="12,4" Height="28" Click="TombolFilter_Click"/>
+                <Button x:Name="TombolTambah" Content="➕ Tambah Nota" Padding="12,4" Height="28" Margin="8,0,0,0" Background="#4F46E5" Foreground="White" FontWeight="Bold" Click="TombolTambah_Click"/>
+                <TextBox x:Name="TeksStatus" VerticalAlignment="Center" Margin="10,0,0,0" FontStyle="Italic"
+                         IsReadOnly="True" BorderThickness="0" Background="Transparent" IsReadOnlyCaretVisible="True"/>
+            </StackPanel>
+        </WrapPanel>
 
-            <Button x:Name="TombolFilter" Content="🔍 Filter" Padding="12,4" Height="28" Click="TombolFilter_Click"/>
-            <Button x:Name="TombolTambah" Content="➕ Tambah Nota" Padding="12,4" Height="28" Margin="10,0,0,0" Background="#4F46E5" Foreground="White" FontWeight="Bold" Click="TombolTambah_Click"/>
-            <TextBox x:Name="TeksStatus" VerticalAlignment="Center" Margin="15,0,0,0" FontStyle="Italic"
-                     IsReadOnly="True" BorderThickness="0" Background="Transparent" IsReadOnlyCaretVisible="True"/>
-        </StackPanel>
 
 
 
